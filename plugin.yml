@@ -1,0 +1,68 @@
+name: Xelephia
+main: eu.octanne.xelephia.XelephiaPlugin
+version: 1.5dev
+author: Octanne
+description: Core plugin of Xelephia.
+commands:
+  loot:
+    description: loot admin system.
+  coins:
+    description: admin coins system.
+  kit:
+    description: admin kit system.
+  day:
+    description: set day.
+  night:
+    description: set night.
+  sun:
+    description: set the sun.
+  site:
+    description: link to the web site.        
+  discord:
+    description: link to the discord command.
+  rename:
+    description: rename the item in hand.
+  staff:
+    description: Staff Chat.
+    aliases: [st]
+  broadcast:
+    description: broadcast a message.
+    aliases: [bc,annonce]
+  speed:
+    description: change speed of player.
+  heal:
+    description: heal you    
+  fly:
+    description: make you able to fly.
+  gamemode:
+    description: make you able to switch gamemode.
+    aliases: [gm]
+  tpall:
+    description: teleport all player at player executor.
+  spawn:
+    description: teleport at spawn.
+  warp:
+    description: open warp menu or teleport to warp.
+  tpa:
+    description: teleport request into player.
+  tpyes:
+    description: accept teleport request.
+    aliases: [tpaccept]
+  tpno:
+    description: refuse teleport request.
+    aliases: [tpdeny]
+  setspawn:
+    description: set spawn point.
+  setwarp:
+    description: set warp position.
+  world:
+    description: World manager.
+  message:
+    description: Private messenger.
+    aliases: [m, msg]
+  respond:
+    description: respond to last private messenger.
+    aliases: [r]
+  stats:
+    description: to see the stats of a player.
+    aliases: [stat]
