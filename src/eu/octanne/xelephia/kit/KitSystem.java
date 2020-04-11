@@ -106,7 +106,7 @@ public class KitSystem implements Listener {
 	}
 
 	public void openMenu(Player p) {
-		Inventory menuKit = Bukkit.createInventory(null, 27, "&6Kit | &eChoix des kits");
+		Inventory menuKit = Bukkit.createInventory(null, 27, "§6Kit | §eChoix des kits");
 		XPlayer xP = XelephiaPlugin.getXPlayer(p.getUniqueId());
 
 		for (Kit kit : kitsList) {
@@ -135,7 +135,7 @@ public class KitSystem implements Listener {
 	@EventHandler
 	public void onInKitsMenu(InventoryClickEvent e) {
 		if (e.getWhoClicked() instanceof Player && e.getClickedInventory() != null) {
-			if (e.getClickedInventory().getName().equals("&6Kit | &eChoix des kits")) {
+			if (e.getClickedInventory().getName().equals("§6Kit | §eChoix des kits")) {
 				e.setCancelled(true);
 				Kit kit = getKit(e.getCurrentItem().getType());
 				if (e.getCurrentItem() != null && kit != null) {
