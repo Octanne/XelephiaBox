@@ -264,7 +264,7 @@ public class XPlayer {
 		if(inCombat != true) {
 			inCombat = true;
 			
-			sendMessage(MessageType.SUBTITLE,"§cVous entrez en combat. (20 sec)");
+			sendMessage(MessageType.SUBTITLE,"§4「§c✗§4」§c Vous êtes en combat ! (20 secs)");
 			combatTask = new BukkitRunnable() {
 		        
 				int sec = 20;
@@ -279,7 +279,7 @@ public class XPlayer {
 			       }else {
 			    	   this.cancel();
 			    	   inCombat = false;
-			    	   sendMessage(MessageType.SUBTITLE,"§cVous n'êtes plus en combat.");
+			    	   sendMessage(MessageType.SUBTITLE,"§7「§a✓§7」§a Vous n'êtes plus en combat.");
 			       }
 			    }
 			}.runTaskTimerAsynchronously(XelephiaPlugin.getInstance(), 0, 20);
