@@ -110,7 +110,7 @@ public class KitSystem implements Listener {
 		XPlayer xP = XelephiaPlugin.getXPlayer(p.getUniqueId());
 
 		for (Kit kit : kitsList) {
-			boolean hasKit = (xP.getUnlockKit().contains(kit.getUnName()));
+			boolean hasKit = (kit.getCost() == 0 ) ? true : (xP.getUnlockKit().contains(kit.getUnName()));
 			/*
 			 * Lore
 			 */
