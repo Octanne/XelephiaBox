@@ -33,10 +33,6 @@
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 		</repository>
-		<repository>
-			<id>bukkit-repo</id>
-			<url>http://repo.bukkit.org/content/groups/public/</url>
-		</repository>
 	</repositories>
 	<dependencies>
 		<dependency>
@@ -51,10 +47,11 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>craftbukkit</artifactId>
-			<version>1.8.8-R0.1-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>craftbukkit</artifactId>
+            <version>LATEST</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/ressources/craftbukkit-1.8.8-R0.1.jar</systemPath>
+        </dependency>
 	</dependencies>
 </project>
