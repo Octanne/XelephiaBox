@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,6 +22,9 @@ public class LootZoneManager implements Listener {
 	protected File zoneFolder = new File("plugins/Xelephia/zone/");
 
 	public LootZoneManager() {
+		//Serialization
+		ConfigurationSerialization.registerClass(Loot.class, "Loot");
+		
 		// LootZone load
 
 		// Register Listener

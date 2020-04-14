@@ -15,13 +15,27 @@ public class LootZone {
 
 	protected List<Loot> loots;
 
+	
+	
 	public LootZone(String name, Location pos) {
 		this.pos = pos;
 		this.name = name;
 
 		loots = new ArrayList<Loot>();
 	}
+	
+	protected LootZone(String name) {
+		
+	}
 
+	protected void save() {
+		
+	}
+	
+	protected void load() {
+		
+	}
+	
 	public void addLoot(Loot loot) {
 		loots.add(loot);
 	}
@@ -32,7 +46,7 @@ public class LootZone {
 		}else return false;
 	}
 
-	public void setControlTime(int sec) {
+	protected void setControlTime(int sec) {
 		controlTime = sec;
 	}
 
