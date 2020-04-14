@@ -6,6 +6,8 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import eu.octanne.xelephia.util.ConfigYaml;
+
 public class LootZone {
 
 	protected Location pos;
@@ -15,25 +17,38 @@ public class LootZone {
 
 	protected List<Loot> loots;
 
+	private ConfigYaml config;
 	
-	
-	public LootZone(String name, Location pos) {
+	public LootZone(String name, Location pos, int controlTime) {
+		config = new ConfigYaml("zone/"+name+".yml");
+		
 		this.pos = pos;
 		this.name = name;
-
+		this.controlTime = controlTime;
+		
 		loots = new ArrayList<Loot>();
+		save();
 	}
 	
 	protected LootZone(String name) {
-		
+		this.name = name;
+		load();
 	}
 
 	protected void save() {
-		
+		config.getConfig().set("name", this.name);
+		config.getConfig().set("pos", this.pos);
+		config.getConfig().set("time", this.controlTime);
+		config.getConfig().get("loots", loots);
+		config.save();
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected void load() {
-		
+		this.name = config.getConfig().getString("name", null);
+		this.pos = (Location) config.getConfig().get("pos", null);
+		this.controlTime = config.getConfig().getInt("time", 0);
+		loots = (List<Loot>) config.getConfig().get("loots", new ArrayList<Loot>());
 	}
 	
 	public void addLoot(Loot loot) {
@@ -60,5 +75,9 @@ public class LootZone {
 	
 	public List<Loot> getLoots(){
 		return loots;
+	}
+	
+	public void remove() {
+		config.getFile().delete();
 	}
 }

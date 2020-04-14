@@ -10,6 +10,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.Inventory;
 
@@ -21,16 +22,37 @@ public class LootZoneManager implements Listener {
 
 	protected File zoneFolder = new File("plugins/Xelephia/zone/");
 
+	private class LootZoneEdit {
+		LootZone zone;
+		
+	}
+	
 	public LootZoneManager() {
 		//Serialization
 		ConfigurationSerialization.registerClass(Loot.class, "Loot");
 		
 		// LootZone load
-
+		load();
+		
 		// Register Listener
 		Bukkit.getPluginManager().registerEvents(this, XelephiaPlugin.getInstance());
 	}
 
+	protected void load() {
+		for(File file : zoneFolder.listFiles()) {
+			if(file.getName().contains(".yml")) {
+				LootZone zone = new LootZone(file.getName().split(".yml")[0]);
+				if(zone.getName() != null)lootZones.add(zone);
+			}
+		}
+	}
+	
+	protected void save() {
+		for(LootZone zone : lootZones) {
+			zone.save();
+		}
+	}
+	
 	public List<LootZone> getLootZones() {
 		return lootZones;
 	}
@@ -51,8 +73,7 @@ public class LootZoneManager implements Listener {
 	}
 
 	public boolean createZone(String name, int timeZone, Location loc) {
-		LootZone zone = new LootZone(name, loc);
-		zone.setControlTime(timeZone);
+		LootZone zone = new LootZone(name, loc, timeZone);
 		lootZones.add(zone);
 		return true;
 	}
@@ -64,8 +85,15 @@ public class LootZoneManager implements Listener {
 		
 	}
 	
-	public boolean removeZone(String name) {
-		
+	public boolean removeZone(String zoneName) {
+		for (LootZone zone : lootZones) {
+			if (zone.getName().equalsIgnoreCase(zoneName)) {
+				zone.remove();
+				lootZones.remove(zone);
+				return true;
+			} else
+				continue;
+		}
 		return false;
 	}
 
@@ -73,5 +101,15 @@ public class LootZoneManager implements Listener {
 	@EventHandler
 	public void onPlayerInZone(PlayerMoveEvent e) {
 		
+	}
+	
+	@EventHandler
+	public void onInMenu(InventoryClickEvent e) {
+		if(e.getWhoClicked() instanceof Player) {
+			Player p = (Player) e.getWhoClicked();
+			if(e.getInventory() != null && e.getInventory().getName().contains("§cLootZone §8| §9")) {
+				
+			}else return;
+		}
 	}
 }
