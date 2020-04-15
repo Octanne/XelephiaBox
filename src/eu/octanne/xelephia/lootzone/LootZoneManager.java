@@ -39,6 +39,7 @@ public class LootZoneManager implements Listener {
 	}
 
 	protected void load() {
+		if(zoneFolder.isDirectory() && zoneFolder.listFiles() != null)
 		for(File file : zoneFolder.listFiles()) {
 			if(file.getName().contains(".yml")) {
 				LootZone zone = new LootZone(file.getName().split(".yml")[0]);
