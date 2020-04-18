@@ -113,11 +113,17 @@ public class XPlayerListener implements Listener {
 	}
 	
 	
-	private boolean isPvPActive(Entity e) {
-		if(!(e instanceof Player) || !(((Projectile)e).getShooter() instanceof Player)) return false;
-		RegionQuery query = WorldGuardPlugin.inst().getRegionContainer().createQuery();
-		if (query.testState(e.getLocation(), WorldGuardPlugin.inst().wrapPlayer((Player)e), DefaultFlag.PVP)) {
-		    return true;
+	private boolean isPvPActive(Entity e) {	
+		if(e instanceof Player) {
+			RegionQuery query = WorldGuardPlugin.inst().getRegionContainer().createQuery();
+			if (query.testState(e.getLocation(), WorldGuardPlugin.inst()
+					.wrapPlayer((Player)e), DefaultFlag.PVP)) return true;
+			else return false;
+		}else if(((Projectile)e).getShooter() instanceof Player){
+			RegionQuery query = WorldGuardPlugin.inst().getRegionContainer().createQuery();
+			if (query.testState(e.getLocation(), WorldGuardPlugin.inst()
+					.wrapPlayer((Player)((Projectile)e).getShooter()), DefaultFlag.PVP)) return true;
+			else return false;
 		}else return false;
 	}
 	

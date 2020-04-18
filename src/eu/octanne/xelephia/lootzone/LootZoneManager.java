@@ -133,8 +133,8 @@ public class LootZoneManager implements Listener {
 			if(e.getInventory() != null && lootZoneEdit.isEmpty() ? false : lootZoneEdit.containsKey(p.getName())) {
 				LootZoneEdit zoneEdit = lootZoneEdit.get(p.getName());
 				if(zoneEdit.inv.equals(e.getClickedInventory())) {
-					// Delete Loot, Edit % or Edit max
 					if((e.getSlot() < 9 || e.getSlot() > 17)) {
+						// Delete Loot, Edit % or Edit max
 						
 					}else {
 						e.setCancelled(true);
