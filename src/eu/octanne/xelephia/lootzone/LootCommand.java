@@ -73,10 +73,10 @@ public class LootCommand implements CommandExecutor {
 							p.sendMessage("§eLoot §8| §cLa zone §9" + args[1] + " §cn'existe pas.");
 							return false;
 						}
-					} else if (args[0].equalsIgnoreCase("info")) {
+					} else if (args[0].equalsIgnoreCase("edit")) {
 						if (XelephiaPlugin.getLootZoneManager().hasZone(args[1])) {
-							// Loot Zone Informations
-							
+							// Loot Zone Edit
+							XelephiaPlugin.getLootZoneManager().editLootZone(p, args[1]);
 							return true;
 						} else {
 							p.sendMessage("§eLoot §8| §cLa zone §9" + args[1] + " §cn'existe pas.");
@@ -91,11 +91,11 @@ public class LootCommand implements CommandExecutor {
 						p.sendMessage("§eLoot §8| §aLes différents tags : §9kit§a, §9lootable§a, §9permanent§a.");
 						return true;
 					} else {
-						p.sendMessage("§eLoot §8| §cUsage: /loot <taglist|tag|create|remove|list|info> [args]");
+						p.sendMessage("§eLoot §8| §cUsage: /loot <taglist|tag|create|remove|list|edit> [args]");
 						return false;
 					}
 				} else {
-					p.sendMessage("§eLoot §8| §cUsage: /loot <tag|create|remove|list|info> [args]");
+					p.sendMessage("§eLoot §8| §cUsage: /loot <tag|create|remove|list|edit> [args]");
 					return false;
 				}
 			} else {
