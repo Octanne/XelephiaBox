@@ -169,7 +169,7 @@ public class LootZoneManager implements Listener {
 					}else {
 						e.setCancelled(true);
 						// Scroll
-						if(e.getSlot() == 24 && zoneEdit.scroll < zoneEdit.getScrollMax() + 1) {
+						if(e.getSlot() == 24 && zoneEdit.scroll < zoneEdit.getScrollMax()) {
 							openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll+1, zoneEdit.inv);
 							zoneEdit.scroll+=1;
 							p.updateInventory();
@@ -252,21 +252,22 @@ public class LootZoneManager implements Listener {
 		Bukkit.broadcastMessage("=====INSERT ITEMS=====");
 		for(int i = 9; i < 18; i++) {
 			Loot loot;
-			if(i+scroll-8 < zone.getLoots().size()) loot = zone.getLoots().get(i+scroll-8);
+			if(i-9+scroll < zone.getLoots().size()) {
+				loot = zone.getLoots().get(i-9+scroll);
+				Bukkit.broadcastMessage("§7Shown item => slot : " + i + " index : " + (i-9+scroll));
+				ItemStack item = loot.getItem().clone();
+				ItemMeta meta = item.getItemMeta();
+				ArrayList<String> lore = new ArrayList<>();
+				lore.add("§7Pourcentage : §c"+loot.getLuckPrct());
+				lore.add("§7Quantité max : §c"+loot.getMax());
+				meta.setLore(lore);
+				item.setItemMeta(meta);
+				inv.setItem(i, item);
+			}
 			else {
 				inv.clear(i);
-				Bukkit.broadcastMessage("§7Clear item => slot : " + i + "index : " + (i+scroll-8));
-				continue;
+				Bukkit.broadcastMessage("§7Clear item => slot : " + i + " index : " + (i-9+scroll));
 			}
-			Bukkit.broadcastMessage("§7Shown item => slot : " + i + "index : " + (i+scroll-8));
-			ItemStack item = loot.getItem().clone();
-			ItemMeta meta = item.getItemMeta();
-			ArrayList<String> lore = new ArrayList<>();
-			lore.add("§7Pourcentage : §c"+loot.getLuckPrct());
-			lore.add("§7Quantité max : §c"+loot.getMax());
-			meta.setLore(lore);
-			item.setItemMeta(meta);
-			inv.setItem(i, item);
 		}
 		
 		return inv;
