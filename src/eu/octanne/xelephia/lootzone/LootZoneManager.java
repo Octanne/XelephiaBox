@@ -15,6 +15,8 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -133,16 +135,41 @@ public class LootZoneManager implements Listener {
 			if(e.getInventory() != null && lootZoneEdit.isEmpty() ? false : lootZoneEdit.containsKey(p.getName())) {
 				LootZoneEdit zoneEdit = lootZoneEdit.get(p.getName());
 				if(zoneEdit.inv.equals(e.getClickedInventory())) {
-					if((e.getSlot() < 9 || e.getSlot() > 17)) {
+					if(!(e.getSlot() < 9 || e.getSlot() > 17)) {
 						// Delete Loot, Edit % or Edit max
-						
+						if(e.getCurrentItem() != null) {
+							int lootNb = e.getSlot() - 9 + zoneEdit.scroll;
+							Loot eLoot = zoneEdit.zone.getLoots().get(lootNb);
+							// Delete
+							if(e.isShiftClick()) {
+								zoneEdit.zone.getLoots().remove(eLoot);
+								zoneEdit.zone.save();
+								openEditMenu(zoneEdit.zone, zoneEdit.scroll+1, zoneEdit.inv);
+							}
+							// Edit QTE Max
+							else if(e.getClick().equals(ClickType.DOUBLE_CLICK)){
+								
+							}
+							else if(e.getClick().equals(ClickType.MIDDLE)) {
+								
+							}
+						}
+						// Add Item
+						else if(e.getAction().equals(InventoryAction.PLACE_SOME)) {
+							
+						}
 					}else {
 						e.setCancelled(true);
 						// Scroll
-						if(e.getSlot() == 24 && zoneEdit.scroll < zoneEdit.getScrollMax()) openEditMenu(zoneEdit.zone, 
-								zoneEdit.scroll+1, zoneEdit.inv);
-						else if(e.getSlot() == 20 && zoneEdit.scroll > 0) openEditMenu(zoneEdit.zone, 
-								zoneEdit.scroll-1, zoneEdit.inv);
+						if(e.getSlot() == 24 && zoneEdit.scroll < zoneEdit.getScrollMax()) 
+						openEditMenu(zoneEdit.zone, zoneEdit.scroll+1, zoneEdit.inv);
+						else if(e.getSlot() == 20 && zoneEdit.scroll > 0) 
+						openEditMenu(zoneEdit.zone, zoneEdit.scroll-1, zoneEdit.inv);
+						else if(e.getSlot() == 26) {
+							p.closeInventory();
+							zoneEdit.zone.save();
+							lootZoneEdit.remove(p.getName());
+						}
 					}
 				}else return;
 			}else return;
@@ -151,10 +178,18 @@ public class LootZoneManager implements Listener {
 	
 	@EventHandler
 	public void onCloseMenu(InventoryCloseEvent e) {
-		
+		Bukkit.broadcastMessage("InventoryClose !");
+		if(e.getPlayer() instanceof Player) {
+			Player p = (Player) e.getPlayer();
+			if(e.getInventory() != null && lootZoneEdit.isEmpty() ? false : lootZoneEdit.containsKey(p.getName())) {
+				LootZoneEdit zoneEdit = lootZoneEdit.get(p.getName());
+				zoneEdit.zone.save();
+				lootZoneEdit.remove(p.getName());
+			}
+		}
 	}
 	
-	private Inventory openEditMenu(LootZone zone, int scroll, @Nullable Inventory INV) {
+ 	private Inventory openEditMenu(LootZone zone, int scroll, @Nullable Inventory INV) {
 		
 		int scrollMax = (zone.getLoots().size()-10) <= 0 ? 1 : zone.getLoots().size()-10;
 		if(scroll > scrollMax) scroll = scrollMax;
@@ -178,21 +213,23 @@ public class LootZoneManager implements Listener {
 			
 			ItemStack rollRightItem = Utils.createItemSkull("§9Défiler (droite)", new ArrayList<String>(), SkullType.PLAYER, "MHF_ArrowRight", false);
 			ItemStack rollLeftItem = Utils.createItemSkull("§9Défiler (gauche)", new ArrayList<String>(), SkullType.PLAYER, "MHF_ArrowLeft", false); 
+			ItemStack closeItem = Utils.createItemStack("§cFermer & Sauver", Material.BARRIER, 1, new ArrayList<String>(), 0, false);
 			ArrayList<String> tutoLore = new ArrayList<>();
 			tutoLore.add("§aActions disponible:");
-			tutoLore.add("§cClick §7diter pourcentage");
-			tutoLore.add("§cShift-Click §7pour supprimer");
-			tutoLore.add("§cDouble-Click §7editer quantité max");
-			ItemStack tutorialItem = Utils.createItemSkull("§7Tutoriel", tutoLore, SkullType.PLAYER, "MHF_Question", false);;
+			tutoLore.add("§cShift-Click §7pour supprimer le loot");
+			tutoLore.add("§cMidle-Click §7pour editer le pourcentage");
+			tutoLore.add("§cDouble-Click §7pour editer la quantité max");
+			ItemStack tutorialItem = Utils.createItemSkull("§7Tutoriel", tutoLore, SkullType.PLAYER, "MHF_Question", false);
 			
 			inv.setItem(20, rollLeftItem);
 			inv.setItem(22, tutorialItem);
 			inv.setItem(24, rollRightItem);
+			inv.setItem(26, closeItem);
 		}
 		
 		// Info
 		ArrayList<String> infoLore = new ArrayList<>();
-		infoLore.add("§7Nombres de loot : §c"+zone.getLoots().size());
+		infoLore.add("§7Nombre de loot : §c"+zone.getLoots().size());
 		infoLore.add("§7Temps de contrôle : §c"+zone.getControlTime()+" §7secs");
 		infoLore.add("§7Location : (§c"+zone.pos.getBlockX()+"§7, §c"+zone.pos.getBlockY()+"§7,"
 				+ " §c"+zone.pos.getBlockZ()+"§7)");
