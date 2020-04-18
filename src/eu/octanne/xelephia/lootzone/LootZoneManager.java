@@ -45,8 +45,11 @@ public class LootZoneManager implements Listener {
 		}	
 
 		public int getScrollMax() {
-			if(inv.getItem(17) != null) return zone.getLoots().size()-9+1;
-			else return zone.getLoots().size()-9;
+			int scrollMax = 0;
+			if(inv.getItem(17) != null) scrollMax = (zone.getLoots().size()-9+1);
+			else scrollMax = (zone.getLoots().size()-9);
+			if (scrollMax <= 0) scrollMax = 0;
+			return scrollMax;
 		}
 	}
 	
@@ -168,6 +171,10 @@ public class LootZoneManager implements Listener {
 							zoneEdit.zone.save();
 							openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
 							//p.updateInventory();
+							Bukkit.broadcastMessage("Action add item :" + e.getAction());
+						}else {
+							Bukkit.broadcastMessage("Action not take : " + e.getAction());
+							e.setCancelled(true);
 						}
 					}else {
 						e.setCancelled(true);
@@ -217,7 +224,8 @@ public class LootZoneManager implements Listener {
 			isSet = true;
 		}
 		
-		int scrollMax = (inv.getItem(17) != null) ? zone.getLoots().size()-9+1 : zone.getLoots().size()-9;
+		int scrollMax = (inv.getItem(17) != null) ? (zone.getLoots().size()-9+1) : (zone.getLoots().size()-9);
+		if(scrollMax <= 0) scrollMax = 0;
 		if(scroll > scrollMax) scroll = scrollMax;
 		
 		if(!isSet) {
@@ -250,12 +258,12 @@ public class LootZoneManager implements Listener {
 		inv.setItem(4, infoItem);
 
 		// LootItems
-		Bukkit.broadcastMessage("=====INSERT ITEMS=====");
+		//Bukkit.broadcastMessage("=====INSERT ITEMS=====");
 		for(int i = 0; i < 9; i++) {
 			Loot loot;
 			if(!zone.getLoots().isEmpty() && i+scroll < zone.getLoots().size()) {
 				loot = zone.getLoots().get(i+scroll);
-				Bukkit.broadcastMessage("§7Shown item => slot : " + i+9 + " index : " + (i+scroll));
+				//Bukkit.broadcastMessage("§7Shown item => slot : " + (int)(i+9) + " index : " + (int)(i+scroll) + " scroll : " + scroll);
 				ItemStack item = loot.getItem().clone();
 				ItemMeta meta = item.getItemMeta();
 				ArrayList<String> lore = new ArrayList<>();
@@ -267,7 +275,7 @@ public class LootZoneManager implements Listener {
 			}
 			else {
 				inv.clear(i+9);
-				Bukkit.broadcastMessage("§7Clear item => slot : " + i+9 + " index : " + (i+scroll));
+				//Bukkit.broadcastMessage("§7Clear item => slot : " + (int)(i+9) + " index : " + (int)(i+scroll) + " scroll : " + scroll);
 			}
 		}
 		
