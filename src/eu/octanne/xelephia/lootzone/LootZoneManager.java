@@ -45,7 +45,8 @@ public class LootZoneManager implements Listener {
 		}	
 
 		public int getScrollMax() {
-			return zone.getLoots().size()-9;
+			if(inv.getItem(17) != null) return zone.getLoots().size()-9+1;
+			else return zone.getLoots().size()-9;
 		}
 	}
 	
@@ -137,7 +138,7 @@ public class LootZoneManager implements Listener {
 				if(zoneEdit.inv.equals(e.getClickedInventory())) {
 					if(!(e.getSlot() < 9 || e.getSlot() > 17)) {
 						// Delete Loot, Edit % or Edit max
-						if(!e.getCurrentItem().getType().equals(Material.AIR)) {
+						if(e.getCurrentItem() != null && !e.getCurrentItem().getType().equals(Material.AIR)) {
 							e.setCancelled(true);
 							int lootNb = e.getSlot() - 9 + zoneEdit.scroll;
 							Loot eLoot = zoneEdit.zone.getLoots().get(lootNb);
@@ -145,7 +146,7 @@ public class LootZoneManager implements Listener {
 							if(e.isShiftClick()) {
 								zoneEdit.zone.getLoots().remove(eLoot);
 								zoneEdit.zone.save();
-								openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll+1, zoneEdit.inv);
+								openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
 								p.updateInventory();
 							}
 							// Edit QTE Max
