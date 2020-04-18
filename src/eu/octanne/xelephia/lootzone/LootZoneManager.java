@@ -156,21 +156,24 @@ public class LootZoneManager implements Listener {
 						}
 						// Add Item
 						else if((e.getAction().equals(InventoryAction.PLACE_ALL) || 
-								e.getAction().equals(InventoryAction.PLACE_ONE)) && 
-								!zoneEdit.inv.getItem(e.getSlot()).getType().equals(Material.AIR)) {
-							ItemStack newItem = zoneEdit.inv.getItem(e.getSlot());
+								e.getAction().equals(InventoryAction.PLACE_ONE))) {
+							ItemStack newItem = p.getItemOnCursor().clone();
 							zoneEdit.zone.addLoot(new Loot(newItem, 1, newItem.getAmount()));
 							zoneEdit.zone.save();
-							openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll+1, zoneEdit.inv);
+							openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
+							//p.updateInventory();
+							Bukkit.broadcastMessage("Add item");
 						}
 					}else {
 						e.setCancelled(true);
 						// Scroll
-						if(e.getSlot() == 24 && zoneEdit.scroll < zoneEdit.getScrollMax()) 
+						if(e.getSlot() == 24 && zoneEdit.scroll < zoneEdit.getScrollMax()) {
 							openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll+1, zoneEdit.inv);
-						else if(e.getSlot() == 20 && zoneEdit.scroll > 0) 
+							//p.updateInventory();
+						}else if(e.getSlot() == 20 && zoneEdit.scroll > 0) {
 							openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll-1, zoneEdit.inv);
-						else if(e.getSlot() == 26) {
+							//p.updateInventory();
+						}else if(e.getSlot() == 26) {
 							p.closeInventory();
 							zoneEdit.zone.save();
 							lootZoneEdit.remove(p.getName());
@@ -220,7 +223,7 @@ public class LootZoneManager implements Listener {
 			ItemStack rollLeftItem = Utils.createItemSkull("§9Défiler (gauche)", new ArrayList<String>(), SkullType.PLAYER, "MHF_ArrowLeft", false); 
 			ItemStack closeItem = Utils.createItemStack("§cFermer & Sauver", Material.BARRIER, 1, new ArrayList<String>(), 0, false);
 			ArrayList<String> tutoLore = new ArrayList<>();
-			tutoLore.add("§aActions disponible:");
+			tutoLore.add("§aActions disponibles :");
 			tutoLore.add("§cShift-Click §7pour supprimer le loot");
 			tutoLore.add("§cMidle-Click §7pour editer le pourcentage");
 			tutoLore.add("§cDouble-Click §7pour editer la quantité max");
@@ -242,7 +245,7 @@ public class LootZoneManager implements Listener {
 		inv.setItem(4, infoItem);
 
 		// LootItems
-		for(int i = 9; i > 18; i++) {
+		for(int i = 9; i < 18; i++) {
 			Loot loot;
 			if(i+scroll < zone.getLoots().size()) loot = zone.getLoots().get(i+scroll);
 			else {
@@ -252,7 +255,6 @@ public class LootZoneManager implements Listener {
 			ItemStack item = loot.getItem().clone();
 			ItemMeta meta = item.getItemMeta();
 			ArrayList<String> lore = new ArrayList<>();
-			lore.add(" ");
 			lore.add("§7Pourcentage : §c"+loot.getLuckPrct());
 			lore.add("§7Quantité max : §c"+loot.getMax());
 			meta.setLore(lore);
