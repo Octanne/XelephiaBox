@@ -133,6 +133,9 @@ public class LootZoneManager implements Listener {
 				LootZoneEdit zoneEdit = lootZoneEdit.get(p.getName());
 				if(zoneEdit.inv.equals(e.getInventory())) {
 					e.setCancelled(true);
+					// Delete Action, Edit % or Edit max
+					
+					// Create Action
 					
 					// Scroll
 					if(e.getSlot() == 24 && zoneEdit.scroll < zoneEdit.getScrollMax()) openEditMenu(zoneEdit.zone, 
