@@ -153,22 +153,38 @@ public class LootZoneManager implements Listener {
 		if(scroll > scrollMax) scroll = scrollMax;
 		
 		Inventory inv;
+		boolean isSet;
 		
-		if(INV == null) inv = Bukkit.createInventory(null, 27, "§cLootZone §8| §9"+zone.getName());
-		else inv = INV;
+		if(INV == null) {
+			inv = Bukkit.createInventory(null, 27, "§cLootZone §8| §9"+zone.getName());
+			isSet = false;
+		}
+		else {
+			inv = INV;
+			isSet = true;
+		}
 		
-		for(int i = 0; i < 9; i++) inv.setItem(i, Utils.createItemStack(" ", Material.STAINED_GLASS_PANE, 1, new ArrayList<String>(), 7, false));
-		for(int i = 18; i < 26; i++) inv.setItem(i, Utils.createItemStack(" ", Material.STAINED_GLASS_PANE, 1, new ArrayList<String>(), 7, false));
 		
-		ItemStack rollRightItem = Utils.createItemSkull("§9Défiler (droite)", new ArrayList<String>(), SkullType.PLAYER, "MHF_ArrowRight", false);
-		ItemStack rollLeftItem = Utils.createItemSkull("§9Défiler (gauche)", new ArrayList<String>(), SkullType.PLAYER, "MHF_ArrowLeft", false); 
-		ArrayList<String> tutoLore = new ArrayList<>();
-		tutoLore.add("");
-		tutoLore.add("§aLes actions :");
-		tutoLore.add("§cClick §8diter pourcentage");
-		tutoLore.add("§cShift-Click §8pour supprimer");
-		tutoLore.add("§cDouble-Click §8editer quantité max");
-		ItemStack tutorialItem = Utils.createItemSkull("§8Tutoriel", tutoLore, SkullType.PLAYER, "MHF_Question", false);;
+		if(!isSet) {
+			for(int i = 0; i < 9; i++) inv.setItem(i, Utils.createItemStack(" ", Material.STAINED_GLASS_PANE, 1, new ArrayList<String>(), 7, false));
+			for(int i = 18; i < 27; i++) inv.setItem(i, Utils.createItemStack(" ", Material.STAINED_GLASS_PANE, 1, new ArrayList<String>(), 7, false));
+			
+			ItemStack rollRightItem = Utils.createItemSkull("§9Défiler (droite)", new ArrayList<String>(), SkullType.PLAYER, "MHF_ArrowRight", false);
+			ItemStack rollLeftItem = Utils.createItemSkull("§9Défiler (gauche)", new ArrayList<String>(), SkullType.PLAYER, "MHF_ArrowLeft", false); 
+			ArrayList<String> tutoLore = new ArrayList<>();
+			tutoLore.add("");
+			tutoLore.add("§aLes actions :");
+			tutoLore.add("§cClick §8diter pourcentage");
+			tutoLore.add("§cShift-Click §8pour supprimer");
+			tutoLore.add("§cDouble-Click §8editer quantité max");
+			ItemStack tutorialItem = Utils.createItemSkull("§8Tutoriel", tutoLore, SkullType.PLAYER, "MHF_Question", false);;
+			
+			inv.setItem(20, rollLeftItem);
+			inv.setItem(22, tutorialItem);
+			inv.setItem(24, rollRightItem);
+		}
+		
+		// Info
 		ArrayList<String> infoLore = new ArrayList<>();
 		infoLore.add(" ");
 		infoLore.add("§8Nombres de loot : §c"+zone.getLoots().size());
@@ -176,12 +192,9 @@ public class LootZoneManager implements Listener {
 		infoLore.add("§8Location : (§c"+zone.pos.getBlockX()+"§8, §c"+zone.pos.getBlockY()+"§8,"
 				+ " §c"+zone.pos.getBlockZ()+"§8)");
 		ItemStack infoItem = Utils.createItemStack("§aInformations", Material.BOOK, 1, infoLore, 0, false);
-		
 		inv.setItem(4, infoItem);
-		inv.setItem(20, rollLeftItem);
-		inv.setItem(22, tutorialItem);
-		inv.setItem(24, rollRightItem);
-		
+
+		// LootItems
 		for(int i = 9; i > 18; i++) {
 			Loot loot;
 			if(i+scroll < zone.getLoots().size()) loot = zone.getLoots().get(i+scroll);
