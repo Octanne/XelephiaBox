@@ -48,7 +48,7 @@ public class KitSystem implements Listener {
 		ArrayList<String> loreSelector = new ArrayList<String>();
 		loreSelector.add(" ");
 		loreSelector.add("§7Clique pour ouvrir");
-		selectorItem = Utils.createItemStack("§eChoix du kits", Material.NETHER_STAR, 1, loreSelector, 0, true);
+		selectorItem = Utils.createItemStack("§eChoix du kit", Material.NETHER_STAR, 1, loreSelector, 0, true);
 		Bukkit.getPluginManager().registerEvents(this, XelephiaPlugin.getInstance());
 		if (!kitsFolder.exists())
 			kitsFolder.mkdirs();
