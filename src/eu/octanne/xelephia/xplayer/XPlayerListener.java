@@ -120,9 +120,9 @@ public class XPlayerListener implements Listener {
 		// Check to make sure that "regions" is not null
 		ApplicableRegionSet set = regions.getApplicableRegions(p.getLocation());
 		for (ProtectedRegion region : set) {
-		    if(region.getFlag(DefaultFlag.PVP).compareTo(State.DENY) == 0) return true;
+		    if(region.getFlag(DefaultFlag.PVP) == State.DENY) return false;
 		}
-		return false;
+		return true;
 	}
 	
 	/*
