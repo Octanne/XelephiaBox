@@ -31,6 +31,7 @@ public class LootZone {
 	}
 	
 	protected LootZone(String name) {
+		config = new ConfigYaml("zone/"+name+".yml");
 		this.name = name;
 		load();
 	}
@@ -39,7 +40,7 @@ public class LootZone {
 		config.getConfig().set("name", this.name);
 		config.getConfig().set("pos", this.pos);
 		config.getConfig().set("time", this.controlTime);
-		config.getConfig().get("loots", loots);
+		config.getConfig().set("loots", loots);
 		config.save();
 	}
 	
