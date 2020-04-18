@@ -40,7 +40,7 @@ public class LootZone {
 		config.getConfig().set("name", this.name);
 		config.getConfig().set("pos", this.pos);
 		config.getConfig().set("time", this.controlTime);
-		config.getConfig().set("loots", loots);
+		config.getConfig().set("loots", this.loots);
 		config.save();
 	}
 	

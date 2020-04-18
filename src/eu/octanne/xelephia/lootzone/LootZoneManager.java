@@ -131,11 +131,9 @@ public class LootZoneManager implements Listener {
 			Player p = (Player) e.getWhoClicked();
 			if(e.getInventory() != null && lootZoneEdit.isEmpty() ? false : lootZoneEdit.containsKey(p.getName())) {
 				LootZoneEdit zoneEdit = lootZoneEdit.get(p.getName());
-				if(zoneEdit.inv.equals(e.getInventory())) {
+				if(zoneEdit.inv.equals(e.getClickedInventory()) && (e.getSlot() < 9 || e.getSlot() > 17)) {
 					e.setCancelled(true);
-					// Delete Action, Edit % or Edit max
-					
-					// Create Action
+					// Delete Loot, Edit % or Edit max
 					
 					// Scroll
 					if(e.getSlot() == 24 && zoneEdit.scroll < zoneEdit.getScrollMax()) openEditMenu(zoneEdit.zone, 
@@ -172,12 +170,11 @@ public class LootZoneManager implements Listener {
 			ItemStack rollRightItem = Utils.createItemSkull("§9Défiler (droite)", new ArrayList<String>(), SkullType.PLAYER, "MHF_ArrowRight", false);
 			ItemStack rollLeftItem = Utils.createItemSkull("§9Défiler (gauche)", new ArrayList<String>(), SkullType.PLAYER, "MHF_ArrowLeft", false); 
 			ArrayList<String> tutoLore = new ArrayList<>();
-			tutoLore.add("");
-			tutoLore.add("§aLes actions :");
-			tutoLore.add("§cClick §8diter pourcentage");
-			tutoLore.add("§cShift-Click §8pour supprimer");
-			tutoLore.add("§cDouble-Click §8editer quantité max");
-			ItemStack tutorialItem = Utils.createItemSkull("§8Tutoriel", tutoLore, SkullType.PLAYER, "MHF_Question", false);;
+			tutoLore.add("§aActions disponible:");
+			tutoLore.add("§cClick §7diter pourcentage");
+			tutoLore.add("§cShift-Click §7pour supprimer");
+			tutoLore.add("§cDouble-Click §7editer quantité max");
+			ItemStack tutorialItem = Utils.createItemSkull("§7Tutoriel", tutoLore, SkullType.PLAYER, "MHF_Question", false);;
 			
 			inv.setItem(20, rollLeftItem);
 			inv.setItem(22, tutorialItem);
@@ -186,11 +183,10 @@ public class LootZoneManager implements Listener {
 		
 		// Info
 		ArrayList<String> infoLore = new ArrayList<>();
-		infoLore.add(" ");
-		infoLore.add("§8Nombres de loot : §c"+zone.getLoots().size());
-		infoLore.add("§8Temps de contrôle : §c"+zone.getControlTime()+" §8secs");
-		infoLore.add("§8Location : (§c"+zone.pos.getBlockX()+"§8, §c"+zone.pos.getBlockY()+"§8,"
-				+ " §c"+zone.pos.getBlockZ()+"§8)");
+		infoLore.add("§7Nombres de loot : §c"+zone.getLoots().size());
+		infoLore.add("§7Temps de contrôle : §c"+zone.getControlTime()+" §7secs");
+		infoLore.add("§7Location : (§c"+zone.pos.getBlockX()+"§7, §c"+zone.pos.getBlockY()+"§7,"
+				+ " §c"+zone.pos.getBlockZ()+"§7)");
 		ItemStack infoItem = Utils.createItemStack("§aInformations", Material.BOOK, 1, infoLore, 0, false);
 		inv.setItem(4, infoItem);
 
@@ -206,8 +202,8 @@ public class LootZoneManager implements Listener {
 			ItemMeta meta = item.getItemMeta();
 			ArrayList<String> lore = new ArrayList<>();
 			lore.add(" ");
-			lore.add("§8Pourcentage : §c"+loot.getLuckPrct());
-			lore.add("§8Quantité max : §c"+loot.getMax());
+			lore.add("§7Pourcentage : §c"+loot.getLuckPrct());
+			lore.add("§7Quantité max : §c"+loot.getMax());
 			meta.setLore(lore);
 			item.setItemMeta(meta);
 			inv.setItem(i, item);

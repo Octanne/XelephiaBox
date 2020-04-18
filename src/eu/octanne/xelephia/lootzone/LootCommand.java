@@ -62,7 +62,7 @@ public class LootCommand implements CommandExecutor {
 						if (XelephiaPlugin.getLootZoneManager().hasZone(args[1])) {
 							// Remove Zone
 							if (XelephiaPlugin.getLootZoneManager().removeZone(args[1])) {
-								p.sendMessage("§eLoot §8| §aSupression de la zone §9" + args[1] + " confirmé.");
+								p.sendMessage("§eLoot §8| §aSupression de la zone §9" + args[1] + " §aconfirmé.");
 								return true;
 							} else {
 								p.sendMessage(
