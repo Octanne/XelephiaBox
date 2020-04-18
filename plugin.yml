@@ -3,6 +3,7 @@ main: eu.octanne.xelephia.XelephiaPlugin
 version: 1.5dev
 author: Octanne
 description: Core plugin of Xelephia.
+softdepend: [WorldGuard]
 commands:
   loot:
     description: loot admin system.

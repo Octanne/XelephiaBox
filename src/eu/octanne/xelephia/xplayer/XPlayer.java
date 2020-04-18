@@ -13,6 +13,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.SkullType;
@@ -115,6 +116,9 @@ public class XPlayer {
 				
 				Bukkit.getLogger().log(Level.INFO, "[Xelephia] Chargement du joueur : " + this.lastPlayerName + " !");
 			} else {
+				Location spawn = (Location) XelephiaPlugin.getTeleportConfig().getConfig().get("Spawn",
+						getBukkitPlayer().getWorld().getSpawnLocation());
+				getBukkitPlayer().teleport(spawn);
 				this.coins = 0;
 				this.killCount = 0;
 				this.deathCount = 0;

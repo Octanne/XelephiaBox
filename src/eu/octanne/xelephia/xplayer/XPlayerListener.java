@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -20,6 +21,17 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
+
+import com.sk89q.worldedit.Vector;
+import com.sk89q.worldguard.bukkit.RegionQuery;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.flags.DefaultFlag;
+import com.sk89q.worldguard.protection.flags.Flag;
+import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.flags.StateFlag.State;
+import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 import java.util.Random;
 import eu.octanne.xelephia.XelephiaPlugin;
@@ -108,12 +120,23 @@ public class XPlayerListener implements Listener {
 	}
 	
 	
+	private boolean isPvPActive(Player p) {
+		RegionManager regions = WorldGuardPlugin.inst().getRegionContainer().get(p.getWorld());
+		// Check to make sure that "regions" is not null
+		ApplicableRegionSet set = regions.getApplicableRegions(p.getLocation());
+		for (ProtectedRegion region : set) {
+		    if(region.getFlag(DefaultFlag.PVP).compareTo(State.DENY) == 0) return true;
+		}
+		return false;
+	}
+	
 	/*
 	 * DamageTakenEvent
 	 */
 	@EventHandler
 	public void onTakeDamage(EntityDamageByEntityEvent e) {
-		if(e.getEntity().getType().equals(EntityType.PLAYER)) {
+		if(e.getEntity().getType().equals(EntityType.PLAYER) && !e.isCancelled() && 
+				Bukkit.getPluginManager().isPluginEnabled(WorldGuardPlugin.inst()) ? isPvPActive((Player) e.getEntity()) : true) {
 			XPlayer xPVictim = XelephiaPlugin.getXPlayer(e.getEntity().getUniqueId());
 			XPlayer xPDamager = null;
 			

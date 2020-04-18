@@ -22,10 +22,10 @@ public class LootZoneManager implements Listener {
 
 	protected File zoneFolder = new File("plugins/Xelephia/zone/");
 
-	private class LootZoneEdit {
+	/*private class LootZoneEdit {
 		LootZone zone;
 		
-	}
+	}*/
 	
 	public LootZoneManager() {
 		//Serialization
@@ -107,10 +107,11 @@ public class LootZoneManager implements Listener {
 	@EventHandler
 	public void onInMenu(InventoryClickEvent e) {
 		if(e.getWhoClicked() instanceof Player) {
-			Player p = (Player) e.getWhoClicked();
+			//Player p = (Player) e.getWhoClicked();
 			if(e.getInventory() != null && e.getInventory().getName().contains("§cLootZone §8| §9")) {
 				
 			}else return;
 		}
 	}
+	
 }
