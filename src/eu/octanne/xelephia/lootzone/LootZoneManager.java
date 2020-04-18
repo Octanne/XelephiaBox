@@ -105,7 +105,7 @@ public class LootZoneManager implements Listener {
 
 	public void editLootZone(Player p, String name) {
 		LootZone zone = getZone(name);
-		Inventory inv = openEditMenu(zone, 0, null);
+		Inventory inv = openOrUpdateEditMenu(zone, 0, null);
 		lootZoneEdit.put(p.getName(), new LootZoneEdit(zone, inv));
 		p.openInventory(inv);
 	}
@@ -137,14 +137,14 @@ public class LootZoneManager implements Listener {
 				if(zoneEdit.inv.equals(e.getClickedInventory())) {
 					if(!(e.getSlot() < 9 || e.getSlot() > 17)) {
 						// Delete Loot, Edit % or Edit max
-						if(e.getCurrentItem() != null) {
+						if(!e.getCurrentItem().getType().equals(Material.AIR)) {
 							int lootNb = e.getSlot() - 9 + zoneEdit.scroll;
 							Loot eLoot = zoneEdit.zone.getLoots().get(lootNb);
 							// Delete
 							if(e.isShiftClick()) {
 								zoneEdit.zone.getLoots().remove(eLoot);
 								zoneEdit.zone.save();
-								openEditMenu(zoneEdit.zone, zoneEdit.scroll+1, zoneEdit.inv);
+								openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll+1, zoneEdit.inv);
 							}
 							// Edit QTE Max
 							else if(e.getClick().equals(ClickType.DOUBLE_CLICK)){
@@ -155,16 +155,21 @@ public class LootZoneManager implements Listener {
 							}
 						}
 						// Add Item
-						else if(e.getAction().equals(InventoryAction.PLACE_SOME)) {
-							
+						else if((e.getAction().equals(InventoryAction.PLACE_ALL) || 
+								e.getAction().equals(InventoryAction.PLACE_ONE)) && 
+								!zoneEdit.inv.getItem(e.getSlot()).getType().equals(Material.AIR)) {
+							ItemStack newItem = zoneEdit.inv.getItem(e.getSlot());
+							zoneEdit.zone.addLoot(new Loot(newItem, 1, newItem.getAmount()));
+							zoneEdit.zone.save();
+							openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll+1, zoneEdit.inv);
 						}
 					}else {
 						e.setCancelled(true);
 						// Scroll
 						if(e.getSlot() == 24 && zoneEdit.scroll < zoneEdit.getScrollMax()) 
-						openEditMenu(zoneEdit.zone, zoneEdit.scroll+1, zoneEdit.inv);
+							openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll+1, zoneEdit.inv);
 						else if(e.getSlot() == 20 && zoneEdit.scroll > 0) 
-						openEditMenu(zoneEdit.zone, zoneEdit.scroll-1, zoneEdit.inv);
+							openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll-1, zoneEdit.inv);
 						else if(e.getSlot() == 26) {
 							p.closeInventory();
 							zoneEdit.zone.save();
@@ -189,7 +194,7 @@ public class LootZoneManager implements Listener {
 		}
 	}
 	
- 	private Inventory openEditMenu(LootZone zone, int scroll, @Nullable Inventory INV) {
+ 	private Inventory openOrUpdateEditMenu(LootZone zone, int scroll, @Nullable Inventory INV) {
 		
 		int scrollMax = (zone.getLoots().size()-10) <= 0 ? 1 : zone.getLoots().size()-10;
 		if(scroll > scrollMax) scroll = scrollMax;
