@@ -246,12 +246,15 @@ public class LootZoneManager implements Listener {
 
 		// LootItems
 		for(int i = 9; i < 18; i++) {
+			Bukkit.broadcastMessage("§7Start show item");
 			Loot loot;
-			if(i+scroll < zone.getLoots().size()) loot = zone.getLoots().get(i+scroll);
+			if(i+scroll-9 < zone.getLoots().size()) loot = zone.getLoots().get(i+scroll-9);
 			else {
 				inv.clear(i);
+				Bukkit.broadcastMessage("§7Clear item");
 				continue;
 			}
+			Bukkit.broadcastMessage("§7Shown item");
 			ItemStack item = loot.getItem().clone();
 			ItemMeta meta = item.getItemMeta();
 			ArrayList<String> lore = new ArrayList<>();
