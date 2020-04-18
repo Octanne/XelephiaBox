@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -112,9 +113,10 @@ public class XPlayerListener implements Listener {
 	}
 	
 	
-	private boolean isPvPActive(Player p) {
+	private boolean isPvPActive(Entity e) {
+		if(!(e instanceof Player) || !(((Projectile)e).getShooter() instanceof Player)) return false;
 		RegionQuery query = WorldGuardPlugin.inst().getRegionContainer().createQuery();
-		if (query.testState(p.getLocation(), WorldGuardPlugin.inst().wrapPlayer(p), DefaultFlag.PVP)) {
+		if (query.testState(e.getLocation(), WorldGuardPlugin.inst().wrapPlayer((Player)e), DefaultFlag.PVP)) {
 		    return true;
 		}else return false;
 	}
@@ -125,7 +127,7 @@ public class XPlayerListener implements Listener {
 	@EventHandler
 	public void onTakeDamage(EntityDamageByEntityEvent e) {
 		if(e.getEntity().getType().equals(EntityType.PLAYER) && !e.isCancelled() && 
-				(Bukkit.getPluginManager().isPluginEnabled(WorldGuardPlugin.inst()) ? isPvPActive((Player) e.getEntity()) : true)) {
+				(Bukkit.getPluginManager().isPluginEnabled("WorldGuard") ? isPvPActive(e.getDamager()) : true)) {
 			XPlayer xPVictim = XelephiaPlugin.getXPlayer(e.getEntity().getUniqueId());
 			XPlayer xPDamager = null;
 			
@@ -197,6 +199,9 @@ public class XPlayerListener implements Listener {
 			XPlayer xPKiller = XelephiaPlugin.getXPlayer(e.getEntity().getKiller().getUniqueId());
 			xPKiller.actualKillStreak++;
 			xPKiller.killCount++;
+			if(xPKiller.getBukkitPlayer().getInventory().firstEmpty() == -1) xPKiller.getBukkitPlayer().getWorld()
+			.dropItem(e.getEntity().getKiller().getLocation(), new ItemStack(Material.EXP_BOTTLE, 1));
+			else xPKiller.getBukkitPlayer().getInventory().addItem(new ItemStack(Material.EXP_BOTTLE, 1));
 			if (xPKiller.highKillStreak < xPKiller.actualKillStreak)
 				xPKiller.highKillStreak = xPKiller.actualKillStreak;
 		}
