@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -131,18 +132,26 @@ public class LootZoneManager implements Listener {
 			Player p = (Player) e.getWhoClicked();
 			if(e.getInventory() != null && lootZoneEdit.isEmpty() ? false : lootZoneEdit.containsKey(p.getName())) {
 				LootZoneEdit zoneEdit = lootZoneEdit.get(p.getName());
-				if(zoneEdit.inv.equals(e.getClickedInventory()) && (e.getSlot() < 9 || e.getSlot() > 17)) {
-					e.setCancelled(true);
+				if(zoneEdit.inv.equals(e.getClickedInventory())) {
 					// Delete Loot, Edit % or Edit max
-					
-					// Scroll
-					if(e.getSlot() == 24 && zoneEdit.scroll < zoneEdit.getScrollMax()) openEditMenu(zoneEdit.zone, 
-							zoneEdit.scroll+1, zoneEdit.inv);
-					else if(e.getSlot() == 20 && zoneEdit.scroll > 0) openEditMenu(zoneEdit.zone, 
-							zoneEdit.scroll-1, zoneEdit.inv);
+					if((e.getSlot() < 9 || e.getSlot() > 17)) {
+						
+					}else {
+						e.setCancelled(true);
+						// Scroll
+						if(e.getSlot() == 24 && zoneEdit.scroll < zoneEdit.getScrollMax()) openEditMenu(zoneEdit.zone, 
+								zoneEdit.scroll+1, zoneEdit.inv);
+						else if(e.getSlot() == 20 && zoneEdit.scroll > 0) openEditMenu(zoneEdit.zone, 
+								zoneEdit.scroll-1, zoneEdit.inv);
+					}
 				}else return;
 			}else return;
 		}
+	}
+	
+	@EventHandler
+	public void onCloseMenu(InventoryCloseEvent e) {
+		
 	}
 	
 	private Inventory openEditMenu(LootZone zone, int scroll, @Nullable Inventory INV) {
