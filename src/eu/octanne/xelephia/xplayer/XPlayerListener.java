@@ -21,12 +21,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
+import com.sk89q.worldguard.bukkit.RegionQuery;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.flags.StateFlag.State;
-import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 import java.util.Random;
 import eu.octanne.xelephia.XelephiaPlugin;
@@ -116,13 +113,10 @@ public class XPlayerListener implements Listener {
 	
 	
 	private boolean isPvPActive(Player p) {
-		RegionManager regions = WorldGuardPlugin.inst().getRegionContainer().get(p.getWorld());
-		// Check to make sure that "regions" is not null
-		ApplicableRegionSet set = regions.getApplicableRegions(p.getLocation());
-		for (ProtectedRegion region : set) {
-		    if(region.getFlag(DefaultFlag.PVP) == State.DENY) return false;
-		}
-		return true;
+		RegionQuery query = WorldGuardPlugin.inst().getRegionContainer().createQuery();
+		if (query.testState(p.getLocation(), WorldGuardPlugin.inst().wrapPlayer(p), DefaultFlag.PVP)) {
+		    return true;
+		}else return false;
 	}
 	
 	/*
@@ -131,7 +125,7 @@ public class XPlayerListener implements Listener {
 	@EventHandler
 	public void onTakeDamage(EntityDamageByEntityEvent e) {
 		if(e.getEntity().getType().equals(EntityType.PLAYER) && !e.isCancelled() && 
-				Bukkit.getPluginManager().isPluginEnabled(WorldGuardPlugin.inst()) ? isPvPActive((Player) e.getEntity()) : true) {
+				(Bukkit.getPluginManager().isPluginEnabled(WorldGuardPlugin.inst()) ? isPvPActive((Player) e.getEntity()) : true)) {
 			XPlayer xPVictim = XelephiaPlugin.getXPlayer(e.getEntity().getUniqueId());
 			XPlayer xPDamager = null;
 			
