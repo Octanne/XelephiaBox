@@ -45,8 +45,8 @@ public class LootZoneManager implements Listener {
 		}	
 
 		public int getScrollMax() {
-			if(inv.getItem(17) != null) return zone.getLoots().size()-9;
-			else return zone.getLoots().size()-9+1;
+			if(inv.getItem(17) != null) return zone.getLoots().size()-9+1;
+			else return zone.getLoots().size()-9;
 		}
 	}
 	
@@ -147,7 +147,7 @@ public class LootZoneManager implements Listener {
 								zoneEdit.zone.getLoots().remove(eLoot);
 								zoneEdit.zone.save();
 								openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
-								p.updateInventory();
+								//p.updateInventory();
 							}
 							// Edit QTE Max
 							else if(e.getClick().equals(ClickType.DOUBLE_CLICK)){
@@ -161,11 +161,13 @@ public class LootZoneManager implements Listener {
 						else if((e.getAction().equals(InventoryAction.PLACE_ALL) || 
 								e.getAction().equals(InventoryAction.PLACE_ONE))) {
 							ItemStack newItem = p.getItemOnCursor().clone();
+							e.setCancelled(true);
 							p.getItemOnCursor().setAmount(0);
+							//p.updateInventory();
 							zoneEdit.zone.addLoot(new Loot(newItem, 1, newItem.getAmount()));
 							zoneEdit.zone.save();
 							openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
-							p.updateInventory();
+							//p.updateInventory();
 						}
 					}else {
 						e.setCancelled(true);
@@ -173,11 +175,11 @@ public class LootZoneManager implements Listener {
 						if(e.getSlot() == 24 && zoneEdit.scroll < zoneEdit.getScrollMax()) {
 							openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll+1, zoneEdit.inv);
 							zoneEdit.scroll+=1;
-							p.updateInventory();
+							//p.updateInventory();
 						}else if(e.getSlot() == 20 && zoneEdit.scroll > 0) {
 							openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll-1, zoneEdit.inv);
 							zoneEdit.scroll-=1;
-							p.updateInventory();
+							//p.updateInventory();
 						}else if(e.getSlot() == 26) {
 							p.closeInventory();
 							zoneEdit.zone.save();
@@ -191,7 +193,6 @@ public class LootZoneManager implements Listener {
 	
 	@EventHandler
 	public void onCloseMenu(InventoryCloseEvent e) {
-		Bukkit.broadcastMessage("InventoryClose !");
 		if(e.getPlayer() instanceof Player) {
 			Player p = (Player) e.getPlayer();
 			if(e.getInventory() != null && lootZoneEdit.isEmpty() ? false : lootZoneEdit.containsKey(p.getName())) {
@@ -216,7 +217,7 @@ public class LootZoneManager implements Listener {
 			isSet = true;
 		}
 		
-		int scrollMax = (inv.getItem(17) != null) ? zone.getLoots().size()-9 : zone.getLoots().size()-9+1;
+		int scrollMax = (inv.getItem(17) != null) ? zone.getLoots().size()-9+1 : zone.getLoots().size()-9;
 		if(scroll > scrollMax) scroll = scrollMax;
 		
 		if(!isSet) {
@@ -250,11 +251,11 @@ public class LootZoneManager implements Listener {
 
 		// LootItems
 		Bukkit.broadcastMessage("=====INSERT ITEMS=====");
-		for(int i = 9; i < 18; i++) {
+		for(int i = 0; i < 9; i++) {
 			Loot loot;
-			if(i-9+scroll < zone.getLoots().size()) {
-				loot = zone.getLoots().get(i-9+scroll);
-				Bukkit.broadcastMessage("§7Shown item => slot : " + i + " index : " + (i-9+scroll));
+			if(!zone.getLoots().isEmpty() && i+scroll < zone.getLoots().size()) {
+				loot = zone.getLoots().get(i+scroll);
+				Bukkit.broadcastMessage("§7Shown item => slot : " + i+9 + " index : " + (i+scroll));
 				ItemStack item = loot.getItem().clone();
 				ItemMeta meta = item.getItemMeta();
 				ArrayList<String> lore = new ArrayList<>();
@@ -262,11 +263,11 @@ public class LootZoneManager implements Listener {
 				lore.add("§7Quantité max : §c"+loot.getMax());
 				meta.setLore(lore);
 				item.setItemMeta(meta);
-				inv.setItem(i, item);
+				inv.setItem(i+9, item);
 			}
 			else {
-				inv.clear(i);
-				Bukkit.broadcastMessage("§7Clear item => slot : " + i + " index : " + (i-9+scroll));
+				inv.clear(i+9);
+				Bukkit.broadcastMessage("§7Clear item => slot : " + i+9 + " index : " + (i+scroll));
 			}
 		}
 		
