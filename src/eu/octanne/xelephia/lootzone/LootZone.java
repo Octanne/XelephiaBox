@@ -77,7 +77,7 @@ public class LootZone {
 		return loots;
 	}
 	
-	public void remove() {
+	protected void remove() {
 		config.getFile().delete();
 	}
 }

@@ -2,10 +2,15 @@ package eu.octanne.xelephia.lootzone;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.SkullType;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,19 +18,35 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import eu.octanne.xelephia.XelephiaPlugin;
+import eu.octanne.xelephia.util.Utils;
 
 public class LootZoneManager implements Listener {
 
 	protected ArrayList<LootZone> lootZones = new ArrayList<LootZone>();
 
-	protected File zoneFolder = new File("plugins/Xelephia/zone/");
-
-	/*private class LootZoneEdit {
-		LootZone zone;
+	private HashMap<String,LootZoneEdit> lootZoneEdit = new HashMap<>();
+	
+	private class LootZoneEdit{
+		public LootZone zone;
+		public Inventory inv;
+		public int scroll;
 		
-	}*/
+		public LootZoneEdit(LootZone zone, Inventory inv) {
+			this.zone = zone;
+			this.inv = inv;
+			scroll = 0;
+		}	
+
+		public int getScrollMax() {
+			return (zone.getLoots().size()-10) <= 0 ? 1 : zone.getLoots().size()-10;
+		}
+	}
+	
+	protected File zoneFolder = new File("plugins/Xelephia/zone/");
 	
 	public LootZoneManager() {
 		//Serialization
@@ -79,11 +100,11 @@ public class LootZoneManager implements Listener {
 		return true;
 	}
 
-	@SuppressWarnings("unused")
 	public void editLootZone(Player p, String name) {
 		LootZone zone = getZone(name);
-		Inventory inv = Bukkit.createInventory(null, 27, "§cLootZone §8| §9"+name);
-		
+		Inventory inv = openEditMenu(zone, 0, null);
+		lootZoneEdit.put(p.getName(), new LootZoneEdit(zone, inv));
+		p.openInventory(inv);
 	}
 	
 	public boolean removeZone(String zoneName) {
@@ -107,11 +128,75 @@ public class LootZoneManager implements Listener {
 	@EventHandler
 	public void onInMenu(InventoryClickEvent e) {
 		if(e.getWhoClicked() instanceof Player) {
-			//Player p = (Player) e.getWhoClicked();
-			if(e.getInventory() != null && e.getInventory().getName().contains("§cLootZone §8| §9")) {
-				
+			Player p = (Player) e.getWhoClicked();
+			if(e.getInventory() != null && lootZoneEdit.isEmpty() ? false : lootZoneEdit.containsKey(p.getName())) {
+				LootZoneEdit zoneEdit = lootZoneEdit.get(p.getName());
+				if(zoneEdit.inv.equals(e.getInventory())) {
+					e.setCancelled(true);
+					
+					// Scroll
+					if(e.getSlot() == 24 && zoneEdit.scroll < zoneEdit.getScrollMax()) openEditMenu(zoneEdit.zone, 
+							zoneEdit.scroll+1, zoneEdit.inv);
+					else if(e.getSlot() == 20 && zoneEdit.scroll > 0) openEditMenu(zoneEdit.zone, 
+							zoneEdit.scroll-1, zoneEdit.inv);
+				}else return;
 			}else return;
 		}
 	}
 	
+	private Inventory openEditMenu(LootZone zone, int scroll, @Nullable Inventory INV) {
+		
+		int scrollMax = (zone.getLoots().size()-10) <= 0 ? 1 : zone.getLoots().size()-10;
+		if(scroll > scrollMax) scroll = scrollMax;
+		
+		Inventory inv;
+		
+		if(INV == null) inv = Bukkit.createInventory(null, 27, "§cLootZone §8| §9"+zone.getName());
+		else inv = INV;
+		
+		for(int i = 0; i < 9; i++) inv.setItem(i, Utils.createItemStack(" ", Material.STAINED_GLASS_PANE, 1, new ArrayList<String>(), 7, false));
+		for(int i = 18; i < 26; i++) inv.setItem(i, Utils.createItemStack(" ", Material.STAINED_GLASS_PANE, 1, new ArrayList<String>(), 7, false));
+		
+		ItemStack rollRightItem = Utils.createItemSkull("§9Défiler (droite)", new ArrayList<String>(), SkullType.PLAYER, "MHF_ArrowRight", false);
+		ItemStack rollLeftItem = Utils.createItemSkull("§9Défiler (gauche)", new ArrayList<String>(), SkullType.PLAYER, "MHF_ArrowLeft", false); 
+		ArrayList<String> tutoLore = new ArrayList<>();
+		tutoLore.add("");
+		tutoLore.add("§aLes actions :");
+		tutoLore.add("§cClick §8diter pourcentage");
+		tutoLore.add("§cShift-Click §8pour supprimer");
+		tutoLore.add("§cDouble-Click §8editer quantité max");
+		ItemStack tutorialItem = Utils.createItemSkull("§8Tutoriel", tutoLore, SkullType.PLAYER, "MHF_Question", false);;
+		ArrayList<String> infoLore = new ArrayList<>();
+		infoLore.add(" ");
+		infoLore.add("§8Nombres de loot : §c"+zone.getLoots().size());
+		infoLore.add("§8Temps de contrôle : §c"+zone.getControlTime()+" §8secs");
+		infoLore.add("§8Location : (§c"+zone.pos.getBlockX()+"§8, §c"+zone.pos.getBlockY()+"§8,"
+				+ " §c"+zone.pos.getBlockZ()+"§8)");
+		ItemStack infoItem = Utils.createItemStack("§aInformations", Material.BOOK, 1, infoLore, 0, false);
+		
+		inv.setItem(4, infoItem);
+		inv.setItem(20, rollLeftItem);
+		inv.setItem(22, tutorialItem);
+		inv.setItem(24, rollRightItem);
+		
+		for(int i = 9; i > 18; i++) {
+			Loot loot;
+			if(i+scroll < zone.getLoots().size()) loot = zone.getLoots().get(i+scroll);
+			else {
+				inv.clear(i);
+				continue;
+			}
+			ItemStack item = loot.getItem().clone();
+			ItemMeta meta = item.getItemMeta();
+			ArrayList<String> lore = new ArrayList<>();
+			lore.add(" ");
+			lore.add("§8Pourcentage : §c"+loot.getLuckPrct());
+			lore.add("§8Quantité max : §c"+loot.getMax());
+			meta.setLore(lore);
+			item.setItemMeta(meta);
+			inv.setItem(i, item);
+		}
+		
+		return inv;
+	}
 }
