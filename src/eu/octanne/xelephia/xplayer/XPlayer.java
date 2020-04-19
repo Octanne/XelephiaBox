@@ -360,17 +360,15 @@ public class XPlayer {
 	}
 	
 	public  void sendMessage(MessageType type, String message) {
-		PacketPlayOutTitle times = new PacketPlayOutTitle(10,15,10);
+		
 		if(type.equals(MessageType.SUBTITLE)) {
-			PacketPlayOutTitle subTitle = new PacketPlayOutTitle(EnumTitleAction.SUBTITLE, ChatSerializer.a("{\"text\":\"" + message.replace("&", "§") + "\"}"));
-			PacketPlayOutTitle title = new PacketPlayOutTitle(EnumTitleAction.TITLE, ChatSerializer.a("{\"text\":\" \"}"));
+			PacketPlayOutTitle subTitle = new PacketPlayOutTitle(EnumTitleAction.SUBTITLE, ChatSerializer.a("{\"text\":\"" + message.replace("&", "§") + "\"}"),10,15,10);
+			PacketPlayOutTitle title = new PacketPlayOutTitle(EnumTitleAction.TITLE, ChatSerializer.a("{\"text\":\" \"}"),10,15,10);
 			((CraftPlayer) getBukkitPlayer()).getHandle().playerConnection.sendPacket(title);
 			((CraftPlayer) getBukkitPlayer()).getHandle().playerConnection.sendPacket(subTitle);
-			((CraftPlayer) getBukkitPlayer()).getHandle().playerConnection.sendPacket(times);
 		}else if(type.equals(MessageType.ACTIONBAR)) {
 			PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message.replace("&", "§") + "\"}"), (byte) 2);
 			((CraftPlayer) getBukkitPlayer()).getHandle().playerConnection.sendPacket(packet);
-			((CraftPlayer) getBukkitPlayer()).getHandle().playerConnection.sendPacket(times);
 		}
 		
 	}
