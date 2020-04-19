@@ -285,6 +285,51 @@ public class LootZoneManager implements Listener {
 							}else if(e.getSlot() == 26) {
 								zoneEdit.willClose = true;
 								p.closeInventory();
+							}else if(e.getSlot() == 4) {
+								AnvilGUI menu = new AnvilGUI(p, new AnvilGUI.AnvilEventHandler() {
+
+									LootZone zone = zoneEdit.zone;
+									
+									@Override
+									public void onAnvilClick(AnvilGUI.AnvilClickEvent event) {
+										event.setWillClose(true);
+										event.setWillDestroy(true);
+										if(event.getSlot() == AnvilGUI.AnvilSlot.OUTPUT) {
+											int time;
+											try {
+												time = Integer.parseInt(event.getName());
+											}catch(NumberFormatException exp) {
+												event.getPlayer().sendMessage("§eLoot §8| §cErreur : La valeur §9" + event.getName() + " §cest invalide.");
+												return;
+											}
+											zone.controlTime = time < 0 ? 5 : time;
+											p.sendMessage("§eLoot §8| §aLe temps de contrôle est défini sur §9" + zone.controlTime + " sec(s)§a.");
+										}
+									}
+
+									@Override
+									public void onAnvilClose(AnvilCloseEvent event) {
+										Bukkit.getScheduler().scheduleSyncDelayedTask(XelephiaPlugin.getInstance(), new Runnable() {
+											@Override
+											public void run() {
+												reOpenEditor(p);
+											}
+										}, 8);
+										zoneEdit.inAnvil = false;
+									}
+								});
+								ArrayList<String> lore = new ArrayList<String>();
+								lore.add("§aModifier temps de contrôle :");
+								lore.add("§7Entrer la valeur voulue,");
+								lore.add("§e> §7Renommer l'item pour valider.");
+								ItemStack anvilItem = Utils.createItemStack("Entrée valeur...", Material.PAPER, 1, lore, 0, true);
+								menu.setSlot(AnvilSlot.INPUT_LEFT, anvilItem);
+								try {
+									zoneEdit.inAnvil = true;
+									menu.open();
+								} catch (IllegalAccessException | InvocationTargetException | InstantiationException exp) {
+									exp.printStackTrace();
+								}
 							}
 						}
 					}else if(e.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY) && e.getView().getItem(17) != null){

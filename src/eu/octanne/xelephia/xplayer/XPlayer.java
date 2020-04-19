@@ -286,7 +286,7 @@ public class XPlayer {
 			    	   sendMessage(MessageType.SUBTITLE,"§7「§a✓§7」§a Vous n'êtes plus en combat.");
 			       }
 			    }
-			}.runTaskTimerAsynchronously(XelephiaPlugin.getInstance(), 0, 20);
+			}.runTaskTimer(XelephiaPlugin.getInstance(), 0, 20);
 		}else {
 			combatRelaunch = true;
 		}

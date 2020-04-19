@@ -6,11 +6,14 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import eu.octanne.xelephia.XelephiaPlugin;
 import eu.octanne.xelephia.util.ConfigYaml;
@@ -25,26 +28,26 @@ public class LootZone {
 	protected int controlTime;
 
 	protected List<Loot> loots;
-	
-	private HashMap<String,Integer> playerInZone = new HashMap<String,Integer>();
+
+	private HashMap<String,BukkitTask> playerInZone = new HashMap<String,BukkitTask>();
 
 	private ConfigYaml config;
-	
+
 	private LootZoneListener listener;
-	
+
 	public LootZone(String name, Location pos, int controlTime) {
 		config = new ConfigYaml("zone/"+name+".yml");
 		listener = new LootZoneListener();
-		
+
 		this.pos = pos;
 		this.name = name;
 		this.controlTime = controlTime;
-		
+
 		loots = new ArrayList<Loot>();
 		save();
 		Bukkit.getPluginManager().registerEvents(listener, XelephiaPlugin.getInstance());
 	}
-	
+
 	protected LootZone(String name) {
 		config = new ConfigYaml("zone/"+name+".yml");
 		listener = new LootZoneListener();
@@ -60,7 +63,7 @@ public class LootZone {
 		config.getConfig().set("loots", this.loots);
 		config.save();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	protected void load() {
 		this.name = config.getConfig().getString("name", null);
@@ -68,7 +71,7 @@ public class LootZone {
 		this.controlTime = config.getConfig().getInt("time", 0);
 		loots = (List<Loot>) config.getConfig().get("loots", new ArrayList<Loot>());
 	}
-	
+
 	public void addLoot(Loot loot) {
 		loots.add(loot);
 	}
@@ -90,33 +93,35 @@ public class LootZone {
 	public String getName() {
 		return name;
 	}
-	
+
 	public List<Loot> getLoots(){
 		return loots;
 	}
-	
+
 	protected void remove() {
 		config.getFile().delete();
 		unregister();
 	}
-	
+
 	private void unregister() {
 		PlayerQuitEvent.getHandlerList().unregister(listener);
 		PlayerMoveEvent.getHandlerList().unregister(listener);
 	}
-	
+
 	protected void captureZone(Player p) {
-		Bukkit.getScheduler().cancelTask(playerInZone.get(p.getName()));
+		Bukkit.getScheduler().cancelTask(playerInZone.get(p.getName()).getTaskId());
 		playerInZone.remove(p.getName());
 		Bukkit.broadcastMessage("§eLoot §8| §aCapture de la zone §9" + name + "§a par §9" + p.getName() + "§a.");
 		XPlayer xP = (XelephiaPlugin.getXPlayer(p.getName()));
 		xP.sendMessage(MessageType.SUBTITLE, "§eLoot §8| §aCapture de la zone §9" + name + "§a.");
+		p.playSound(xP.getBukkitPlayer().getLocation(),
+				Sound.LEVEL_UP, 4.0F, xP.getBukkitPlayer().getLocation().getPitch());
 		// Need to be finish
 		// TODO
 	}
-	
+
 	private class LootZoneListener implements Listener{
-		
+
 		@EventHandler
 		public void onPlayerInZone(PlayerMoveEvent e) {
 			Player p = e.getPlayer();
@@ -124,35 +129,36 @@ public class LootZone {
 			// Enter Zone
 			if(inZone(e.getTo()) && !playerInZone.containsKey(p.getName())) {
 				xP.sendMessage(MessageType.SUBTITLE, "§eLoot §8| §bEntrée dans la zone §9" + name + "§b.");
-				Integer task = 0;
-				playerInZone.put(p.getName(),task);
-				task = Bukkit.getScheduler().runTaskTimer(XelephiaPlugin.getInstance(), new Runnable() {
+				BukkitTask task = new BukkitRunnable() {
 
 					int sec = 0;
-					
+
 					@Override
 					public void run() {
 						if(sec <= controlTime) {
 							sec++;
 						}else {
 							captureZone(p);
+							this.cancel();
 						}
 					}
-				}, 0, 20).getTaskId();
+				}.runTaskTimer(XelephiaPlugin.getInstance(), 0, 20);
+				playerInZone.put(p.getName(),task);
 			}
 			// Leave Zone
 			if(playerInZone.containsKey(p.getName()) && !inZone(e.getTo())) {
-				Bukkit.getScheduler().cancelTask(playerInZone.get(p.getName()));
-				xP.sendMessage(MessageType.SUBTITLE, "§eLoot §8| §cCapture de la zone §9" + name + " §cinterrompu.");
+				Bukkit.getScheduler().cancelTask(playerInZone.get(p.getName()).getTaskId());
+				playerInZone.remove(p.getName());
+				xP.sendMessage(MessageType.SUBTITLE, "§eLoot §8| §cSorti de la zone §9" + name + "§c.");
 			}
 		}
-		
+
 		@EventHandler
 		public void onPlayerQuit(PlayerQuitEvent e) {
 			// Cancel if leave
 			Player p = e.getPlayer();
 			if(playerInZone.containsKey(p.getName())) {
-				Bukkit.getScheduler().cancelTask(playerInZone.get(p.getName()));
+				Bukkit.getScheduler().cancelTask(playerInZone.get(p.getName()).getTaskId());
 				playerInZone.remove(p.getName());
 			}
 		}
