@@ -119,7 +119,7 @@ public class LootZoneManager implements Listener {
 		if(hasZone(name)) {
 			if(lootZoneInEdit.contains(name)) {
 				if(lootZoneEdit.containsKey(p.getName())) p.openInventory(lootZoneEdit.get(p.getName()).inv);
-				else p.sendMessage("§eLoot §8| §cErreur: La zone "+name+" est déjà en édition.");
+				else p.sendMessage("§eLoot §8| §cErreur : La zone "+name+" est déjà en édition.");
 				return true;
 			}else {
 				LootZone zone = getZone(name);
