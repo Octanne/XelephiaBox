@@ -108,7 +108,7 @@ public class LootZoneManager implements Listener {
 	}
 
 	public boolean createZone(String name, int timeZone, Location loc) {
-		if(hasZone(name)) {
+		if(!hasZone(name)) {
 			LootZone zone = new LootZone(name, loc, timeZone);
 			lootZones.add(zone);
 			return true;

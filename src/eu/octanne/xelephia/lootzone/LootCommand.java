@@ -83,10 +83,10 @@ public class LootCommand implements CommandExecutor {
 							// Create Zone
 							if (XelephiaPlugin.getLootZoneManager().createZone(args[1], timeZone, p.getLocation())) {
 								p.sendMessage(COMMAND_TAG+"§aCréation de la zone §9" + args[1] + " §a(ControlTime : §9"
-										+ timeZone + "§asec).");
+										+ timeZone + "§asec(s)).");
 								return true;
 							} else {
-								p.sendMessage(COMMAND_TAG+"§cErreur: Création de la zone §9" + args[1] + " §cimpossible.");
+								p.sendMessage(COMMAND_TAG+"§cErreur : Création de la zone §9" + args[1] + " §cimpossible.");
 								return false;
 							}
 						}else {
