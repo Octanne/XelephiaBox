@@ -139,8 +139,8 @@ public class KitSystem implements Listener {
 			if (e.getView().getTopInventory().getName().equals("§6Kit | §eChoix des kits")) {
 				if(e.getRawSlot() <= 26 || e.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
 					e.setCancelled(true);
-					Kit kit = getKit(e.getCurrentItem().getType());
-					if (e.getCurrentItem() != null && kit != null) {
+					if (e.getCurrentItem() != null && !e.getCurrentItem().getType().equals(Material.AIR)) {
+						Kit kit = getKit(e.getSlot());
 						XPlayer xP = XelephiaPlugin.getXPlayer(e.getWhoClicked().getUniqueId());
 
 						// Middle Click => View Kit
@@ -158,14 +158,13 @@ public class KitSystem implements Listener {
 											4.0F, xP.getBukkitPlayer().getLocation().getPitch());
 									xP.getUnlockKit().add(kit.getUnName());
 									xP.takeCoins(kit.getCost());
-									xP.getBukkitPlayer().closeInventory();
+									openMenu(xP.getBukkitPlayer());
 									xP.getBukkitPlayer().sendMessage("§cKit §7| §aAchat du kit " + kit.getName()
 									+ "§a pour §6" + kit.getCost() + " §acoins.");
 									return;
 								} else {
 									xP.getBukkitPlayer().playSound(xP.getBukkitPlayer().getLocation(),
 											Sound.ENDERDRAGON_HIT, 4.0F, xP.getBukkitPlayer().getLocation().getPitch());
-									xP.getBukkitPlayer().closeInventory();
 									xP.getBukkitPlayer().sendMessage("§cKit §7| §cFond insuffisant vous n'avez que §6"
 											+ xP.getCoins() + " §ccoins.");
 									return;
@@ -237,12 +236,8 @@ public class KitSystem implements Listener {
 		}
 	}
 
-	private Kit getKit(Material mat) {
-		for (Kit kit : kitsList) {
-			if (kit.getLogo().equals(mat))
-				return kit;
-		}
-		return null;
+	private Kit getKit(int slot) {
+		return kitsList.get(slot);
 	}
 
 	private Kit getKit(String name) {

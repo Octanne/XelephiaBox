@@ -166,6 +166,7 @@ public class LootZoneManager implements Listener {
 									e.getAction().equals(InventoryAction.PLACE_ONE)) {
 								ItemStack newItem = p.getItemOnCursor().clone();
 								p.getItemOnCursor().setAmount(0);
+								//p.setItemOnCursor(null);
 								//p.updateInventory();
 								zoneEdit.zone.addLoot(new Loot(newItem, 1, newItem.getAmount()));
 								zoneEdit.zone.save();
@@ -190,7 +191,7 @@ public class LootZoneManager implements Listener {
 								lootZoneEdit.remove(p.getName());
 							}
 						}
-					}else if(e.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)){
+					}else if(e.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY) && e.getView().getItem(17) != null){
 						ItemStack newItem = e.getCurrentItem().clone();
 						//p.updateInventory();
 						zoneEdit.zone.addLoot(new Loot(newItem, 1, newItem.getAmount()));
