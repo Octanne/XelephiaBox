@@ -135,7 +135,7 @@ public class KitSystem implements Listener {
 	@EventHandler
 	public void onInKitsMenu(InventoryClickEvent e) {
 		if (e.getWhoClicked() instanceof Player && e.getClickedInventory() != null) {
-			if (e.getClickedInventory().getName().equals("§6Kit | §eChoix des kits")) {
+			if (e.getView().getTopInventory().getName().equals("§6Kit | §eChoix des kits")) {
 				e.setCancelled(true);
 				Kit kit = getKit(e.getCurrentItem().getType());
 				if (e.getCurrentItem() != null && kit != null) {
@@ -188,14 +188,12 @@ public class KitSystem implements Listener {
 							return;
 						}
 					}
-				} else
-					return;
-			} else if (e.getClickedInventory().getName().equals("§9Visualisation du kit")) {
+				} else return;
+			} else if (e.getView().getTopInventory().getName().equals("§9Visualisation du kit")) {
 				e.setCancelled(true);
 				return;
 			}
-		} else
-			return;
+		} else return;
 	}
 
 	@SuppressWarnings("deprecation")
