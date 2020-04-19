@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.WeatherType;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -38,6 +39,7 @@ public class XPlayerListener implements Listener {
 		XelephiaPlugin.xplayersOnline.add(xp);
 		e.setJoinMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("joinPlayer").replace("{PLAYER}",
 				xp.getName()));
+		e.getPlayer().setPlayerWeather(WeatherType.CLEAR);
 		if(xp.kitEquiped == false && !e.getPlayer().getInventory().contains(KitSystem.selectorItem) && !e.getPlayer().isDead()) {
 			e.getPlayer().getInventory().addItem(KitSystem.selectorItem);
 		}
