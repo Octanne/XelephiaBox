@@ -20,6 +20,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
@@ -129,9 +130,9 @@ public class LootZoneManager implements Listener {
 	public void reOpenEditor(Player p) {
 		if(lootZoneEdit.containsKey(p.getName())) {
 			LootZoneEdit zoneEdit = lootZoneEdit.get(p.getName());
+			zoneEdit.inAnvil = false;
 			createOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
 			p.openInventory(zoneEdit.inv);
-			lootZoneEdit.get(p.getName()).inAnvil = false;
 		}
 	}
 
@@ -181,15 +182,9 @@ public class LootZoneManager implements Listener {
 								}
 								// Edit QTE Max
 								else if(e.getClick().equals(ClickType.DOUBLE_CLICK)){
-									zoneEdit.inAnvil = true;
 									AnvilGUI menu = new AnvilGUI(p, new AnvilGUI.AnvilClickEventHandler() {
 
 										Loot loot = eLoot;
-
-										@Override
-										public void onAnvilClose(InventoryCloseEvent event) {
-											reOpenEditor((Player)event.getPlayer());
-										}
 										
 										@Override
 										public void onAnvilClick(AnvilGUI.AnvilClickEvent event) {
@@ -220,25 +215,16 @@ public class LootZoneManager implements Listener {
 									ItemStack anvilItem = Utils.createItemStack("Entrée valeur...", Material.PAPER, 1, lore, 0, true);
 									menu.setSlot(AnvilSlot.INPUT_LEFT, anvilItem);
 									try {
+										zoneEdit.inAnvil = true;
 										menu.open();
-									} catch (IllegalAccessException exc) {
-										exc.printStackTrace();
-									} catch (InvocationTargetException exc) {
-										exc.printStackTrace();
-									} catch (InstantiationException exc) {
-										exc.printStackTrace();
+									} catch (IllegalAccessException | InvocationTargetException | InstantiationException exp) {
+										exp.printStackTrace();
 									}
 								}
 								else if(e.getClick().equals(ClickType.MIDDLE)) {
-									zoneEdit.inAnvil = true;
 									AnvilGUI menu = new AnvilGUI(p, new AnvilGUI.AnvilClickEventHandler() {
 
 										Loot loot = eLoot;
-
-										@Override
-										public void onAnvilClose(InventoryCloseEvent event) {
-											reOpenEditor((Player)event.getPlayer());
-										}
 										
 										@Override
 										public void onAnvilClick(AnvilGUI.AnvilClickEvent event) {
@@ -269,13 +255,10 @@ public class LootZoneManager implements Listener {
 									ItemStack anvilItem = Utils.createItemStack("Entrée valeur...", Material.PAPER, 1, lore, 0, true);
 									menu.setSlot(AnvilSlot.INPUT_LEFT, anvilItem);
 									try {
+										zoneEdit.inAnvil = true;
 										menu.open();
-									} catch (IllegalAccessException exc) {
-										exc.printStackTrace();
-									} catch (InvocationTargetException exc) {
-										exc.printStackTrace();
-									} catch (InstantiationException exc) {
-										exc.printStackTrace();
+									} catch (IllegalAccessException | InvocationTargetException | InstantiationException exp) {
+										exp.printStackTrace();
 									}
 								}
 							}else e.setCancelled(true);
@@ -327,7 +310,7 @@ public class LootZoneManager implements Listener {
 			if(e.getInventory() != null && lootZoneEdit.isEmpty() ? false : lootZoneEdit.containsKey(p.getName())) {
 				LootZoneEdit zoneEdit = lootZoneEdit.get(p.getName());
 				zoneEdit.zone.save();
-				if(zoneEdit.willClose && !zoneEdit.inAnvil) {
+				if(zoneEdit.willClose) {
 					lootZoneInEdit.remove(zoneEdit.zone.getName());
 					lootZoneEdit.remove(p.getName());
 				}else if(!zoneEdit.inAnvil){
@@ -336,7 +319,15 @@ public class LootZoneManager implements Listener {
 						public void run() {
 							reOpenEditor(p);
 						}
-					}, 6);
+					}, 8);
+				}else if(e.getInventory().getType().equals(InventoryType.ANVIL)){
+					zoneEdit.inAnvil = false;
+					Bukkit.getScheduler().scheduleSyncDelayedTask(XelephiaPlugin.getInstance(), new Runnable() {
+						@Override
+						public void run() {
+							reOpenEditor(p);
+						}
+					}, 8);
 				}
 			}
 		}

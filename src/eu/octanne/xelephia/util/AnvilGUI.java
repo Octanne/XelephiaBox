@@ -7,6 +7,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -51,7 +52,7 @@ public class AnvilGUI {
             public void onInventoryClick(InventoryClickEvent event) {
                 if (event.getWhoClicked() instanceof Player) {
 
-                    if (event.getInventory().equals(inv)) {
+                    if (event.getInventory().equals(inv) && event.getSlotType().equals(SlotType.RESULT)) {
                         event.setCancelled(true);
 
                         ItemStack item = event.getCurrentItem();
@@ -71,7 +72,7 @@ public class AnvilGUI {
                         AnvilClickEvent clickEvent = new AnvilClickEvent(AnvilSlot.bySlot(slot), name, (Player)event.getWhoClicked());
 
                         handler.onAnvilClick(clickEvent);
-                        
+
                         if (clickEvent.getWillClose()) {
                             event.getWhoClicked().closeInventory();
                         }
@@ -89,7 +90,6 @@ public class AnvilGUI {
                     Inventory inv = event.getInventory();
                     player.setLevel(player.getLevel() - 1);
                     if (inv.equals(AnvilGUI.this.inv)) {
-                        handler.onAnvilClose(event);
                         inv.clear();
                         destroy();
                     }
@@ -199,7 +199,6 @@ public class AnvilGUI {
 
     public interface AnvilClickEventHandler {
         void onAnvilClick(AnvilClickEvent event);
-        void onAnvilClose(InventoryCloseEvent event);
     }
 
     public class AnvilClickEvent {

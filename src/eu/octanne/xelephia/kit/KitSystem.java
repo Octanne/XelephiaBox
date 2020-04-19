@@ -207,7 +207,7 @@ public class KitSystem implements Listener {
 				public void run() {
 					openMenu((Player) e.getPlayer());
 				}
-			}, 6);
+			}, 8);
 		}
 		if (e.getInventory().getName().equals("§aDéposer les items ici")) {
 			if (preKitList.containsKey(e.getPlayer())) {
