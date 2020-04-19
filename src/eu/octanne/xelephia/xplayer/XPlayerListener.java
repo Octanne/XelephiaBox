@@ -122,6 +122,7 @@ public class XPlayerListener implements Listener {
 				Class<?> classRegionQuery = Class.forName("com.sk89q.worldguard.bukkit.RegionQuery");
 				Class<?> classLocalPlayer = Class.forName("com.sk89q.worldguard.LocalPlayer");
 				Class<?> classDefaultFlag = Class.forName("com.sk89q.worldguard.protection.flags.DefaultFlag");
+				Class<?> classSateFlag = Class.forName("com.sk89q.worldguard.protection.flags.StateFlag");
 				
 				Object worldGuardPlugin = classWorldGuardPlugin.getMethod("inst").invoke(null);
 				Object regionContainer = classWorldGuardPlugin.getMethod("getRegionContainer").invoke(worldGuardPlugin);
@@ -132,7 +133,7 @@ public class XPlayerListener implements Listener {
 				
 				Object pvpFlag = classDefaultFlag.getField("PVP");
 				
-				Class[] queryPara = {Location.class, classLocalPlayer, classDefaultFlag};
+				Class[] queryPara = {Location.class, classLocalPlayer, classSateFlag};
 				return ((boolean)classRegionQuery.getMethod("testState", queryPara).invoke(query, p.getLocation(), wrapPlayer, pvpFlag));
 			} catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | NoSuchFieldException e1) {
 				Bukkit.getLogger().info(" Error in WorldGuard Support System");

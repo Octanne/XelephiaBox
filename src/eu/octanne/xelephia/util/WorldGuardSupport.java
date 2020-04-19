@@ -7,6 +7,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 
+import com.sk89q.worldguard.bukkit.RegionQuery;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.flags.DefaultFlag;
+
 public class WorldGuardSupport {
 	@SuppressWarnings("rawtypes")
 	static public boolean isPvPActive(Entity e) {
@@ -35,10 +39,10 @@ public class WorldGuardSupport {
 			return ((boolean)classRegionQuery.getMethod("testState", queryPara).invoke(query, e.getLocation(), wrapPlayer, pvpFlag));
 		} catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e1) {
 			e1.printStackTrace();
-			return false;
+			//return false;
 		}
 		
-		/*if(e instanceof Player) {
+		if(e instanceof Player) {
 			RegionQuery query = WorldGuardPlugin.inst().getRegionContainer().createQuery();
 			if (query.testState(e.getLocation(), WorldGuardPlugin.inst()
 					.wrapPlayer((Player)e), DefaultFlag.PVP)) return true;
@@ -48,6 +52,6 @@ public class WorldGuardSupport {
 			if (query.testState(e.getLocation(), WorldGuardPlugin.inst()
 					.wrapPlayer((Player)((Projectile)e).getShooter()), DefaultFlag.PVP)) return true;
 			else return false;
-		}else return false;*/
+		}else return false;
 	}
 }
