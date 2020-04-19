@@ -30,8 +30,11 @@ public class LootZone {
 
 	private ConfigYaml config;
 	
+	private LootZoneListener listener;
+	
 	public LootZone(String name, Location pos, int controlTime) {
 		config = new ConfigYaml("zone/"+name+".yml");
+		listener = new LootZoneListener();
 		
 		this.pos = pos;
 		this.name = name;
@@ -39,13 +42,15 @@ public class LootZone {
 		
 		loots = new ArrayList<Loot>();
 		save();
-		Bukkit.getPluginManager().registerEvents(new LootZoneListener(), XelephiaPlugin.getInstance());
+		Bukkit.getPluginManager().registerEvents(listener, XelephiaPlugin.getInstance());
 	}
 	
 	protected LootZone(String name) {
 		config = new ConfigYaml("zone/"+name+".yml");
+		listener = new LootZoneListener();
 		this.name = name;
 		load();
+		Bukkit.getPluginManager().registerEvents(listener, XelephiaPlugin.getInstance());
 	}
 
 	protected void save() {
@@ -92,12 +97,18 @@ public class LootZone {
 	
 	protected void remove() {
 		config.getFile().delete();
+		unregister();
+	}
+	
+	private void unregister() {
+		PlayerQuitEvent.getHandlerList().unregister(listener);
+		PlayerMoveEvent.getHandlerList().unregister(listener);
 	}
 	
 	protected void captureZone(Player p) {
 		Bukkit.getScheduler().cancelTask(playerInZone.get(p.getName()));
 		playerInZone.remove(p.getName());
-		Bukkit.broadcastMessage(p.getName() + " viens de capturé la zone " + name);
+		Bukkit.broadcastMessage("§eLoot §8| §aCapture de la zone §9" + name + "§a par §9" + p.getName() + "§a.");
 		XPlayer xP = (XelephiaPlugin.getXPlayer(p.getName()));
 		xP.sendMessage(MessageType.SUBTITLE, "§eLoot §8| §aCapture de la zone §9" + name + "§a.");
 		// Need to be finish
