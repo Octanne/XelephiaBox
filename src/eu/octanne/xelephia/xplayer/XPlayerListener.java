@@ -49,11 +49,14 @@ public class XPlayerListener implements Listener {
 		XPlayer xp = XelephiaPlugin.getXPlayer(e.getPlayer().getUniqueId());
 		if (XelephiaPlugin.getXPlayersOnline().contains(xp)) {
 			if(xp.inCombat()) {
-				Entity killer = null;
+				xp.decoInCombat = true;
+				Player killer = null;
 				if(xp.lastDamagerName != null) killer = Bukkit.getPlayer(xp.lastDamagerName);
-				e.getPlayer().setHealth(1);
-				if(killer != null) xp.getBukkitPlayer().damage(10, killer);
-				else xp.getBukkitPlayer().damage(10);
+				if(killer != null) {
+					e.getPlayer().setHealth(0.0);
+				}else {
+					xp.getBukkitPlayer().setHealth(0.0);
+				}
 			}
 			xp.saveIntoDB();
 			XelephiaPlugin.xplayersOnline.remove(xp);
@@ -187,11 +190,12 @@ public class XPlayerListener implements Listener {
 	 */
 	@EventHandler
 	public void onDeath(PlayerDeathEvent e) {
+		
 		ArrayList<ItemStack> removeItems = new ArrayList<ItemStack>();
 		XPlayer xP = XelephiaPlugin.getXPlayer(e.getEntity().getUniqueId());
 		
-		if(xP.combatTask != null && Bukkit.getScheduler().isCurrentlyRunning(xP.combatTask.getTaskId())) {
-			Bukkit.getScheduler().cancelTask(xP.combatTask.getTaskId());
+		if(xP.inCombat) {
+			xP.combatTask.cancel();
 			xP.inCombat = false;
 		}
 		
@@ -255,6 +259,13 @@ public class XPlayerListener implements Listener {
 		// Clean
 		for(ItemStack item : removeItems) {
 			e.getDrops().remove(item);
+		}
+		
+		/*
+		 * Custom Death Message
+		 */
+		if(xP.decoInCombat = true) {
+			e.setDeathMessage("§cMort §8|§b §9"+xP.getName()+" §ba déconnecté en plein combat.");
 		}
 	}
 }

@@ -43,7 +43,7 @@ public class XPlayer {
 	DecimalFormat df = new DecimalFormat("#.##");
 
 	protected BukkitTask combatTask;
-	protected boolean inCombat = false;
+	protected boolean inCombat = false, decoInCombat = false;
 	private boolean combatRelaunch = false;
 	protected String lastDamagerName;
 	
