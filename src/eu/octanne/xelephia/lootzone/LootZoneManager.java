@@ -46,8 +46,7 @@ public class LootZoneManager implements Listener {
 
 		public int getScrollMax() {
 			int scrollMax = 0;
-			if(inv.getItem(17) != null) scrollMax = (zone.getLoots().size()-9+1);
-			else scrollMax = (zone.getLoots().size()-9);
+			scrollMax = (zone.getLoots().size()-9);
 			if (scrollMax <= 0) scrollMax = 0;
 			return scrollMax;
 		}
@@ -151,6 +150,10 @@ public class LootZoneManager implements Listener {
 								if(e.isShiftClick()) {
 									zoneEdit.zone.getLoots().remove(eLoot);
 									zoneEdit.zone.save();
+									
+									if(zoneEdit.scroll > zoneEdit.getScrollMax()) 
+										zoneEdit.scroll = zoneEdit.getScrollMax();
+									
 									//zoneEdit.scroll-=1;
 									openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
 									//p.updateInventory();
@@ -219,10 +222,6 @@ public class LootZoneManager implements Listener {
 			inv = INV;
 			isSet = true;
 		}
-
-		int scrollMax = (inv.getItem(17) != null) ? (zone.getLoots().size()-9+1) : (zone.getLoots().size()-9);
-		if(scrollMax <= 0) scrollMax = 0;
-		if(scroll > scrollMax) scroll = scrollMax;
 
 		if(!isSet) {
 			for(int i = 0; i < 9; i++) inv.setItem(i, Utils.createItemStack(" ", Material.STAINED_GLASS_PANE, 1, new ArrayList<String>(), 7, false));
