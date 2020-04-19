@@ -25,7 +25,7 @@ public class WorldGuardSupport {
 				Class<?> classWorldGuardPlugin = Class.forName("com.sk89q.worldguard.bukkit.WorldGuardPlugin");
 				Class<?> classRegionContainer = Class.forName("com.sk89q.worldguard.bukkit.RegionContainer");
 				Class<?> classRegionQuery = Class.forName("com.sk89q.worldguard.bukkit.RegionQuery");
-				Class<?> classLocalPlayer = Class.forName("com.sk89q.worldguard.LocalPlayer");
+				Class<?> classStateFlag = Class.forName("com.sk89q.worldguard.protection.flags.StateFlag");
 				Class<?> classDefaultFlag = Class.forName("com.sk89q.worldguard.protection.flags.DefaultFlag");
 				Class<?> classRegionAssociable = Class.forName("com.sk89q.worldguard.protection.association.RegionAssociable");
 				
@@ -38,14 +38,14 @@ public class WorldGuardSupport {
 				
 				Object pvpFlag = classDefaultFlag.getField("PVP");
 				
-				Class[] queryPara = {Location.class, classLocalPlayer, classRegionAssociable};
+				Class[] queryPara = {Location.class, classRegionAssociable, classStateFlag};
 				return ((boolean)classRegionQuery.getMethod("testState", queryPara).invoke(query, p.getLocation(), wrapPlayer, pvpFlag));
 			} catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | NoSuchFieldException e1) {
 				Bukkit.getLogger().info("[Xelephia] Error in WorldGuard Support System");
 				e1.printStackTrace();
 				return true;
 			}
-		}//else return true;
+		}else return true;
 		
 		if(e instanceof Player) {
 			RegionQuery query = WorldGuardPlugin.inst().getRegionContainer().createQuery();

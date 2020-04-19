@@ -120,9 +120,9 @@ public class XPlayerListener implements Listener {
 				Class<?> classWorldGuardPlugin = Class.forName("com.sk89q.worldguard.bukkit.WorldGuardPlugin");
 				Class<?> classRegionContainer = Class.forName("com.sk89q.worldguard.bukkit.RegionContainer");
 				Class<?> classRegionQuery = Class.forName("com.sk89q.worldguard.bukkit.RegionQuery");
-				Class<?> classLocalPlayer = Class.forName("com.sk89q.worldguard.LocalPlayer");
+				Class<?> classStateFlag = Class.forName("com.sk89q.worldguard.protection.flags.StateFlag");
 				Class<?> classDefaultFlag = Class.forName("com.sk89q.worldguard.protection.flags.DefaultFlag");
-				Class<?> classSateFlag = Class.forName("com.sk89q.worldguard.protection.flags.StateFlag");
+				Class<?> classRegionAssociable = Class.forName("com.sk89q.worldguard.protection.association.RegionAssociable");
 				
 				Object worldGuardPlugin = classWorldGuardPlugin.getMethod("inst").invoke(null);
 				Object regionContainer = classWorldGuardPlugin.getMethod("getRegionContainer").invoke(worldGuardPlugin);
@@ -133,7 +133,7 @@ public class XPlayerListener implements Listener {
 				
 				Object pvpFlag = classDefaultFlag.getField("PVP");
 				
-				Class[] queryPara = {Location.class, classLocalPlayer, classSateFlag};
+				Class[] queryPara = {Location.class, classRegionAssociable, classStateFlag};
 				return ((boolean)classRegionQuery.getMethod("testState", queryPara).invoke(query, p.getLocation(), wrapPlayer, pvpFlag));
 			} catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | NoSuchFieldException e1) {
 				Bukkit.getLogger().info("[Xelephia] Error in WorldGuard Support System");
