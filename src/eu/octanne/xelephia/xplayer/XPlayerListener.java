@@ -111,11 +111,11 @@ public class XPlayerListener implements Listener {
 	@SuppressWarnings("rawtypes")
 	private boolean isPvPActive(Entity e){
 		if(Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
-			Player p = null;
+			Player p;
 			if(e instanceof Projectile && (((Projectile)e).getShooter()) instanceof Player) {
 				p = (Player)((Projectile)e).getShooter();
-			}else if(!(e instanceof Player) || p == null) return false;
-			
+			}else if(!(e instanceof Player)) return false;
+			p = (Player)e;
 			try {
 				Class<?> classWorldGuardPlugin = Class.forName("com.sk89q.worldguard.bukkit.WorldGuardPlugin");
 				Class<?> classRegionContainer = Class.forName("com.sk89q.worldguard.bukkit.RegionContainer");
