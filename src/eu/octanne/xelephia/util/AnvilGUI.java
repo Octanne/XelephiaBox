@@ -1,6 +1,7 @@
 package eu.octanne.xelephia.util;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -58,7 +59,7 @@ public class AnvilGUI {
                             int slot = event.getRawSlot();
                             String name = "no_value";
 
-                            if (item != null) {
+                            if (item != null && !item.getType().equals(Material.AIR)) {
                                 if (item.hasItemMeta()) {
                                     ItemMeta meta = item.getItemMeta();
 
@@ -91,9 +92,9 @@ public class AnvilGUI {
                     player.setLevel(player.getLevel() - 1);
                     if (inv.equals(AnvilGUI.this.inv)) {
                         inv.clear();
-                        destroy();
                         AnvilCloseEvent closeEvent = new AnvilCloseEvent((Player)event.getPlayer());
                         handler.onAnvilClose(closeEvent);
+                        destroy();
                     }
                 }
             }

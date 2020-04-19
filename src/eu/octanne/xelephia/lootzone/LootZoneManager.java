@@ -205,7 +205,8 @@ public class LootZoneManager implements Listener {
 
 										@Override
 										public void onAnvilClose(AnvilCloseEvent event) {
-											reOpenEditor(event.getPlayer());
+											p.closeInventory();
+											reOpenEditor(p);
 											zoneEdit.inAnvil = false;
 										}
 									});
@@ -247,7 +248,8 @@ public class LootZoneManager implements Listener {
 
 										@Override
 										public void onAnvilClose(AnvilCloseEvent event) {
-											reOpenEditor(event.getPlayer());
+											p.closeInventory();
+											reOpenEditor(p);
 											zoneEdit.inAnvil = false;
 										}
 									});
