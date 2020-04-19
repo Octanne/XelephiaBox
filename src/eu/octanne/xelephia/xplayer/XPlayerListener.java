@@ -46,20 +46,22 @@ public class XPlayerListener implements Listener {
 	// Player Quit REMOVE XPlayer of Online
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent e) {
-		XPlayer xp = XelephiaPlugin.getXPlayer(e.getPlayer().getUniqueId());
-		if (XelephiaPlugin.getXPlayersOnline().contains(xp)) {
-			if(xp.inCombat()) {
-				xp.decoInCombat = true;
+		XPlayer xP = XelephiaPlugin.getXPlayer(e.getPlayer().getUniqueId());
+		if (XelephiaPlugin.getXPlayersOnline().contains(xP)) {
+			if(xP.inCombat()) {
+				xP.combatTask.cancel();
+				xP.inCombat = false;
+				xP.decoInCombat = true;
 				Player killer = null;
-				if(xp.lastDamagerName != null) killer = Bukkit.getPlayer(xp.lastDamagerName);
+				if(xP.lastDamagerName != null) killer = Bukkit.getPlayer(xP.lastDamagerName);
 				if(killer != null) {
 					e.getPlayer().setHealth(0.0);
 				}else {
-					xp.getBukkitPlayer().setHealth(0.0);
+					xP.getBukkitPlayer().setHealth(0.0);
 				}
 			}
-			xp.saveIntoDB();
-			XelephiaPlugin.xplayersOnline.remove(xp);
+			xP.saveIntoDB();
+			XelephiaPlugin.xplayersOnline.remove(xP);
 		}
 		e.setQuitMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("quitPlayer").replace("{PLAYER}",
 				e.getPlayer().getName()));
@@ -264,7 +266,7 @@ public class XPlayerListener implements Listener {
 		/*
 		 * Custom Death Message
 		 */
-		if(xP.decoInCombat = true) {
+		if(xP.decoInCombat == true) {
 			e.setDeathMessage("§cMort §8|§b §9"+xP.getName()+" §ba déconnecté en plein combat.");
 		}
 	}
