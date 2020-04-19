@@ -20,7 +20,6 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -148,12 +147,6 @@ public class LootZoneManager implements Listener {
 			lootZones.remove(zone);
 			return true;
 		}else return false;
-	}
-
-	// Event Move
-	@EventHandler
-	public void onPlayerInZone(PlayerMoveEvent e) {
-
 	}
 
 	@EventHandler

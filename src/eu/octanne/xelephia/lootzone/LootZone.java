@@ -1,12 +1,21 @@
 package eu.octanne.xelephia.lootzone;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
+import eu.octanne.xelephia.XelephiaPlugin;
 import eu.octanne.xelephia.util.ConfigYaml;
+import eu.octanne.xelephia.xplayer.XPlayer;
+import eu.octanne.xelephia.xplayer.XPlayer.MessageType;
 
 public class LootZone {
 
@@ -16,6 +25,8 @@ public class LootZone {
 	protected int controlTime;
 
 	protected List<Loot> loots;
+	
+	private HashMap<String,Integer> playerInZone = new HashMap<String,Integer>();
 
 	private ConfigYaml config;
 	
@@ -28,6 +39,7 @@ public class LootZone {
 		
 		loots = new ArrayList<Loot>();
 		save();
+		Bukkit.getPluginManager().registerEvents(new LootZoneListener(), XelephiaPlugin.getInstance());
 	}
 	
 	protected LootZone(String name) {
@@ -56,8 +68,8 @@ public class LootZone {
 		loots.add(loot);
 	}
 
-	public boolean inZone(Player p) {
-		if(p.getLocation().distance(pos) <= 5) {
+	public boolean inZone(Location loc) {
+		if(loc.distance(pos) <= 5) {
 			return true;
 		}else return false;
 	}
@@ -80,5 +92,55 @@ public class LootZone {
 	
 	protected void remove() {
 		config.getFile().delete();
+	}
+	
+	protected void captureZone(Player p) {
+		Bukkit.getScheduler().cancelTask(playerInZone.get(p.getName()));
+		playerInZone.remove(p.getName());
+		Bukkit.broadcastMessage(p.getName() + " viens de capturé la zone " + name);
+		// Need to be finish
+		// TODO
+	}
+	
+	private class LootZoneListener implements Listener{
+		
+		@EventHandler
+		public void onPlayerInZone(PlayerMoveEvent e) {
+			Player p = e.getPlayer();
+			// Enter Zone
+			if(inZone(e.getTo()) && !playerInZone.containsKey(p.getName())) {
+				Integer task = 0;
+				playerInZone.put(p.getName(),task);
+				task = Bukkit.getScheduler().runTaskTimer(XelephiaPlugin.getInstance(), new Runnable() {
+
+					int sec = 0;
+					
+					@Override
+					public void run() {
+						if(sec <= controlTime) {
+							sec++;
+						}else {
+							captureZone(p);
+						}
+					}
+				}, 0, 20).getTaskId();
+			}
+			// Leave Zone
+			if(playerInZone.containsKey(p.getName()) && !inZone(e.getTo())) {
+				Bukkit.getScheduler().cancelTask(playerInZone.get(p.getName()));
+				XPlayer xP = (XelephiaPlugin.getXPlayer(p.getName()));
+				xP.sendMessage(MessageType.SUBTITLE, "§eLoot §8| §cCapture de la zone §9" + name + " §cinterrompu.");
+			}
+		}
+		
+		@EventHandler
+		public void onPlayerQuit(PlayerQuitEvent e) {
+			// Cancel if leave
+			Player p = e.getPlayer();
+			if(playerInZone.containsKey(p.getName())) {
+				Bukkit.getScheduler().cancelTask(playerInZone.get(p.getName()));
+				playerInZone.remove(p.getName());
+			}
+		}
 	}
 }

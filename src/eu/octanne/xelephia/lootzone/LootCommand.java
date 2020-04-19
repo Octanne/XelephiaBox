@@ -26,15 +26,15 @@ public class LootCommand implements CommandExecutor {
 					if(args[0].equalsIgnoreCase("list")) {
 						p.sendMessage(COMMAND_TAG+"§aListe des zones :");
 						for(LootZone zone : XelephiaPlugin.getLootZoneManager().getLootZones()) {
-							p.sendMessage("    §e=> §9"+zone.getName());
+							p.sendMessage("     §e=> §9"+zone.getName());
 						}
 						return true;
 					}
 					if(args[0].equalsIgnoreCase("tags")) {
 						p.sendMessage(COMMAND_TAG+"§aListe des tags :");
-						p.sendMessage("    §e=> §9Permanent");
-						p.sendMessage("    §e=> §9Lootable");
-						p.sendMessage("    §e=> §9Kit");
+						p.sendMessage("     §e=> §9Permanent");
+						p.sendMessage("     §e=> §9Lootable");
+						p.sendMessage("     §e=> §9Kit");
 						return true;
 					}
 					if(args[0].equalsIgnoreCase("edit")) {
