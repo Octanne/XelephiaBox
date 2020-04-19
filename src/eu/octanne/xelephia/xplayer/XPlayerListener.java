@@ -136,7 +136,7 @@ public class XPlayerListener implements Listener {
 				Class[] queryPara = {Location.class, classLocalPlayer, classSateFlag};
 				return ((boolean)classRegionQuery.getMethod("testState", queryPara).invoke(query, p.getLocation(), wrapPlayer, pvpFlag));
 			} catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | NoSuchFieldException e1) {
-				Bukkit.getLogger().info(" Error in WorldGuard Support System");
+				Bukkit.getLogger().info("[Xelephia] Error in WorldGuard Support System");
 				e1.printStackTrace();
 				return true;
 			}
