@@ -1,11 +1,9 @@
 package eu.octanne.xelephia.xplayer;
 
-import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
@@ -108,8 +106,7 @@ public class XPlayerListener implements Listener {
 		if(e.getItem() != null && e.getItem().equals(KitSystem.selectorItem)) XelephiaPlugin.getKitSystem().openMenu(e.getPlayer());
 	}
 	
-	@SuppressWarnings("rawtypes")
-	private boolean isPvPActive(Entity e){
+	/*private boolean isPvPActive(Entity e){
 		if(Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
 			Player p;
 			if(e instanceof Projectile && (((Projectile)e).getShooter()) instanceof Player) {
@@ -134,21 +131,27 @@ public class XPlayerListener implements Listener {
 				Object pvpFlag = classDefaultFlag.getField("PVP");
 				
 				Class[] queryPara = {Location.class, classRegionAssociable, classStateFlag};
-				return ((boolean)classRegionQuery.getMethod("testState", queryPara).invoke(query, p.getLocation(), wrapPlayer, pvpFlag));
+				if((boolean)classRegionQuery.getMethod("testState", queryPara).invoke(query, p.getLocation(), wrapPlayer, pvpFlag)) {
+					Bukkit.getLogger().info("[Xelephia] Work Function PVP ALLOW");
+					return true;
+				}else {
+					Bukkit.getLogger().info("[Xelephia] Work Function PvP Not Allow");
+					return false;
+				}
 			} catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | NoSuchFieldException e1) {
 				Bukkit.getLogger().info("[Xelephia] Error in WorldGuard Support System");
 				e1.printStackTrace();
 				return true;
 			}
 		}else return true;
-	}
+	}*/
 	
 	/*
 	 * DamageTakenEvent
 	 */
 	@EventHandler
 	public void onTakeDamage(EntityDamageByEntityEvent e) {
-		if(e.getEntity().getType().equals(EntityType.PLAYER) && !e.isCancelled() && isPvPActive(e.getDamager())) {
+		if(e.getEntity().getType().equals(EntityType.PLAYER) && !e.isCancelled()) {
 			XPlayer xPVictim = XelephiaPlugin.getXPlayer(e.getEntity().getUniqueId());
 			XPlayer xPDamager = null;
 			
