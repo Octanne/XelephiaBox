@@ -71,7 +71,7 @@ public class AnvilGUI {
                         AnvilClickEvent clickEvent = new AnvilClickEvent(AnvilSlot.bySlot(slot), name, (Player)event.getWhoClicked());
 
                         handler.onAnvilClick(clickEvent);
-
+                        
                         if (clickEvent.getWillClose()) {
                             event.getWhoClicked().closeInventory();
                         }
@@ -89,6 +89,7 @@ public class AnvilGUI {
                     Inventory inv = event.getInventory();
                     player.setLevel(player.getLevel() - 1);
                     if (inv.equals(AnvilGUI.this.inv)) {
+                        handler.onAnvilClose(event);
                         inv.clear();
                         destroy();
                     }
@@ -198,6 +199,7 @@ public class AnvilGUI {
 
     public interface AnvilClickEventHandler {
         void onAnvilClick(AnvilClickEvent event);
+        void onAnvilClose(InventoryCloseEvent event);
     }
 
     public class AnvilClickEvent {

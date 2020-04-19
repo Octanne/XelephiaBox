@@ -199,16 +199,15 @@ public class KitSystem implements Listener {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onCloseMenu(InventoryCloseEvent e) {
 		if (e.getInventory().getName().equals("§9Visualisation du kit")) {
-			Bukkit.getScheduler().scheduleAsyncDelayedTask(XelephiaPlugin.getInstance(), new Runnable() {
+			Bukkit.getScheduler().scheduleSyncDelayedTask(XelephiaPlugin.getInstance(), new Runnable() {
 				@Override
 				public void run() {
 					openMenu((Player) e.getPlayer());
 				}
-			}, 8);
+			}, 6);
 		}
 		if (e.getInventory().getName().equals("§aDéposer les items ici")) {
 			if (preKitList.containsKey(e.getPlayer())) {

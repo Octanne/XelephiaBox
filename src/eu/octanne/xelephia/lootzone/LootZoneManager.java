@@ -21,6 +21,7 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -29,7 +30,6 @@ import eu.octanne.xelephia.XelephiaPlugin;
 import eu.octanne.xelephia.util.AnvilGUI;
 import eu.octanne.xelephia.util.AnvilGUI.AnvilSlot;
 import eu.octanne.xelephia.util.Utils;
-import net.md_5.bungee.api.ChatColor;
 
 public class LootZoneManager implements Listener {
 
@@ -37,12 +37,13 @@ public class LootZoneManager implements Listener {
 
 	private HashMap<String,LootZoneEdit> lootZoneEdit = new HashMap<>();
 	private ArrayList<String> lootZoneInEdit = new ArrayList<>();
-	
+
 	private class LootZoneEdit{
 		public LootZone zone;
 		public Inventory inv;
 		public int scroll;
 		public boolean willClose = false;
+		public boolean inAnvil = false;
 
 		public LootZoneEdit(LootZone zone, Inventory inv) {
 			this.zone = zone;
@@ -124,9 +125,14 @@ public class LootZoneManager implements Listener {
 			p.openInventory(inv);
 		}
 	}
-	
+
 	public void reOpenEditor(Player p) {
-		if(lootZoneEdit.containsKey(p.getName())) p.openInventory(lootZoneEdit.get(p.getName()).inv);
+		if(lootZoneEdit.containsKey(p.getName())) {
+			LootZoneEdit zoneEdit = lootZoneEdit.get(p.getName());
+			createOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
+			p.openInventory(zoneEdit.inv);
+			lootZoneEdit.get(p.getName()).inAnvil = false;
+		}
 	}
 
 	public boolean removeZone(String zoneName) {
@@ -165,30 +171,36 @@ public class LootZoneManager implements Listener {
 								if(e.isShiftClick()) {
 									zoneEdit.zone.getLoots().remove(eLoot);
 									zoneEdit.zone.save();
-									
+
 									if(zoneEdit.scroll > zoneEdit.getScrollMax()) 
 										zoneEdit.scroll = zoneEdit.getScrollMax();
-									
+
 									//zoneEdit.scroll-=1;
 									createOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
 									//p.updateInventory();
 								}
 								// Edit QTE Max
 								else if(e.getClick().equals(ClickType.DOUBLE_CLICK)){
+									zoneEdit.inAnvil = true;
 									AnvilGUI menu = new AnvilGUI(p, new AnvilGUI.AnvilClickEventHandler() {
-										
+
 										Loot loot = eLoot;
+
+										@Override
+										public void onAnvilClose(InventoryCloseEvent event) {
+											reOpenEditor((Player)event.getPlayer());
+										}
 										
 										@Override
 										public void onAnvilClick(AnvilGUI.AnvilClickEvent event) {
 											event.setWillClose(false);
 											event.setWillDestroy(false);
 											if(event.getSlot() == AnvilGUI.AnvilSlot.OUTPUT) {
-													int quantity;
+												int quantity;
 												try {
 													quantity = Integer.parseInt(event.getName());
 												}catch(NumberFormatException exp) {
-													event.getPlayer().sendMessage("§eLoot §8| §cErreur: La valeur §9" + event.getName() + " §cest invalide.");
+													event.getPlayer().sendMessage("§eLoot §8| §cErreur : La valeur §9" + event.getName() + " §cest invalide.");
 													event.setWillDestroy(true);
 													reOpenEditor(event.getPlayer());
 													return;
@@ -196,7 +208,7 @@ public class LootZoneManager implements Listener {
 												loot.max = quantity <= 64 ? quantity : 64;
 												loot.max = quantity < loot.item.getAmount() ? loot.item.getAmount() : quantity;
 												event.setWillDestroy(true);
-												p.sendMessage("§eLoot §8| §aLa quantité max est défini à §9" + quantity + "§a.");
+												p.sendMessage("§eLoot §8| §aLa quantité max est défini à §9" + loot.max + "§.");
 												reOpenEditor(event.getPlayer());
 											}
 										}
@@ -218,20 +230,26 @@ public class LootZoneManager implements Listener {
 									}
 								}
 								else if(e.getClick().equals(ClickType.MIDDLE)) {
-						AnvilGUI menu = new AnvilGUI(p, new AnvilGUI.AnvilClickEventHandler() {
-										
+									zoneEdit.inAnvil = true;
+									AnvilGUI menu = new AnvilGUI(p, new AnvilGUI.AnvilClickEventHandler() {
+
 										Loot loot = eLoot;
+
+										@Override
+										public void onAnvilClose(InventoryCloseEvent event) {
+											reOpenEditor((Player)event.getPlayer());
+										}
 										
 										@Override
 										public void onAnvilClick(AnvilGUI.AnvilClickEvent event) {
 											event.setWillClose(false);
 											event.setWillDestroy(false);
 											if(event.getSlot() == AnvilGUI.AnvilSlot.OUTPUT) {
-													double prct;
+												double prct;
 												try {
 													prct = Double.parseDouble(event.getName());
 												}catch(NumberFormatException exp) {
-													event.getPlayer().sendMessage("§eLoot §8| §cErreur: La valeur §9" + event.getName() + " §cest invalide.");
+													event.getPlayer().sendMessage("§eLoot §8| §cErreur : La valeur §9" + event.getName() + " §cest invalide.");
 													event.setWillDestroy(true);
 													reOpenEditor(event.getPlayer());
 													return;
@@ -239,7 +257,7 @@ public class LootZoneManager implements Listener {
 												loot.luckPrct = prct <= 100 ? prct : 100;
 												loot.luckPrct = prct < 0 ? 0 : prct;
 												event.setWillDestroy(true);
-												p.sendMessage("§eLoot §8| §aLa quantité max est défini à §9" + prct + "§a.");
+												p.sendMessage("§eLoot §8| §aLe pourcentage est défini sur §9" + loot.luckPrct + "§a.");
 												reOpenEditor(event.getPlayer());
 											}
 										}
@@ -292,16 +310,33 @@ public class LootZoneManager implements Listener {
 	}
 
 	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent e) {
+		Player p = e.getPlayer();
+		if(lootZoneEdit.isEmpty() ? false : lootZoneEdit.containsKey(p.getName())) {
+			LootZoneEdit zoneEdit = lootZoneEdit.get(p.getName());
+			zoneEdit.zone.save();
+			lootZoneInEdit.remove(zoneEdit.zone.getName());
+			lootZoneEdit.remove(p.getName());
+		}
+	}
+	
+	@EventHandler
 	public void onCloseMenu(InventoryCloseEvent e) {
 		if(e.getPlayer() instanceof Player) {
 			Player p = (Player) e.getPlayer();
 			if(e.getInventory() != null && lootZoneEdit.isEmpty() ? false : lootZoneEdit.containsKey(p.getName())) {
 				LootZoneEdit zoneEdit = lootZoneEdit.get(p.getName());
 				zoneEdit.zone.save();
-				if(zoneEdit.willClose) {
+				if(zoneEdit.willClose && !zoneEdit.inAnvil) {
+					lootZoneInEdit.remove(zoneEdit.zone.getName());
 					lootZoneEdit.remove(p.getName());
-				}else {
-					p.openInventory(zoneEdit.inv);
+				}else if(!zoneEdit.inAnvil){
+					Bukkit.getScheduler().scheduleSyncDelayedTask(XelephiaPlugin.getInstance(), new Runnable() {
+						@Override
+						public void run() {
+							reOpenEditor(p);
+						}
+					}, 6);
 				}
 			}
 		}
