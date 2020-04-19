@@ -98,6 +98,8 @@ public class LootZone {
 		Bukkit.getScheduler().cancelTask(playerInZone.get(p.getName()));
 		playerInZone.remove(p.getName());
 		Bukkit.broadcastMessage(p.getName() + " viens de capturé la zone " + name);
+		XPlayer xP = (XelephiaPlugin.getXPlayer(p.getName()));
+		xP.sendMessage(MessageType.SUBTITLE, "§eLoot §8| §aCapture de la zone §9" + name + "§a.");
 		// Need to be finish
 		// TODO
 	}
@@ -107,8 +109,10 @@ public class LootZone {
 		@EventHandler
 		public void onPlayerInZone(PlayerMoveEvent e) {
 			Player p = e.getPlayer();
+			XPlayer xP = (XelephiaPlugin.getXPlayer(p.getName()));
 			// Enter Zone
 			if(inZone(e.getTo()) && !playerInZone.containsKey(p.getName())) {
+				xP.sendMessage(MessageType.SUBTITLE, "§eLoot §8| §bEntrée dans la zone §9" + name + "§b.");
 				Integer task = 0;
 				playerInZone.put(p.getName(),task);
 				task = Bukkit.getScheduler().runTaskTimer(XelephiaPlugin.getInstance(), new Runnable() {
@@ -128,7 +132,6 @@ public class LootZone {
 			// Leave Zone
 			if(playerInZone.containsKey(p.getName()) && !inZone(e.getTo())) {
 				Bukkit.getScheduler().cancelTask(playerInZone.get(p.getName()));
-				XPlayer xP = (XelephiaPlugin.getXPlayer(p.getName()));
 				xP.sendMessage(MessageType.SUBTITLE, "§eLoot §8| §cCapture de la zone §9" + name + " §cinterrompu.");
 			}
 		}
