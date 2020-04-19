@@ -143,6 +143,7 @@ public class LootZoneManager implements Listener {
 						if(!(e.getRawSlot() < 9 || e.getRawSlot() > 17)) {
 							// Delete Loot, Edit % or Edit max
 							if(e.getCurrentItem() != null && !e.getCurrentItem().getType().equals(Material.AIR)) {
+								Bukkit.broadcastMessage("Delete and Edit");
 								e.setCancelled(true);
 								int lootNb = e.getSlot() - 9 + zoneEdit.scroll;
 								Loot eLoot = zoneEdit.zone.getLoots().get(lootNb);
@@ -172,10 +173,11 @@ public class LootZoneManager implements Listener {
 								zoneEdit.zone.save();
 								openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
 								//p.updateInventory();
-								Bukkit.broadcastMessage("Action add item :" + e.getAction());
+								Bukkit.broadcastMessage("Place add Item :" + e.getAction());
 							}
 						}else{
 							e.setCancelled(true);
+							Bukkit.broadcastMessage("Scroll");
 							// Scroll
 							if(e.getSlot() == 24 && zoneEdit.scroll < zoneEdit.getScrollMax()) {
 								openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll+1, zoneEdit.inv);
@@ -193,12 +195,13 @@ public class LootZoneManager implements Listener {
 						}
 					}else if(e.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY) && e.getView().getItem(17) != null){
 						ItemStack newItem = e.getCurrentItem().clone();
+						e.getClickedInventory().clear(e.getSlot());
 						//p.updateInventory();
 						zoneEdit.zone.addLoot(new Loot(newItem, 1, newItem.getAmount()));
 						zoneEdit.zone.save();
 						openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
 						//p.updateInventory();
-						Bukkit.broadcastMessage("Action add item :" + e.getAction());
+						Bukkit.broadcastMessage("Switch add item :" + e.getAction());
 					}
 				}
 			}
