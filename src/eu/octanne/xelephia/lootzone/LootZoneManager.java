@@ -151,6 +151,7 @@ public class LootZoneManager implements Listener {
 								if(e.isShiftClick()) {
 									zoneEdit.zone.getLoots().remove(eLoot);
 									zoneEdit.zone.save();
+									//zoneEdit.scroll-=1;
 									openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
 									//p.updateInventory();
 								}
@@ -161,23 +162,9 @@ public class LootZoneManager implements Listener {
 								else if(e.getClick().equals(ClickType.MIDDLE)) {
 
 								}
-							}
-							// Add Item
-							else if(e.getAction().equals(InventoryAction.PLACE_ALL) || 
-									e.getAction().equals(InventoryAction.PLACE_ONE)) {
-								ItemStack newItem = p.getItemOnCursor().clone();
-								p.getItemOnCursor().setAmount(0);
-								//p.setItemOnCursor(null);
-								//p.updateInventory();
-								zoneEdit.zone.addLoot(new Loot(newItem, 1, newItem.getAmount()));
-								zoneEdit.zone.save();
-								openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
-								//p.updateInventory();
-								Bukkit.broadcastMessage("Place add Item :" + e.getAction());
-							}
+							}else e.setCancelled(true);
 						}else{
 							e.setCancelled(true);
-							Bukkit.broadcastMessage("Scroll");
 							// Scroll
 							if(e.getSlot() == 24 && zoneEdit.scroll < zoneEdit.getScrollMax()) {
 								openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll+1, zoneEdit.inv);
@@ -201,7 +188,6 @@ public class LootZoneManager implements Listener {
 						zoneEdit.zone.save();
 						openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
 						//p.updateInventory();
-						Bukkit.broadcastMessage("Switch add item :" + e.getAction());
 					}
 				}
 			}
