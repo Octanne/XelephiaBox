@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
@@ -23,7 +24,7 @@ import eu.octanne.xelephia.xplayer.XPlayer;
 public class KitSystem implements Listener {
 
 	public static ItemStack selectorItem;
-	
+
 	protected class preKit {
 		public Inventory inv;
 		public int cost;
@@ -84,7 +85,7 @@ public class KitSystem implements Listener {
 		}
 		return false;
 	}
-	
+
 	public boolean removeKit(String nameKit) {
 		for (Kit kit : kitsList) {
 			if (kit.getUnName().equalsIgnoreCase(nameKit)) {
@@ -136,64 +137,67 @@ public class KitSystem implements Listener {
 	public void onInKitsMenu(InventoryClickEvent e) {
 		if (e.getWhoClicked() instanceof Player && e.getClickedInventory() != null) {
 			if (e.getView().getTopInventory().getName().equals("§6Kit | §eChoix des kits")) {
-				e.setCancelled(true);
-				Kit kit = getKit(e.getCurrentItem().getType());
-				if (e.getCurrentItem() != null && kit != null) {
-					XPlayer xP = XelephiaPlugin.getXPlayer(e.getWhoClicked().getUniqueId());
+				if(e.getRawSlot() <= 26 || e.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
+					e.setCancelled(true);
+					Kit kit = getKit(e.getCurrentItem().getType());
+					if (e.getCurrentItem() != null && kit != null) {
+						XPlayer xP = XelephiaPlugin.getXPlayer(e.getWhoClicked().getUniqueId());
 
-					// Middle Click => View Kit
-					if (e.getClick().equals(ClickType.MIDDLE)) {
-						Inventory kitV = Bukkit.createInventory(null, 27, "§9Visualisation du kit");
-						kitV.setContents(kit.getContents());
-						e.getWhoClicked().openInventory(kitV);
-					}
-					// Other Click => Select or Buy
-					else if (e.getClick().equals(ClickType.DOUBLE_CLICK)) {
-						// Buy
-						if (e.getCurrentItem().getEnchantments().isEmpty()) {
-							if (xP.getCoins() >= kit.getCost()) {
-								xP.getBukkitPlayer().playSound(xP.getBukkitPlayer().getLocation(), Sound.ORB_PICKUP,
-										4.0F, xP.getBukkitPlayer().getLocation().getPitch());
-								xP.getUnlockKit().add(kit.getUnName());
-								xP.takeCoins(kit.getCost());
+						// Middle Click => View Kit
+						if (e.getClick().equals(ClickType.MIDDLE)) {
+							Inventory kitV = Bukkit.createInventory(null, 27, "§9Visualisation du kit");
+							kitV.setContents(kit.getContents());
+							e.getWhoClicked().openInventory(kitV);
+						}
+						// Other Click => Select or Buy
+						else if (e.getClick().equals(ClickType.DOUBLE_CLICK)) {
+							// Buy
+							if (e.getCurrentItem().getEnchantments().isEmpty()) {
+								if (xP.getCoins() >= kit.getCost()) {
+									xP.getBukkitPlayer().playSound(xP.getBukkitPlayer().getLocation(), Sound.ORB_PICKUP,
+											4.0F, xP.getBukkitPlayer().getLocation().getPitch());
+									xP.getUnlockKit().add(kit.getUnName());
+									xP.takeCoins(kit.getCost());
+									xP.getBukkitPlayer().closeInventory();
+									xP.getBukkitPlayer().sendMessage("§cKit §7| §aAchat du kit " + kit.getName()
+									+ "§a pour §6" + kit.getCost() + " §acoins.");
+									return;
+								} else {
+									xP.getBukkitPlayer().playSound(xP.getBukkitPlayer().getLocation(),
+											Sound.ENDERDRAGON_HIT, 4.0F, xP.getBukkitPlayer().getLocation().getPitch());
+									xP.getBukkitPlayer().closeInventory();
+									xP.getBukkitPlayer().sendMessage("§cKit §7| §cFond insuffisant vous n'avez que §6"
+											+ xP.getCoins() + " §ccoins.");
+									return;
+								}
+							}
+							// Equip
+							else if(!xP.kitEquiped()){
+								if(xP.getBukkitPlayer().getInventory().first(selectorItem) != -1)xP.getBukkitPlayer().getInventory().clear(xP.getBukkitPlayer().getInventory().first(selectorItem));
+								kit.give(xP.getBukkitPlayer());
 								xP.getBukkitPlayer().closeInventory();
-								xP.getBukkitPlayer().sendMessage("§cKit §7| §aAchat du kit " + kit.getName()
-										+ "§a pour §6" + kit.getCost() + " §acoins.");
+								xP.getBukkitPlayer().playSound(xP.getBukkitPlayer().getLocation(), Sound.ORB_PICKUP, 3.0F,
+										xP.getBukkitPlayer().getLocation().getPitch());
+								xP.setKitEquiped(true);
 								return;
-							} else {
+							}
+							// Already Equiped
+							else {
+								xP.getBukkitPlayer().closeInventory();
 								xP.getBukkitPlayer().playSound(xP.getBukkitPlayer().getLocation(),
 										Sound.ENDERDRAGON_HIT, 4.0F, xP.getBukkitPlayer().getLocation().getPitch());
-								xP.getBukkitPlayer().closeInventory();
-								xP.getBukkitPlayer().sendMessage("§cKit §7| §cFond insuffisant vous n'avez que §6"
-										+ xP.getCoins() + " §ccoins.");
+								xP.getBukkitPlayer().sendMessage("§cKit §7| §cVous avez déjà choisit votre kit.");
 								return;
 							}
 						}
-						// Equip
-						else if(!xP.kitEquiped()){
-							if(xP.getBukkitPlayer().getInventory().first(selectorItem) != -1)xP.getBukkitPlayer().getInventory().clear(xP.getBukkitPlayer().getInventory().first(selectorItem));
-							kit.give(xP.getBukkitPlayer());
-							xP.getBukkitPlayer().closeInventory();
-							xP.getBukkitPlayer().playSound(xP.getBukkitPlayer().getLocation(), Sound.ORB_PICKUP, 3.0F,
-									xP.getBukkitPlayer().getLocation().getPitch());
-							xP.setKitEquiped(true);
-							return;
-						}
-						// Already Equiped
-						else {
-							xP.getBukkitPlayer().closeInventory();
-							xP.getBukkitPlayer().playSound(xP.getBukkitPlayer().getLocation(),
-									Sound.ENDERDRAGON_HIT, 4.0F, xP.getBukkitPlayer().getLocation().getPitch());
-							xP.getBukkitPlayer().sendMessage("§cKit §7| §cVous avez déjà choisit votre kit.");
-							return;
-						}
 					}
-				} else return;
+				}
 			} else if (e.getView().getTopInventory().getName().equals("§9Visualisation du kit")) {
-				e.setCancelled(true);
-				return;
+				if(e.getRawSlot() <= 26 || e.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
+					e.setCancelled(true);
+				}
 			}
-		} else return;
+		}
 	}
 
 	@SuppressWarnings("deprecation")
@@ -240,7 +244,7 @@ public class KitSystem implements Listener {
 		}
 		return null;
 	}
-	
+
 	private Kit getKit(String name) {
 		for (Kit kit : kitsList) {
 			if (kit.getUnName().equalsIgnoreCase(name))

@@ -139,60 +139,65 @@ public class LootZoneManager implements Listener {
 			if(e.getInventory() != null && lootZoneEdit.isEmpty() ? false : lootZoneEdit.containsKey(p.getName())) {
 				LootZoneEdit zoneEdit = lootZoneEdit.get(p.getName());
 				if(zoneEdit.inv.equals(e.getView().getTopInventory())) {
-					if(!(e.getRawSlot() < 9 || e.getRawSlot() > 17)) {
-						// Delete Loot, Edit % or Edit max
-						if(e.getCurrentItem() != null && !e.getCurrentItem().getType().equals(Material.AIR) 
-								&& e.getRawSlot() <= 26) {
-							e.setCancelled(true);
-							int lootNb = e.getSlot() - 9 + zoneEdit.scroll;
-							Loot eLoot = zoneEdit.zone.getLoots().get(lootNb);
-							// Delete
-							if(e.isShiftClick()) {
-								zoneEdit.zone.getLoots().remove(eLoot);
+					if(e.getRawSlot() <= 26) {
+						if(!(e.getRawSlot() < 9 || e.getRawSlot() > 17)) {
+							// Delete Loot, Edit % or Edit max
+							if(e.getCurrentItem() != null && !e.getCurrentItem().getType().equals(Material.AIR)) {
+								e.setCancelled(true);
+								int lootNb = e.getSlot() - 9 + zoneEdit.scroll;
+								Loot eLoot = zoneEdit.zone.getLoots().get(lootNb);
+								// Delete
+								if(e.isShiftClick()) {
+									zoneEdit.zone.getLoots().remove(eLoot);
+									zoneEdit.zone.save();
+									openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
+									//p.updateInventory();
+								}
+								// Edit QTE Max
+								else if(e.getClick().equals(ClickType.DOUBLE_CLICK)){
+
+								}
+								else if(e.getClick().equals(ClickType.MIDDLE)) {
+
+								}
+							}
+							// Add Item
+							else if(e.getAction().equals(InventoryAction.PLACE_ALL) || 
+									e.getAction().equals(InventoryAction.PLACE_ONE)) {
+								ItemStack newItem = p.getItemOnCursor().clone();
+								p.getItemOnCursor().setAmount(0);
+								//p.updateInventory();
+								zoneEdit.zone.addLoot(new Loot(newItem, 1, newItem.getAmount()));
 								zoneEdit.zone.save();
 								openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
 								//p.updateInventory();
+								Bukkit.broadcastMessage("Action add item :" + e.getAction());
 							}
-							// Edit QTE Max
-							else if(e.getClick().equals(ClickType.DOUBLE_CLICK)){
-
-							}
-							else if(e.getClick().equals(ClickType.MIDDLE)) {
-
-							}
-						}
-						// Add Item
-						else if(e.getAction().equals(InventoryAction.PLACE_ALL) || 
-								e.getAction().equals(InventoryAction.PLACE_ONE) ||
-								e.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
-							ItemStack newItem = p.getItemOnCursor().clone();
-							p.setItemOnCursor(null);
-							//p.updateInventory();
-							zoneEdit.zone.addLoot(new Loot(newItem, 1, newItem.getAmount()));
-							zoneEdit.zone.save();
-							openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
-							//p.updateInventory();
-							Bukkit.broadcastMessage("Action add item :" + e.getAction());
-						}else if(e.getRawSlot() <= 26){
+						}else{
 							e.setCancelled(true);
+							// Scroll
+							if(e.getSlot() == 24 && zoneEdit.scroll < zoneEdit.getScrollMax()) {
+								openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll+1, zoneEdit.inv);
+								zoneEdit.scroll+=1;
+								//p.updateInventory();
+							}else if(e.getSlot() == 20 && zoneEdit.scroll > 0) {
+								openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll-1, zoneEdit.inv);
+								zoneEdit.scroll-=1;
+								//p.updateInventory();
+							}else if(e.getSlot() == 26) {
+								p.closeInventory();
+								zoneEdit.zone.save();
+								lootZoneEdit.remove(p.getName());
+							}
 						}
-					}else if(e.getRawSlot() <= 26){
-						e.setCancelled(true);
-						// Scroll
-						if(e.getSlot() == 24 && zoneEdit.scroll < zoneEdit.getScrollMax()) {
-							openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll+1, zoneEdit.inv);
-							zoneEdit.scroll+=1;
-							//p.updateInventory();
-						}else if(e.getSlot() == 20 && zoneEdit.scroll > 0) {
-							openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll-1, zoneEdit.inv);
-							zoneEdit.scroll-=1;
-							//p.updateInventory();
-						}else if(e.getSlot() == 26) {
-							p.updateInventory();
-							//p.closeInventory();
-							//zoneEdit.zone.save();
-							//lootZoneEdit.remove(p.getName());
-						}
+					}else if(e.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)){
+						ItemStack newItem = e.getCurrentItem().clone();
+						//p.updateInventory();
+						zoneEdit.zone.addLoot(new Loot(newItem, 1, newItem.getAmount()));
+						zoneEdit.zone.save();
+						openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
+						//p.updateInventory();
+						Bukkit.broadcastMessage("Action add item :" + e.getAction());
 					}
 				}
 			}
