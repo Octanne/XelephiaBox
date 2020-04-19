@@ -1,6 +1,7 @@
 package eu.octanne.xelephia.lootzone;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,18 +26,23 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import eu.octanne.xelephia.XelephiaPlugin;
+import eu.octanne.xelephia.util.AnvilGUI;
+import eu.octanne.xelephia.util.AnvilGUI.AnvilSlot;
 import eu.octanne.xelephia.util.Utils;
+import net.md_5.bungee.api.ChatColor;
 
 public class LootZoneManager implements Listener {
 
 	protected ArrayList<LootZone> lootZones = new ArrayList<LootZone>();
 
 	private HashMap<String,LootZoneEdit> lootZoneEdit = new HashMap<>();
-
+	private ArrayList<String> lootZoneInEdit = new ArrayList<>();
+	
 	private class LootZoneEdit{
 		public LootZone zone;
 		public Inventory inv;
 		public int scroll;
+		public boolean willClose = false;
 
 		public LootZoneEdit(LootZone zone, Inventory inv) {
 			this.zone = zone;
@@ -107,10 +113,20 @@ public class LootZoneManager implements Listener {
 	}
 
 	public void editLootZone(Player p, String name) {
-		LootZone zone = getZone(name);
-		Inventory inv = openOrUpdateEditMenu(zone, 0, null);
-		lootZoneEdit.put(p.getName(), new LootZoneEdit(zone, inv));
-		p.openInventory(inv);
+		if(lootZoneInEdit.contains(name)) {
+			if(lootZoneEdit.containsKey(p.getName())) p.openInventory(lootZoneEdit.get(p.getName()).inv);
+			else p.sendMessage("§eLoot §8| §cErreur: La zone "+name+" est déjà en édition.");
+		}else {
+			LootZone zone = getZone(name);
+			Inventory inv = createOrUpdateEditMenu(zone, 0, null);
+			lootZoneInEdit.add(name);
+			lootZoneEdit.put(p.getName(), new LootZoneEdit(zone, inv));
+			p.openInventory(inv);
+		}
+	}
+	
+	public void reOpenEditor(Player p) {
+		if(lootZoneEdit.containsKey(p.getName())) p.openInventory(lootZoneEdit.get(p.getName()).inv);
 	}
 
 	public boolean removeZone(String zoneName) {
@@ -142,7 +158,6 @@ public class LootZoneManager implements Listener {
 						if(!(e.getRawSlot() < 9 || e.getRawSlot() > 17)) {
 							// Delete Loot, Edit % or Edit max
 							if(e.getCurrentItem() != null && !e.getCurrentItem().getType().equals(Material.AIR)) {
-								Bukkit.broadcastMessage("Delete and Edit");
 								e.setCancelled(true);
 								int lootNb = e.getSlot() - 9 + zoneEdit.scroll;
 								Loot eLoot = zoneEdit.zone.getLoots().get(lootNb);
@@ -155,32 +170,111 @@ public class LootZoneManager implements Listener {
 										zoneEdit.scroll = zoneEdit.getScrollMax();
 									
 									//zoneEdit.scroll-=1;
-									openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
+									createOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
 									//p.updateInventory();
 								}
 								// Edit QTE Max
 								else if(e.getClick().equals(ClickType.DOUBLE_CLICK)){
-
+									AnvilGUI menu = new AnvilGUI(p, new AnvilGUI.AnvilClickEventHandler() {
+										
+										Loot loot = eLoot;
+										
+										@Override
+										public void onAnvilClick(AnvilGUI.AnvilClickEvent event) {
+											event.setWillClose(false);
+											event.setWillDestroy(false);
+											if(event.getSlot() == AnvilGUI.AnvilSlot.OUTPUT) {
+													int quantity;
+												try {
+													quantity = Integer.parseInt(event.getName());
+												}catch(NumberFormatException exp) {
+													event.getPlayer().sendMessage("§eLoot §8| §cErreur: La valeur §9" + event.getName() + " §cest invalide.");
+													event.setWillDestroy(true);
+													reOpenEditor(event.getPlayer());
+													return;
+												}
+												loot.max = quantity <= 64 ? quantity : 64;
+												loot.max = quantity < loot.item.getAmount() ? loot.item.getAmount() : quantity;
+												event.setWillDestroy(true);
+												p.sendMessage("§eLoot §8| §aLa quantité max est défini à §9" + quantity + "§a.");
+												reOpenEditor(event.getPlayer());
+											}
+										}
+									});
+									ArrayList<String> lore = new ArrayList<String>();
+									lore.add("§aModifier quantité max :");
+									lore.add("§7Entrer la valeur voulue,");
+									lore.add("§e> §7Renommer l'item pour valider.");
+									ItemStack anvilItem = Utils.createItemStack("Entrée valeur...", Material.PAPER, 1, lore, 0, true);
+									menu.setSlot(AnvilSlot.INPUT_LEFT, anvilItem);
+									try {
+										menu.open();
+									} catch (IllegalAccessException exc) {
+										exc.printStackTrace();
+									} catch (InvocationTargetException exc) {
+										exc.printStackTrace();
+									} catch (InstantiationException exc) {
+										exc.printStackTrace();
+									}
 								}
 								else if(e.getClick().equals(ClickType.MIDDLE)) {
-
+						AnvilGUI menu = new AnvilGUI(p, new AnvilGUI.AnvilClickEventHandler() {
+										
+										Loot loot = eLoot;
+										
+										@Override
+										public void onAnvilClick(AnvilGUI.AnvilClickEvent event) {
+											event.setWillClose(false);
+											event.setWillDestroy(false);
+											if(event.getSlot() == AnvilGUI.AnvilSlot.OUTPUT) {
+													double prct;
+												try {
+													prct = Double.parseDouble(event.getName());
+												}catch(NumberFormatException exp) {
+													event.getPlayer().sendMessage("§eLoot §8| §cErreur: La valeur §9" + event.getName() + " §cest invalide.");
+													event.setWillDestroy(true);
+													reOpenEditor(event.getPlayer());
+													return;
+												}
+												loot.luckPrct = prct <= 100 ? prct : 100;
+												loot.luckPrct = prct < 0 ? 0 : prct;
+												event.setWillDestroy(true);
+												p.sendMessage("§eLoot §8| §aLa quantité max est défini à §9" + prct + "§a.");
+												reOpenEditor(event.getPlayer());
+											}
+										}
+									});
+									ArrayList<String> lore = new ArrayList<String>();
+									lore.add("§aModifier pourcentage :");
+									lore.add("§7Entrer la valeur voulue,");
+									lore.add("§e> §7Renommer l'item pour valider.");
+									ItemStack anvilItem = Utils.createItemStack("Entrée valeur...", Material.PAPER, 1, lore, 0, true);
+									menu.setSlot(AnvilSlot.INPUT_LEFT, anvilItem);
+									try {
+										menu.open();
+									} catch (IllegalAccessException exc) {
+										exc.printStackTrace();
+									} catch (InvocationTargetException exc) {
+										exc.printStackTrace();
+									} catch (InstantiationException exc) {
+										exc.printStackTrace();
+									}
 								}
 							}else e.setCancelled(true);
 						}else{
 							e.setCancelled(true);
 							// Scroll
 							if(e.getSlot() == 24 && zoneEdit.scroll < zoneEdit.getScrollMax()) {
-								openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll+1, zoneEdit.inv);
+								createOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll+1, zoneEdit.inv);
 								zoneEdit.scroll+=1;
 								//p.updateInventory();
 							}else if(e.getSlot() == 20 && zoneEdit.scroll > 0) {
-								openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll-1, zoneEdit.inv);
+								createOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll-1, zoneEdit.inv);
 								zoneEdit.scroll-=1;
 								//p.updateInventory();
 							}else if(e.getSlot() == 26) {
+								zoneEdit.willClose = true;
 								p.closeInventory();
-								zoneEdit.zone.save();
-								lootZoneEdit.remove(p.getName());
 							}
 						}
 					}else if(e.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY) && e.getView().getItem(17) != null){
@@ -189,7 +283,7 @@ public class LootZoneManager implements Listener {
 						//p.updateInventory();
 						zoneEdit.zone.addLoot(new Loot(newItem, 1, newItem.getAmount()));
 						zoneEdit.zone.save();
-						openOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
+						createOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
 						//p.updateInventory();
 					}
 				}
@@ -204,12 +298,16 @@ public class LootZoneManager implements Listener {
 			if(e.getInventory() != null && lootZoneEdit.isEmpty() ? false : lootZoneEdit.containsKey(p.getName())) {
 				LootZoneEdit zoneEdit = lootZoneEdit.get(p.getName());
 				zoneEdit.zone.save();
-				lootZoneEdit.remove(p.getName());
+				if(zoneEdit.willClose) {
+					lootZoneEdit.remove(p.getName());
+				}else {
+					p.openInventory(zoneEdit.inv);
+				}
 			}
 		}
 	}
 
-	private Inventory openOrUpdateEditMenu(LootZone zone, int scroll, @Nullable Inventory INV) {
+	private Inventory createOrUpdateEditMenu(LootZone zone, int scroll, @Nullable Inventory INV) {
 
 		Inventory inv;
 		boolean isSet;
