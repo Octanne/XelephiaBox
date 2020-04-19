@@ -109,22 +109,28 @@ public class LootZoneManager implements Listener {
 	}
 
 	public boolean createZone(String name, int timeZone, Location loc) {
-		LootZone zone = new LootZone(name, loc, timeZone);
-		lootZones.add(zone);
-		return true;
+		if(hasZone(name)) {
+			LootZone zone = new LootZone(name, loc, timeZone);
+			lootZones.add(zone);
+			return true;
+		}else return false;
 	}
 
-	public void editLootZone(Player p, String name) {
-		if(lootZoneInEdit.contains(name)) {
-			if(lootZoneEdit.containsKey(p.getName())) p.openInventory(lootZoneEdit.get(p.getName()).inv);
-			else p.sendMessage("§eLoot §8| §cErreur: La zone "+name+" est déjà en édition.");
-		}else {
-			LootZone zone = getZone(name);
-			Inventory inv = createOrUpdateEditMenu(zone, 0, null);
-			lootZoneInEdit.add(name);
-			lootZoneEdit.put(p.getName(), new LootZoneEdit(zone, inv));
-			p.openInventory(inv);
-		}
+	public boolean editLootZone(Player p, String name) {
+		if(hasZone(name)) {
+			if(lootZoneInEdit.contains(name)) {
+				if(lootZoneEdit.containsKey(p.getName())) p.openInventory(lootZoneEdit.get(p.getName()).inv);
+				else p.sendMessage("§eLoot §8| §cErreur: La zone "+name+" est déjà en édition.");
+				return true;
+			}else {
+				LootZone zone = getZone(name);
+				Inventory inv = createOrUpdateEditMenu(zone, 0, null);
+				lootZoneInEdit.add(name);
+				lootZoneEdit.put(p.getName(), new LootZoneEdit(zone, inv));
+				p.openInventory(inv);
+				return true;
+			}
+		}else return false;
 	}
 
 	public void reOpenEditor(Player p) {
@@ -136,15 +142,12 @@ public class LootZoneManager implements Listener {
 	}
 
 	public boolean removeZone(String zoneName) {
-		for (LootZone zone : lootZones) {
-			if (zone.getName().equalsIgnoreCase(zoneName)) {
-				zone.remove();
-				lootZones.remove(zone);
-				return true;
-			} else
-				continue;
-		}
-		return false;
+		if(hasZone(zoneName)) {
+			LootZone zone = getZone(zoneName);
+			zone.remove();
+			lootZones.remove(zone);
+			return true;
+		}else return false;
 	}
 
 	// Event Move

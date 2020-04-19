@@ -132,7 +132,9 @@ public class XelephiaPlugin extends JavaPlugin {
 		return xplayersOnline;
 	}
 
-	// Config File
+	/*
+	 * Config File
+	 */
 	static public ConfigYaml getMessageConfig() {
 		return messageConfig;
 	}
@@ -141,7 +143,9 @@ public class XelephiaPlugin extends JavaPlugin {
 		return teleportationPointConfig;
 	}
 
-	// get XPlayer
+	/*
+	 * GET XPlayer
+	 */
 	static public XPlayer getXPlayer(UUID pUUID) {
 		for (XPlayer xp : getXPlayersOnline()) {
 			if (xp.getUUID().equals(pUUID))
@@ -185,7 +189,9 @@ public class XelephiaPlugin extends JavaPlugin {
 				");");
 	}
 
-	// Manager
+	/*
+	 * Manager
+	 */
 	static public WarpManager getWarpManager() {
 		return warpManager;
 	}
