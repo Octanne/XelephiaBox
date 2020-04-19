@@ -184,7 +184,7 @@ public class LootZoneManager implements Listener {
 									AnvilGUI menu = new AnvilGUI(p, new AnvilGUI.AnvilEventHandler() {
 
 										Loot loot = eLoot;
-										
+
 										@Override
 										public void onAnvilClick(AnvilGUI.AnvilClickEvent event) {
 											event.setWillClose(true);
@@ -205,8 +205,12 @@ public class LootZoneManager implements Listener {
 
 										@Override
 										public void onAnvilClose(AnvilCloseEvent event) {
-											p.closeInventory();
-											reOpenEditor(p);
+											Bukkit.getScheduler().scheduleSyncDelayedTask(XelephiaPlugin.getInstance(), new Runnable() {
+												@Override
+												public void run() {
+													reOpenEditor(p);
+												}
+											}, 8);
 											zoneEdit.inAnvil = false;
 										}
 									});
@@ -227,7 +231,7 @@ public class LootZoneManager implements Listener {
 									AnvilGUI menu = new AnvilGUI(p, new AnvilGUI.AnvilEventHandler() {
 
 										Loot loot = eLoot;
-										
+
 										@Override
 										public void onAnvilClick(AnvilGUI.AnvilClickEvent event) {
 											event.setWillClose(true);
@@ -248,8 +252,12 @@ public class LootZoneManager implements Listener {
 
 										@Override
 										public void onAnvilClose(AnvilCloseEvent event) {
-											p.closeInventory();
-											reOpenEditor(p);
+											Bukkit.getScheduler().scheduleSyncDelayedTask(XelephiaPlugin.getInstance(), new Runnable() {
+												@Override
+												public void run() {
+													reOpenEditor(p);
+												}
+											}, 8);
 											zoneEdit.inAnvil = false;
 										}
 									});
@@ -307,7 +315,7 @@ public class LootZoneManager implements Listener {
 			lootZoneEdit.remove(p.getName());
 		}
 	}
-	
+
 	@EventHandler
 	public void onCloseMenu(InventoryCloseEvent e) {
 		if(e.getPlayer() instanceof Player) {
