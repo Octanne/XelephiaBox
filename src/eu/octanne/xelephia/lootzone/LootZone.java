@@ -140,7 +140,8 @@ public class LootZone {
 
 					@Override
 					public void run() {
-						if(sec <= controlTime) {
+						if(sec < controlTime) {
+							xP.sendMessage(MessageType.ACTIONBAR, "§6Capture en cours §e| §bTemps restant :§e "+(controlTime-sec)+" §bsec(s) !");
 							sec++;
 						}else {
 							captureZone(p);
