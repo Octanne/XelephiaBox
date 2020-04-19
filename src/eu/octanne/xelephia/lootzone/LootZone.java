@@ -101,11 +101,16 @@ public class LootZone {
 	protected void remove() {
 		config.getFile().delete();
 		unregister();
+		
 	}
 
 	private void unregister() {
 		PlayerQuitEvent.getHandlerList().unregister(listener);
 		PlayerMoveEvent.getHandlerList().unregister(listener);
+		for(BukkitTask task : playerInZone.values()) {
+			task.cancel();
+		}
+		playerInZone.clear();
 	}
 
 	protected void captureZone(Player p) {
