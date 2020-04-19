@@ -130,11 +130,11 @@ public class XPlayerListener implements Listener {
 				Class[] wrapPara = {Player.class};
 				Object wrapPlayer = classWorldGuardPlugin.getMethod("wrapPlayer", wrapPara).invoke(worldGuardPlugin, p);
 				
-				Object pvpFlag = classDefaultFlag.getMethod("PVP").invoke(null);
+				Object pvpFlag = classDefaultFlag.getField("PVP");
 				
 				Class[] queryPara = {Location.class, classLocalPlayer, classDefaultFlag};
 				return ((boolean)classRegionQuery.getMethod("testState", queryPara).invoke(query, p.getLocation(), wrapPlayer, pvpFlag));
-			} catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e1) {
+			} catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | NoSuchFieldException e1) {
 				Bukkit.getLogger().info(" Error in WorldGuard Support System");
 				e1.printStackTrace();
 				return true;
