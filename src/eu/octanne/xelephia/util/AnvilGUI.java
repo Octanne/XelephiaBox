@@ -24,7 +24,7 @@ import java.util.HashMap;
 public class AnvilGUI {
     private Player player;
     @SuppressWarnings("unused")
-	private AnvilClickEventHandler handler;
+	private AnvilEventHandler handler;
     private static Class<?> BlockPosition;
     private static Class<?> PacketPlayOutOpenWindow;
     private static Class<?> ContainerAnvil;
@@ -42,7 +42,7 @@ public class AnvilGUI {
         ChatMessage = NMSManager.get().getNMSClass("ChatMessage");
     }
 
-    public AnvilGUI(final Player player, final AnvilClickEventHandler handler) {
+    public AnvilGUI(final Player player, final AnvilEventHandler handler) {
         loadClasses();
         this.player = player;
         this.handler = handler;
@@ -51,35 +51,35 @@ public class AnvilGUI {
             @EventHandler
             public void onInventoryClick(InventoryClickEvent event) {
                 if (event.getWhoClicked() instanceof Player) {
-
-                    if (event.getInventory().equals(inv) && event.getSlotType().equals(SlotType.RESULT)) {
+                    if (event.getInventory().equals(inv)) {
                         event.setCancelled(true);
+                        if(event.getSlotType().equals(SlotType.RESULT)) {
+                        	ItemStack item = event.getCurrentItem();
+                            int slot = event.getRawSlot();
+                            String name = "no_value";
 
-                        ItemStack item = event.getCurrentItem();
-                        int slot = event.getRawSlot();
-                        String name = "";
+                            if (item != null) {
+                                if (item.hasItemMeta()) {
+                                    ItemMeta meta = item.getItemMeta();
 
-                        if (item != null) {
-                            if (item.hasItemMeta()) {
-                                ItemMeta meta = item.getItemMeta();
+                                    if (meta.hasDisplayName()) {
+                                        name = meta.getDisplayName();
+                                    }
+                                }
 
-                                if (meta.hasDisplayName()) {
-                                    name = meta.getDisplayName();
+                                AnvilClickEvent clickEvent = new AnvilClickEvent(AnvilSlot.bySlot(slot), name, (Player)event.getWhoClicked());
+
+                                handler.onAnvilClick(clickEvent);
+
+                                if (clickEvent.getWillClose()) {
+                                    event.getWhoClicked().closeInventory();
+                                }
+
+                                if (clickEvent.getWillDestroy()) {
+                                    destroy();
                                 }
                             }
-                        }
-
-                        AnvilClickEvent clickEvent = new AnvilClickEvent(AnvilSlot.bySlot(slot), name, (Player)event.getWhoClicked());
-
-                        handler.onAnvilClick(clickEvent);
-
-                        if (clickEvent.getWillClose()) {
-                            event.getWhoClicked().closeInventory();
-                        }
-
-                        if (clickEvent.getWillDestroy()) {
-                            destroy();
-                        }
+                        }        
                     }
                 }
             }
@@ -92,6 +92,8 @@ public class AnvilGUI {
                     if (inv.equals(AnvilGUI.this.inv)) {
                         inv.clear();
                         destroy();
+                        AnvilCloseEvent closeEvent = new AnvilCloseEvent((Player)event.getPlayer());
+                        handler.onAnvilClose(closeEvent);
                     }
                 }
             }
@@ -197,10 +199,24 @@ public class AnvilGUI {
         }
     }
 
-    public interface AnvilClickEventHandler {
+    public interface AnvilEventHandler {
+        void onAnvilClose(AnvilCloseEvent event);
         void onAnvilClick(AnvilClickEvent event);
     }
 
+    public class AnvilCloseEvent {
+    	
+    	private Player player;
+    	
+        public AnvilCloseEvent(Player player) {
+            this.player = player;
+        }
+        
+        public Player getPlayer() {
+        	return player;
+        }
+    }
+    
     public class AnvilClickEvent {
         private AnvilSlot slot;
 

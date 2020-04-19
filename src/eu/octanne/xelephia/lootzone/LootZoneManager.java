@@ -20,7 +20,6 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
@@ -29,6 +28,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import eu.octanne.xelephia.XelephiaPlugin;
 import eu.octanne.xelephia.util.AnvilGUI;
+import eu.octanne.xelephia.util.AnvilGUI.AnvilCloseEvent;
 import eu.octanne.xelephia.util.AnvilGUI.AnvilSlot;
 import eu.octanne.xelephia.util.Utils;
 
@@ -130,7 +130,6 @@ public class LootZoneManager implements Listener {
 	public void reOpenEditor(Player p) {
 		if(lootZoneEdit.containsKey(p.getName())) {
 			LootZoneEdit zoneEdit = lootZoneEdit.get(p.getName());
-			zoneEdit.inAnvil = false;
 			createOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
 			p.openInventory(zoneEdit.inv);
 		}
@@ -182,30 +181,32 @@ public class LootZoneManager implements Listener {
 								}
 								// Edit QTE Max
 								else if(e.getClick().equals(ClickType.DOUBLE_CLICK)){
-									AnvilGUI menu = new AnvilGUI(p, new AnvilGUI.AnvilClickEventHandler() {
+									AnvilGUI menu = new AnvilGUI(p, new AnvilGUI.AnvilEventHandler() {
 
 										Loot loot = eLoot;
 										
 										@Override
 										public void onAnvilClick(AnvilGUI.AnvilClickEvent event) {
-											event.setWillClose(false);
-											event.setWillDestroy(false);
+											event.setWillClose(true);
+											event.setWillDestroy(true);
 											if(event.getSlot() == AnvilGUI.AnvilSlot.OUTPUT) {
 												int quantity;
 												try {
 													quantity = Integer.parseInt(event.getName());
 												}catch(NumberFormatException exp) {
 													event.getPlayer().sendMessage("§eLoot §8| §cErreur : La valeur §9" + event.getName() + " §cest invalide.");
-													event.setWillDestroy(true);
-													reOpenEditor(event.getPlayer());
 													return;
 												}
 												loot.max = quantity <= 64 ? quantity : 64;
 												loot.max = quantity < loot.item.getAmount() ? loot.item.getAmount() : quantity;
-												event.setWillDestroy(true);
 												p.sendMessage("§eLoot §8| §aLa quantité max est défini à §9" + loot.max + "§.");
-												reOpenEditor(event.getPlayer());
 											}
+										}
+
+										@Override
+										public void onAnvilClose(AnvilCloseEvent event) {
+											reOpenEditor(event.getPlayer());
+											zoneEdit.inAnvil = false;
 										}
 									});
 									ArrayList<String> lore = new ArrayList<String>();
@@ -222,30 +223,32 @@ public class LootZoneManager implements Listener {
 									}
 								}
 								else if(e.getClick().equals(ClickType.MIDDLE)) {
-									AnvilGUI menu = new AnvilGUI(p, new AnvilGUI.AnvilClickEventHandler() {
+									AnvilGUI menu = new AnvilGUI(p, new AnvilGUI.AnvilEventHandler() {
 
 										Loot loot = eLoot;
 										
 										@Override
 										public void onAnvilClick(AnvilGUI.AnvilClickEvent event) {
-											event.setWillClose(false);
-											event.setWillDestroy(false);
+											event.setWillClose(true);
+											event.setWillDestroy(true);
 											if(event.getSlot() == AnvilGUI.AnvilSlot.OUTPUT) {
 												double prct;
 												try {
 													prct = Double.parseDouble(event.getName());
 												}catch(NumberFormatException exp) {
 													event.getPlayer().sendMessage("§eLoot §8| §cErreur : La valeur §9" + event.getName() + " §cest invalide.");
-													event.setWillDestroy(true);
-													reOpenEditor(event.getPlayer());
 													return;
 												}
 												loot.luckPrct = prct <= 100 ? prct : 100;
 												loot.luckPrct = prct < 0 ? 0 : prct;
-												event.setWillDestroy(true);
 												p.sendMessage("§eLoot §8| §aLe pourcentage est défini sur §9" + loot.luckPrct + "§a.");
-												reOpenEditor(event.getPlayer());
 											}
+										}
+
+										@Override
+										public void onAnvilClose(AnvilCloseEvent event) {
+											reOpenEditor(event.getPlayer());
+											zoneEdit.inAnvil = false;
 										}
 									});
 									ArrayList<String> lore = new ArrayList<String>();
@@ -314,14 +317,6 @@ public class LootZoneManager implements Listener {
 					lootZoneInEdit.remove(zoneEdit.zone.getName());
 					lootZoneEdit.remove(p.getName());
 				}else if(!zoneEdit.inAnvil){
-					Bukkit.getScheduler().scheduleSyncDelayedTask(XelephiaPlugin.getInstance(), new Runnable() {
-						@Override
-						public void run() {
-							reOpenEditor(p);
-						}
-					}, 8);
-				}else if(e.getInventory().getType().equals(InventoryType.ANVIL)){
-					zoneEdit.inAnvil = false;
 					Bukkit.getScheduler().scheduleSyncDelayedTask(XelephiaPlugin.getInstance(), new Runnable() {
 						@Override
 						public void run() {
