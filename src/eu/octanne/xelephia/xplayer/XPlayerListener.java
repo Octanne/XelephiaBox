@@ -111,10 +111,10 @@ public class XPlayerListener implements Listener {
 	@SuppressWarnings("rawtypes")
 	private boolean isPvPActive(Entity e){
 		if(Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
-			Entity p = e;
-			if(((Projectile)p).getShooter() instanceof Player) {
+			Player p = null;
+			if(e instanceof Projectile && (((Projectile)e).getShooter()) instanceof Player) {
 				p = (Player)((Projectile)e).getShooter();
-			}else if(!(p instanceof Player)) return false;
+			}else if(!(e instanceof Player) || p == null) return false;
 			
 			try {
 				Class<?> classWorldGuardPlugin = Class.forName("com.sk89q.worldguard.bukkit.WorldGuardPlugin");
@@ -128,12 +128,12 @@ public class XPlayerListener implements Listener {
 				Object query = classRegionContainer.getMethod("createQuery").invoke(regionContainer);
 				
 				Class[] wrapPara = {Player.class};
-				Object wrapPlayer = classWorldGuardPlugin.getMethod("wrapPlayer", wrapPara).invoke(worldGuardPlugin, e);
+				Object wrapPlayer = classWorldGuardPlugin.getMethod("wrapPlayer", wrapPara).invoke(worldGuardPlugin, p);
 				
 				Object pvpFlag = classDefaultFlag.getMethod("PVP").invoke(null);
 				
 				Class[] queryPara = {Location.class, classLocalPlayer, classDefaultFlag};
-				return ((boolean)classRegionQuery.getMethod("testState", queryPara).invoke(query, e.getLocation(), wrapPlayer, pvpFlag));
+				return ((boolean)classRegionQuery.getMethod("testState", queryPara).invoke(query, p.getLocation(), wrapPlayer, pvpFlag));
 			} catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e1) {
 				Bukkit.getLogger().info(" Error in WorldGuard Support System");
 				e1.printStackTrace();
