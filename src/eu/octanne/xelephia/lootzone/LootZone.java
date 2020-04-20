@@ -110,6 +110,10 @@ public class LootZone {
 		return name;
 	}
 
+	public int getMinPlayers() {
+		return minPlayers;
+	}
+	
 	public List<Loot> getLoots(){
 		return loots;
 	}

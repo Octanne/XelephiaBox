@@ -460,6 +460,7 @@ public class LootZoneManager implements Listener {
 		// Info
 		ArrayList<String> infoLore = new ArrayList<>();
 		infoLore.add("§7Nombre de loot : §c"+zone.getLoots().size());
+		infoLore.add("§7Nombre de joueurs min. : §c"+zone.getMinPlayers());
 		infoLore.add("§7Temps de contrôle : §c"+zone.getControlTime()+" §7secs");
 		infoLore.add("§7Location : (§c"+zone.pos.getBlockX()+"§7, §c"+zone.pos.getBlockY()+"§7,"
 				+ " §c"+zone.pos.getBlockZ()+"§7)");
