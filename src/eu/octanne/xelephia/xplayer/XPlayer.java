@@ -161,6 +161,11 @@ public class XPlayer {
 		}
 	}
 
+	public boolean eraseIntoDB() {
+		// TODO
+		return false;
+	}
+	
 	public boolean saveIntoDB() {
 		try {
 			PreparedStatement qCreate = XelephiaPlugin.getPlayersDB().getConnection()

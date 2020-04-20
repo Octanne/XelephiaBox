@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -207,6 +208,50 @@ public class LootZone {
 
 		@EventHandler
 		public void onPlayerInZone(PlayerMoveEvent e) {
+			Player p = e.getPlayer();
+			XPlayer xP = (XelephiaPlugin.getXPlayer(p.getName()));
+			// Enter Zone
+			if(inZone(e.getTo()) && !inZone(e.getFrom())) {
+				xP.sendMessage(MessageType.SUBTITLE, "§eLoot §8| §bEntrée dans la zone §9" + name + "§b.");
+				TryCaptureResult result = canCapture(xP);
+				
+				// CAN CAPTURE
+				if(result.equals(TryCaptureResult.CAN_CAPTURE)) {
+					BukkitTask task = new BukkitRunnable() {
+
+						int sec = 0;
+
+						@Override
+						public void run() {
+							if(sec < controlTime) {
+								xP.sendMessage(MessageType.ACTIONBAR, "§6Capture en cours §e| §bTemps restant :§e "+(controlTime-sec)+" §bsec(s) !");
+								sec++;
+							}else {
+								captureZone(xP);
+								this.cancel();
+							}
+						}
+					}.runTaskTimer(XelephiaPlugin.getInstance(), 0, 20);
+					playerInCapture.put(p.getName(), task);
+				}else {
+					startBroadcastTask();
+					playerInBroadcast.put(p.getName(), result);
+				}
+			}
+			// Leave Zone
+			if(inZone(e.getFrom()) && !inZone(e.getTo())) {
+				xP.sendMessage(MessageType.SUBTITLE, "§eLoot §8| §cSorti de la zone §9" + name + "§c.");
+				if(playerInCapture.containsKey(p.getName())) {
+					Bukkit.getScheduler().cancelTask(playerInCapture.get(p.getName()).getTaskId());
+					playerInCapture.remove(p.getName());
+				}else if(playerInBroadcast.containsKey(p.getName())){
+					playerInBroadcast.remove(p.getName());
+				}
+			}
+		}
+		
+		@EventHandler
+		public void onPlayerTeleport(PlayerTeleportEvent e) {
 			Player p = e.getPlayer();
 			XPlayer xP = (XelephiaPlugin.getXPlayer(p.getName()));
 			// Enter Zone
