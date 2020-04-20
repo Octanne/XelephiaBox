@@ -1,13 +1,14 @@
 package eu.octanne.xelephia.xplayer;
 
 import java.math.RoundingMode;
-import java.sql.Date;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -67,7 +68,7 @@ public class XPlayer {
 	protected boolean kitEquiped;
 	
 	protected int hourLoot;
-	protected Date lastLootDate;
+	protected Calendar lastLootDate;
 
 	protected ArrayList<String> unlockKits;
 	
@@ -107,7 +108,9 @@ public class XPlayer {
 				this.highKillStreak = rs.getInt("highKillStreak");
 				this.hourLoot = rs.getInt("hourLoot");
 				this.hourLoot = rs.getInt("totalLoot");
-				this.lastLootDate = rs.getDate("lastLootDate");
+				this.lastLootDate = Utils.getGson().fromJson(rs.getString("lastLootDate"),
+						new TypeToken<Calendar>() {
+						}.getType());
 				this.unlockKits = Utils.getGson().fromJson(rs.getString("unlockKits"),
 						new TypeToken<ArrayList<String>>() {
 						}.getType());
@@ -140,7 +143,7 @@ public class XPlayer {
 				qCreate.setInt(5, this.deathCount);
 				qCreate.setInt(6, this.actualKillStreak);
 				qCreate.setInt(7, this.highKillStreak);
-				qCreate.setDate(8, this.lastLootDate);
+				qCreate.setString(8, Utils.getGson().toJson(this.lastLootDate));
 				qCreate.setInt(9, this.totalLoot);
 				qCreate.setInt(10, this.hourLoot);
 				qCreate.setString(11, Utils.getGson().toJson(unlockKits));
@@ -168,7 +171,7 @@ public class XPlayer {
 			qCreate.setInt(4, this.deathCount);
 			qCreate.setInt(5, this.actualKillStreak);
 			qCreate.setInt(6, this.highKillStreak);
-			qCreate.setDate(7, this.lastLootDate);
+			qCreate.setString(7, Utils.getGson().toJson(this.lastLootDate));
 			qCreate.setInt(8, this.totalLoot);
 			qCreate.setInt(9, this.hourLoot);
 			qCreate.setString(10, Utils.getGson().toJson(unlockKits));
@@ -195,7 +198,17 @@ public class XPlayer {
 		else
 			return false;
 	}
-
+	
+	/*
+	 * updateLoots & return true if update
+	 */
+	public boolean updateLoots() {
+		if(Calendar.getInstance().after(lastLootDate)) {
+			hourLoot = 0;
+			return true;
+		}else return false;
+	}
+	
 	/*
 	 * getPlayer
 	 */
@@ -344,7 +357,7 @@ public class XPlayer {
 	/*
 	 * getLastLootDate
 	 */
-	public Date getLastLootDate() {
+	public Calendar getLastLootDate() {
 		return lastLootDate;
 	}
 

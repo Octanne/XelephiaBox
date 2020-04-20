@@ -26,11 +26,22 @@ public class LootZone {
 	protected String name;
 
 	protected int controlTime;
-
+	protected int minPlayers;
+	
 	protected List<Loot> loots;
+	
+	BukkitTask broadcastTask;
+	
+	private enum TryCaptureResult {
+		CAN_CAPTURE(),
+		NEED_MORE_PLAYERS(),
+		NO_MORE_CAPTURE();
+	}
 
-	private HashMap<String,BukkitTask> playerInZone = new HashMap<String,BukkitTask>();
+	private HashMap<String,BukkitTask> playerInCapture = new HashMap<String,BukkitTask>();
 
+	private HashMap<String, TryCaptureResult> playerInBroadcast = new HashMap<String,TryCaptureResult>();
+	
 	private ConfigYaml config;
 
 	private LootZoneListener listener;
@@ -42,6 +53,7 @@ public class LootZone {
 		this.pos = pos;
 		this.name = name;
 		this.controlTime = controlTime;
+		this.minPlayers = 3;
 
 		loots = new ArrayList<Loot>();
 		save();
@@ -60,6 +72,7 @@ public class LootZone {
 		config.getConfig().set("name", this.name);
 		config.getConfig().set("pos", this.pos);
 		config.getConfig().set("time", this.controlTime);
+		config.getConfig().set("minPlayers", this.minPlayers);
 		config.getConfig().set("loots", this.loots);
 		config.save();
 	}
@@ -68,7 +81,8 @@ public class LootZone {
 	protected void load() {
 		this.name = config.getConfig().getString("name", null);
 		this.pos = (Location) config.getConfig().get("pos", null);
-		this.controlTime = config.getConfig().getInt("time", 0);
+		this.controlTime = config.getConfig().getInt("time", 5);
+		this.minPlayers = config.getConfig().getInt("minPlayers", 3);
 		loots = (List<Loot>) config.getConfig().get("loots", new ArrayList<Loot>());
 	}
 
@@ -107,24 +121,59 @@ public class LootZone {
 	private void unregister() {
 		PlayerQuitEvent.getHandlerList().unregister(listener);
 		PlayerMoveEvent.getHandlerList().unregister(listener);
-		for(BukkitTask task : playerInZone.values()) {
+		for(BukkitTask task : playerInCapture.values()) {
 			task.cancel();
 		}
-		playerInZone.clear();
+		playerInCapture = null;
+		playerInBroadcast = null;
+		broadcastTask.cancel();
 	}
 
-	protected void captureZone(Player p) {
-		Bukkit.getScheduler().cancelTask(playerInZone.get(p.getName()).getTaskId());
-		playerInZone.remove(p.getName());
+	private void captureZone(XPlayer p) {
+		Bukkit.getScheduler().cancelTask(playerInCapture.get(p.getName()).getTaskId());
+		playerInCapture.remove(p.getName());
 		Bukkit.broadcastMessage("§eLoot §8| §aCapture de la zone §9" + name + "§a par §9" + p.getName() + "§a.");
-		XPlayer xP = (XelephiaPlugin.getXPlayer(p.getName()));
-		xP.sendMessage(MessageType.SUBTITLE, "§eLoot §8| §aCapture de la zone §9" + name + "§a.");
-		p.playSound(xP.getBukkitPlayer().getLocation(),
-				Sound.LEVEL_UP, 4.0F, xP.getBukkitPlayer().getLocation().getPitch());
+		p.sendMessage(MessageType.SUBTITLE, "§eLoot §8| §aCapture de la zone §9" + name + "§a.");
+		p.getBukkitPlayer().playSound(p.getBukkitPlayer().getLocation(),
+				Sound.LEVEL_UP, 4.0F, p.getBukkitPlayer().getLocation().getPitch());
 		// Need to be finish
 		// TODO
 	}
+	
+	private void startBroadcastTask() {
+		if(broadcastTask == null || !Bukkit.getScheduler().isCurrentlyRunning(broadcastTask.getTaskId()));
+			broadcastTask = new BukkitRunnable() {
 
+				@Override
+				public void run() {
+					if(!playerInBroadcast.isEmpty())
+					for(String p : playerInBroadcast.keySet()) {
+						TryCaptureResult result = playerInBroadcast.get(p);
+						XPlayer xP = XelephiaPlugin.getXPlayer(p);
+						if(result.equals(TryCaptureResult.NEED_MORE_PLAYERS)) {
+							xP.sendMessage(MessageType.ACTIONBAR, "§cCapture impossible §e| §bIl manque §e"+(minPlayers-Bukkit.getOnlinePlayers().size())+"§b en ligne.");
+						}else if(result.equals(TryCaptureResult.NO_MORE_CAPTURE)){
+							xP.sendMessage(MessageType.ACTIONBAR, "§cCapture impossible §e| §bVous avez atteint votre limite de captures pour l'heure.");
+						}else {
+							Bukkit.getLogger().info("Erreur broadcastTask in LootZone : " + name);
+						}
+					}
+					else this.cancel();
+				}
+			}.runTaskTimer(XelephiaPlugin.getInstance(), 0, 30);
+	}
+
+	private TryCaptureResult canCapture(XPlayer p) {
+		p.updateLoots();
+		if(Bukkit.getOnlinePlayers().size() < minPlayers) {
+			return TryCaptureResult.NEED_MORE_PLAYERS;
+		}else if(p.getHourLoot() > LootZoneManager.maxLootPerHour) {
+			return TryCaptureResult.NO_MORE_CAPTURE;
+		}else {
+			return TryCaptureResult.CAN_CAPTURE;
+		}
+	}
+	
 	private class LootZoneListener implements Listener{
 
 		@EventHandler
@@ -132,30 +181,42 @@ public class LootZone {
 			Player p = e.getPlayer();
 			XPlayer xP = (XelephiaPlugin.getXPlayer(p.getName()));
 			// Enter Zone
-			if(inZone(e.getTo()) && !playerInZone.containsKey(p.getName())) {
+			if(inZone(e.getTo()) && !inZone(e.getFrom())) {
 				xP.sendMessage(MessageType.SUBTITLE, "§eLoot §8| §bEntrée dans la zone §9" + name + "§b.");
-				BukkitTask task = new BukkitRunnable() {
+				TryCaptureResult result = canCapture(xP);
+				
+				// CAN CAPTURE
+				if(result.equals(TryCaptureResult.CAN_CAPTURE)) {
+					BukkitTask task = new BukkitRunnable() {
 
-					int sec = 0;
+						int sec = 0;
 
-					@Override
-					public void run() {
-						if(sec < controlTime) {
-							xP.sendMessage(MessageType.ACTIONBAR, "§6Capture en cours §e| §bTemps restant :§e "+(controlTime-sec)+" §bsec(s) !");
-							sec++;
-						}else {
-							captureZone(p);
-							this.cancel();
+						@Override
+						public void run() {
+							if(sec < controlTime) {
+								xP.sendMessage(MessageType.ACTIONBAR, "§6Capture en cours §e| §bTemps restant :§e "+(controlTime-sec)+" §bsec(s) !");
+								sec++;
+							}else {
+								captureZone(xP);
+								this.cancel();
+							}
 						}
-					}
-				}.runTaskTimer(XelephiaPlugin.getInstance(), 0, 20);
-				playerInZone.put(p.getName(),task);
+					}.runTaskTimer(XelephiaPlugin.getInstance(), 0, 20);
+					playerInCapture.put(p.getName(), task);
+				}else {
+					startBroadcastTask();
+					playerInBroadcast.put(p.getName(), result);
+				}
 			}
 			// Leave Zone
-			if(playerInZone.containsKey(p.getName()) && !inZone(e.getTo())) {
-				Bukkit.getScheduler().cancelTask(playerInZone.get(p.getName()).getTaskId());
-				playerInZone.remove(p.getName());
+			if(inZone(e.getFrom()) && !inZone(e.getTo())) {
 				xP.sendMessage(MessageType.SUBTITLE, "§eLoot §8| §cSorti de la zone §9" + name + "§c.");
+				if(playerInCapture.containsKey(p.getName())) {
+					Bukkit.getScheduler().cancelTask(playerInCapture.get(p.getName()).getTaskId());
+					playerInCapture.remove(p.getName());
+				}else if(playerInBroadcast.containsKey(p.getName())){
+					playerInBroadcast.remove(p.getName());
+				}
 			}
 		}
 
@@ -163,9 +224,11 @@ public class LootZone {
 		public void onPlayerQuit(PlayerQuitEvent e) {
 			// Cancel if leave
 			Player p = e.getPlayer();
-			if(playerInZone.containsKey(p.getName())) {
-				Bukkit.getScheduler().cancelTask(playerInZone.get(p.getName()).getTaskId());
-				playerInZone.remove(p.getName());
+			if(playerInCapture.containsKey(p.getName())) {
+				Bukkit.getScheduler().cancelTask(playerInCapture.get(p.getName()).getTaskId());
+				playerInCapture.remove(p.getName());
+			}else if(playerInBroadcast.containsKey(p.getName())){
+				playerInBroadcast.remove(p.getName());
 			}
 		}
 	}

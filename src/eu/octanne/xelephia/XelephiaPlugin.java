@@ -184,7 +184,7 @@ public class XelephiaPlugin extends JavaPlugin {
 				+ "    playerName txt NOT NULL,\n" + "    coins REAL NOT NULL,\n"
 				+ "    killCount integer NOT NULL,\n" + "    deathCount integer NOT NULL,\n"
 				+ "    actualKillStreak integer NOT NULL,\n" + "    highKillStreak integer NOT NULL\n,"
-				+ "    lastLootDate date,\n" + "    totalLoot integer NOT NULL,\n" + "    hourLoot integer NOT NULL,\n"
+				+ "    lastLootDate txt,\n" + "    totalLoot integer NOT NULL,\n" + "    hourLoot integer NOT NULL,\n"
 				+ "    unlockKits txt NOT NULL,\n" + "    kitEquiped txt NOT NULL\n" + 
 				");");
 	}
