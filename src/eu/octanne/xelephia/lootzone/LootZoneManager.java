@@ -173,9 +173,7 @@ public class LootZoneManager implements Listener {
 									if(zoneEdit.scroll > zoneEdit.getScrollMax()) 
 										zoneEdit.scroll = zoneEdit.getScrollMax();
 
-									//zoneEdit.scroll-=1;
 									createOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
-									//p.updateInventory();
 								}
 								// Edit QTE Max
 								else if(e.getClick().equals(ClickType.DOUBLE_CLICK)){
@@ -279,69 +277,113 @@ public class LootZoneManager implements Listener {
 							if(e.getSlot() == 24 && zoneEdit.scroll < zoneEdit.getScrollMax()) {
 								createOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll+1, zoneEdit.inv);
 								zoneEdit.scroll+=1;
-								//p.updateInventory();
 							}else if(e.getSlot() == 20 && zoneEdit.scroll > 0) {
 								createOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll-1, zoneEdit.inv);
 								zoneEdit.scroll-=1;
-								//p.updateInventory();
 							}else if(e.getSlot() == 26) {
 								zoneEdit.willClose = true;
 								p.closeInventory();
 							}else if(e.getSlot() == 4) {
-								AnvilGUI menu = new AnvilGUI(p, new AnvilGUI.AnvilEventHandler() {
+								if(e.getClick().equals(ClickType.DOUBLE_CLICK)) {
+									AnvilGUI menu = new AnvilGUI(p, new AnvilGUI.AnvilEventHandler() {
 
-									LootZone zone = zoneEdit.zone;
-									
-									@Override
-									public void onAnvilClick(AnvilGUI.AnvilClickEvent event) {
-										event.setWillClose(true);
-										event.setWillDestroy(true);
-										if(event.getSlot() == AnvilGUI.AnvilSlot.OUTPUT) {
-											int time;
-											try {
-												time = Integer.parseInt(event.getName());
-											}catch(NumberFormatException exp) {
-												event.getPlayer().sendMessage("§eLoot §8| §cErreur : La valeur §9" + event.getName() + " §cest invalide.");
-												return;
+										LootZone zone = zoneEdit.zone;
+										
+										@Override
+										public void onAnvilClick(AnvilGUI.AnvilClickEvent event) {
+											event.setWillClose(true);
+											event.setWillDestroy(true);
+											if(event.getSlot() == AnvilGUI.AnvilSlot.OUTPUT) {
+												int time;
+												try {
+													time = Integer.parseInt(event.getName());
+												}catch(NumberFormatException exp) {
+													event.getPlayer().sendMessage("§eLoot §8| §cErreur : La valeur §9" + event.getName() + " §cest invalide.");
+													return;
+												}
+												zone.controlTime = time < 0 ? 5 : time;
+												p.sendMessage("§eLoot §8| §aLe temps de contrôle est défini sur §9" + zone.controlTime + " sec(s)§a.");
 											}
-											zone.controlTime = time < 0 ? 5 : time;
-											p.sendMessage("§eLoot §8| §aLe temps de contrôle est défini sur §9" + zone.controlTime + " sec(s)§a.");
 										}
-									}
 
-									@Override
-									public void onAnvilClose(AnvilCloseEvent event) {
-										Bukkit.getScheduler().scheduleSyncDelayedTask(XelephiaPlugin.getInstance(), new Runnable() {
-											@Override
-											public void run() {
-												reOpenEditor(p);
-											}
-										}, 8);
-										zoneEdit.inAnvil = false;
+										@Override
+										public void onAnvilClose(AnvilCloseEvent event) {
+											Bukkit.getScheduler().scheduleSyncDelayedTask(XelephiaPlugin.getInstance(), new Runnable() {
+												@Override
+												public void run() {
+													reOpenEditor(p);
+												}
+											}, 8);
+											zoneEdit.inAnvil = false;
+										}
+									});
+									ArrayList<String> lore = new ArrayList<String>();
+									lore.add("§aModifier temps de contrôle :");
+									lore.add("§7Entrer la valeur voulue,");
+									lore.add("§e> §7Renommer l'item pour valider.");
+									ItemStack anvilItem = Utils.createItemStack("Entrée valeur...", Material.PAPER, 1, lore, 0, true);
+									menu.setSlot(AnvilSlot.INPUT_LEFT, anvilItem);
+									try {
+										zoneEdit.inAnvil = true;
+										menu.open();
+									} catch (IllegalAccessException | InvocationTargetException | InstantiationException exp) {
+										exp.printStackTrace();
 									}
-								});
-								ArrayList<String> lore = new ArrayList<String>();
-								lore.add("§aModifier temps de contrôle :");
-								lore.add("§7Entrer la valeur voulue,");
-								lore.add("§e> §7Renommer l'item pour valider.");
-								ItemStack anvilItem = Utils.createItemStack("Entrée valeur...", Material.PAPER, 1, lore, 0, true);
-								menu.setSlot(AnvilSlot.INPUT_LEFT, anvilItem);
-								try {
-									zoneEdit.inAnvil = true;
-									menu.open();
-								} catch (IllegalAccessException | InvocationTargetException | InstantiationException exp) {
-									exp.printStackTrace();
+								}
+								if(e.getClick().equals(ClickType.MIDDLE)) {
+									AnvilGUI menu = new AnvilGUI(p, new AnvilGUI.AnvilEventHandler() {
+
+										LootZone zone = zoneEdit.zone;
+										
+										@Override
+										public void onAnvilClick(AnvilGUI.AnvilClickEvent event) {
+											event.setWillClose(true);
+											event.setWillDestroy(true);
+											if(event.getSlot() == AnvilGUI.AnvilSlot.OUTPUT) {
+												int number;
+												try {
+													number = Integer.parseInt(event.getName());
+												}catch(NumberFormatException exp) {
+													event.getPlayer().sendMessage("§eLoot §8| §cErreur : La valeur §9" + event.getName() + " §cest invalide.");
+													return;
+												}
+												zone.minPlayers = number < 0 ? 1 : number;
+												p.sendMessage("§eLoot §8| §aLe minimun de joueurs est défini sur §9" + zone.minPlayers + " joueurs§a.");
+											}
+										}
+
+										@Override
+										public void onAnvilClose(AnvilCloseEvent event) {
+											Bukkit.getScheduler().scheduleSyncDelayedTask(XelephiaPlugin.getInstance(), new Runnable() {
+												@Override
+												public void run() {
+													reOpenEditor(p);
+												}
+											}, 8);
+											zoneEdit.inAnvil = false;
+										}
+									});
+									ArrayList<String> lore = new ArrayList<String>();
+									lore.add("§aModifier le minimum de joueurs :");
+									lore.add("§7Entrer la valeur voulue,");
+									lore.add("§e> §7Renommer l'item pour valider.");
+									ItemStack anvilItem = Utils.createItemStack("Entrée valeur...", Material.PAPER, 1, lore, 0, true);
+									menu.setSlot(AnvilSlot.INPUT_LEFT, anvilItem);
+									try {
+										zoneEdit.inAnvil = true;
+										menu.open();
+									} catch (IllegalAccessException | InvocationTargetException | InstantiationException exp) {
+										exp.printStackTrace();
+									}
 								}
 							}
 						}
 					}else if(e.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY) && e.getView().getItem(17) != null){
 						ItemStack newItem = e.getCurrentItem().clone();
 						e.getClickedInventory().clear(e.getSlot());
-						//p.updateInventory();
 						zoneEdit.zone.addLoot(new Loot(newItem, 1, newItem.getAmount()));
 						zoneEdit.zone.save();
 						createOrUpdateEditMenu(zoneEdit.zone, zoneEdit.scroll, zoneEdit.inv);
-						//p.updateInventory();
 					}
 				}
 			}
@@ -405,7 +447,7 @@ public class LootZoneManager implements Listener {
 			ArrayList<String> tutoLore = new ArrayList<>();
 			tutoLore.add("§aActions disponibles :");
 			tutoLore.add("§cShift-Click §7pour supprimer le loot");
-			tutoLore.add("§cMidle-Click §7pour editer le pourcentage");
+			tutoLore.add("§cMiddle-Click §7pour editer le pourcentage");
 			tutoLore.add("§cDouble-Click §7pour editer la quantité max");
 			ItemStack tutorialItem = Utils.createItemSkull("§7Tutoriel", tutoLore, SkullType.PLAYER, "MHF_Question", false);
 
@@ -421,6 +463,9 @@ public class LootZoneManager implements Listener {
 		infoLore.add("§7Temps de contrôle : §c"+zone.getControlTime()+" §7secs");
 		infoLore.add("§7Location : (§c"+zone.pos.getBlockX()+"§7, §c"+zone.pos.getBlockY()+"§7,"
 				+ " §c"+zone.pos.getBlockZ()+"§7)");
+		infoLore.add("");
+		infoLore.add("§cDouble-Click §7pour editer le temps de contrôle");
+		infoLore.add("§cMiddle-Click §7pour editer le minimum de joueurs");
 		ItemStack infoItem = Utils.createItemStack("§aInformations", Material.BOOK, 1, infoLore, 0, false);
 		inv.setItem(4, infoItem);
 
