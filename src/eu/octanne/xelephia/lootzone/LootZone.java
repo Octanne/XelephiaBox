@@ -11,6 +11,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -163,6 +164,7 @@ public class LootZone {
 		playerInCapture.remove(p.getName());
 		// Limit Loot
 		p.incrementHourLoot();
+		p.incrementTotalLoot();
 		if(p.getLastLootDate() == null) {
 			p.updateLastLootDate();
 		}
@@ -291,6 +293,18 @@ public class LootZone {
 				}else if(playerInBroadcast.containsKey(p.getName())){
 					playerInBroadcast.remove(p.getName());
 				}
+			}
+		}
+		
+		@EventHandler
+		public void onPlayerDeath(PlayerDeathEvent e) {
+			// Cancel if leave
+			Player p = e.getEntity();
+			if(playerInCapture.containsKey(p.getName())) {
+				Bukkit.getScheduler().cancelTask(playerInCapture.get(p.getName()).getTaskId());
+				playerInCapture.remove(p.getName());
+			}else if(playerInBroadcast.containsKey(p.getName())){
+				playerInBroadcast.remove(p.getName());
 			}
 		}
 

@@ -379,6 +379,13 @@ public class XPlayer {
 	}
 	
 	/*
+	 * incrementTotalLoot
+	 */
+	public void incrementTotalLoot() {
+		totalLoot+=1;
+	}
+	
+	/*
 	 * getLastLootDate
 	 */
 	public Calendar getLastLootDate() {
