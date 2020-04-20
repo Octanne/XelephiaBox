@@ -27,6 +27,7 @@ import org.bukkit.scheduler.BukkitTask;
 import com.google.gson.reflect.TypeToken;
 
 import eu.octanne.xelephia.XelephiaPlugin;
+import eu.octanne.xelephia.lootzone.LootZoneManager;
 import eu.octanne.xelephia.util.Utils;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
@@ -68,6 +69,7 @@ public class XPlayer {
 	protected boolean kitEquiped;
 	
 	protected int hourLoot;
+	// Last Loot date is in reality the date when hourLoot will be reset
 	protected Calendar lastLootDate;
 
 	protected ArrayList<String> unlockKits;
@@ -205,8 +207,18 @@ public class XPlayer {
 	public boolean updateLoots() {
 		if(Calendar.getInstance().after(lastLootDate)) {
 			hourLoot = 0;
+			lastLootDate = null;
 			return true;
 		}else return false;
+	}
+	
+	public void updateLastLootDate() {
+		this.lastLootDate = Calendar.getInstance();
+		this.lastLootDate.add(Calendar.HOUR_OF_DAY, 1);
+	}
+	
+	public String getTimeBeforeResetLoot() {
+		return "à définir";
 	}
 	
 	/*
@@ -355,6 +367,13 @@ public class XPlayer {
 	}
 
 	/*
+	 * incrementHourLoot
+	 */
+	public void incrementHourLoot() {
+		hourLoot+=1;
+	}
+	
+	/*
 	 * getLastLootDate
 	 */
 	public Calendar getLastLootDate() {
@@ -390,6 +409,7 @@ public class XPlayer {
 	 * open Stats Menu
 	 */
 	public void openStats(Player p) {
+		this.updateLoots();
 		for (int i = 0; i < 27; i++) {
 			menuStats.setItem(i,
 					Utils.createItemStack(" ", Material.STAINED_GLASS_PANE, 1, new ArrayList<String>(), 11, false));
@@ -408,8 +428,8 @@ public class XPlayer {
 
 		// Remaining loot or recharge time
 		ArrayList<String> loreGold = new ArrayList<String>();
-		loreGold.add("§8Rechargé dans §a" + "indéfini");
-		menuStats.setItem(10, Utils.createItemStack("§bLoot restant : §a" + (5 - this.hourLoot), Material.GOLD_INGOT, 1,
+		loreGold.add("§8Rechargé dans §a" + getTimeBeforeResetLoot());
+		menuStats.setItem(10, Utils.createItemStack("§bLoot restant : §a" + (LootZoneManager.maxLootPerHour - this.hourLoot), Material.GOLD_INGOT, 1,
 				loreGold, 0, false));
 
 		// All loot

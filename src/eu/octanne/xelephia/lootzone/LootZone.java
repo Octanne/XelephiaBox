@@ -129,15 +129,26 @@ public class LootZone {
 		broadcastTask.cancel();
 	}
 
+	private void giveLoot(XPlayer p) {
+		
+	}
+	
 	private void captureZone(XPlayer p) {
-		Bukkit.getScheduler().cancelTask(playerInCapture.get(p.getName()).getTaskId());
-		playerInCapture.remove(p.getName());
+		// BroadCast
 		Bukkit.broadcastMessage("§eLoot §8| §aCapture de la zone §9" + name + "§a par §9" + p.getName() + "§a.");
 		p.sendMessage(MessageType.SUBTITLE, "§eLoot §8| §aCapture de la zone §9" + name + "§a.");
 		p.getBukkitPlayer().playSound(p.getBukkitPlayer().getLocation(),
 				Sound.LEVEL_UP, 4.0F, p.getBukkitPlayer().getLocation().getPitch());
-		// Need to be finish
-		// TODO
+		// Scheduler
+		Bukkit.getScheduler().cancelTask(playerInCapture.get(p.getName()).getTaskId());
+		playerInCapture.remove(p.getName());
+		// Limit Loot
+		p.incrementHourLoot();
+		if(p.getLastLootDate() == null) {
+			p.updateLastLootDate();
+		}
+		// Give Loot
+		giveLoot(p);
 	}
 	
 	private void startBroadcastTask() {

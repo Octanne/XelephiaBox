@@ -33,7 +33,7 @@ import eu.octanne.xelephia.util.Utils;
 
 public class LootZoneManager implements Listener {
 
-	static int maxLootPerHour = 5;
+	static public int maxLootPerHour = 5;
 	
 	protected ArrayList<LootZone> lootZones = new ArrayList<LootZone>();
 
