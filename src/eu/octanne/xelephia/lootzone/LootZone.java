@@ -180,9 +180,9 @@ public class LootZone {
 						TryCaptureResult result = playerInBroadcast.get(p);
 						XPlayer xP = XelephiaPlugin.getXPlayer(p);
 						if(result.equals(TryCaptureResult.NEED_MORE_PLAYERS)) {
-							xP.sendMessage(MessageType.ACTIONBAR, "§cCapture impossible §e| §bIl manque §e"+(minPlayers-Bukkit.getOnlinePlayers().size())+"§b en ligne.");
+							xP.sendMessage(MessageType.ACTIONBAR, "§cCapture impossible §e| §bIl manque §e"+(minPlayers-Bukkit.getOnlinePlayers().size())+"§b joueurs en ligne.");
 						}else if(result.equals(TryCaptureResult.NO_MORE_CAPTURE)){
-							xP.sendMessage(MessageType.ACTIONBAR, "§cCapture impossible §e| §bVous avez atteint votre limite de captures pour l'heure.");
+							xP.sendMessage(MessageType.ACTIONBAR, "§cCapture impossible §e| §bLimite de captures pour l'heure atteinte.");
 						}else {
 							Bukkit.getLogger().info("Erreur broadcastTask in LootZone : " + name);
 						}
