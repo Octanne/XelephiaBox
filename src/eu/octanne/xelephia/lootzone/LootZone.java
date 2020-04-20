@@ -95,7 +95,7 @@ public class LootZone {
 	}
 
 	public boolean inZone(Location loc) {
-		if(loc.distance(pos) <= 5) {
+		if(loc.getWorld().equals(pos.getWorld()) && loc.distance(pos) <= 5) {
 			return true;
 		}else return false;
 	}
@@ -199,7 +199,7 @@ public class LootZone {
 		p.updateLoots();
 		if(Bukkit.getOnlinePlayers().size() < minPlayers) {
 			return TryCaptureResult.NEED_MORE_PLAYERS;
-		}else if(p.getHourLoot() > LootZoneManager.maxLootPerHour) {
+		}else if(p.getHourLoot() >= LootZoneManager.maxLootPerHour) {
 			return TryCaptureResult.NO_MORE_CAPTURE;
 		}else {
 			return TryCaptureResult.CAN_CAPTURE;

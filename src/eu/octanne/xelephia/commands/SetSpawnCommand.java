@@ -13,8 +13,8 @@ public class SetSpawnCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (sender.hasPermission("xelephia.commands.setspawn") && sender instanceof Player) {
 			Player p = (Player) sender;
-			XelephiaPlugin.getTeleportConfig().set("Spawn", p.getLocation());
-			XelephiaPlugin.getTeleportConfig().save();
+			XelephiaPlugin.getMainConfig().set("spawn", p.getLocation());
+			XelephiaPlugin.getMainConfig().save();
 			sender.sendMessage("Le spawn viens d'être configuré.");
 			return true;
 		} else {

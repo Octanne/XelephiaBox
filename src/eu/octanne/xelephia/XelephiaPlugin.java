@@ -26,6 +26,7 @@ import eu.octanne.xelephia.commands.HealCommand;
 import eu.octanne.xelephia.commands.MessageCommand;
 import eu.octanne.xelephia.commands.NightCommand;
 import eu.octanne.xelephia.commands.RenameCommand;
+import eu.octanne.xelephia.commands.ResetPlayerCommand;
 import eu.octanne.xelephia.commands.SetSpawnCommand;
 import eu.octanne.xelephia.commands.SiteCommand;
 import eu.octanne.xelephia.commands.SpawnCommand;
@@ -58,7 +59,7 @@ public class XelephiaPlugin extends JavaPlugin {
 
 	// CONFIG FILE
 	private static ConfigYaml messageConfig;
-	private static ConfigYaml teleportationPointConfig;
+	private static ConfigYaml mainConfig;
 
 	// TPA REQUEST
 	static public HashMap<Player, Player> requestTPA = new HashMap<Player, Player>();
@@ -89,7 +90,7 @@ public class XelephiaPlugin extends JavaPlugin {
 		// Load File
 		messageConfig = new ConfigYaml("message.yml");
 		loadMessage();
-		teleportationPointConfig = new ConfigYaml("teleportPoints.yml");
+		mainConfig = new ConfigYaml("config.yml");
 
 		// Load Command
 		loadCommand();
@@ -139,8 +140,8 @@ public class XelephiaPlugin extends JavaPlugin {
 		return messageConfig;
 	}
 
-	static public ConfigYaml getTeleportConfig() {
-		return teleportationPointConfig;
+	static public ConfigYaml getMainConfig() {
+		return mainConfig;
 	}
 
 	/*
@@ -236,6 +237,7 @@ public class XelephiaPlugin extends JavaPlugin {
 		getCommand("kit").setExecutor(new KitCommand());
 		getCommand("coins").setExecutor(new CoinsCommand());
 		getCommand("loot").setExecutor(new LootCommand());
+		getCommand("resetplayer").setExecutor(new ResetPlayerCommand());
 		// Temp Command
 
 	}

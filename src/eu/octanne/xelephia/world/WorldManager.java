@@ -81,7 +81,7 @@ public class WorldManager {
 
 	public void unloadWorld(String worldName) {
 		for (Player p : Bukkit.getWorld(worldName).getPlayers()) {
-			p.teleport((Location) XelephiaPlugin.getTeleportConfig().getConfig().get("Spawn",
+			p.teleport((Location) XelephiaPlugin.getMainConfig().getConfig().get("spawn",
 					Bukkit.getWorlds().get(0).getSpawnLocation()));
 		}
 		Bukkit.unloadWorld(worldName, true);

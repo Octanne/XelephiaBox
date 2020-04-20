@@ -67,3 +67,5 @@ commands:
   stats:
     description: to see the stats of a player.
     aliases: [stat]
+  resetplayer:
+    description: reset a player

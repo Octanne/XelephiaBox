@@ -13,10 +13,18 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import eu.octanne.xelephia.XelephiaPlugin;
+import eu.octanne.xelephia.util.ConfigYaml;
 
 public class WarpManager implements Listener {
 
+	private ArrayList<Warp> warpList = new ArrayList<>();
+	
+	private ConfigYaml warpConfig = new ConfigYaml("warps.yml");
+	
+	@SuppressWarnings("unchecked")
 	public WarpManager() {
+		warpList = (ArrayList<Warp>) warpConfig.getConfig().get("", new ArrayList<>());
+		
 		Bukkit.getPluginManager().registerEvents(this, XelephiaPlugin.getInstance());
 	}
 
@@ -28,23 +36,27 @@ public class WarpManager implements Listener {
 		Warp warp = new Warp(name, loc, itemIcon);
 	}
 
+	public Warp getWarp(String name) {
+		for(Warp warp : warpList) {
+			if(warp.getName().equals(""))return warp;
+		}
+		return null;
+	}
+	
 	/*
 	 * CONDITIONS
 	 */
 	public boolean isExist(String warpName) {
-		if (Warp.get(warpName) != null) {
-			return true;
-		} else
-			return false;
+		for(Warp warp : warpList) {
+			if(warp.getName().equalsIgnoreCase(warpName)) return true;
+		}
+		return false;
 	}
 
-	/*
-	 * GET WARP
-	 */
-	public Warp getWarp(String warpName) {
-		return Warp.get(warpName);
+	public ArrayList<Warp> getWarps(){
+		return warpList;
 	}
-
+	
 	/*
 	 * BUKKIT EVENTS
 	 */
@@ -64,7 +76,6 @@ public class WarpManager implements Listener {
 			}
 		}
 	}
-
 	@EventHandler
 	public void onDrag(InventoryDragEvent e) {
 		if (e.getInventory() != null && e.getInventory().getName().equals("§cWarps")) {
@@ -78,18 +89,8 @@ public class WarpManager implements Listener {
 	public void openWarps(Player p) {
 		Inventory inv = Bukkit.createInventory(null, 18, "§cWarps");
 		for (Warp warp : getWarps()) {
-			inv.setItem(warp.getSlot(), warp.getItem());
+			inv.addItem(warp.getItem());
 		}
 		p.openInventory(inv);
-	}
-
-	@SuppressWarnings("unchecked")
-	public ArrayList<Warp> getWarps() {
-		ArrayList<Warp> warps = new ArrayList<Warp>();
-		for (String warpName : (ArrayList<String>) XelephiaPlugin.getTeleportConfig().getConfig().get("Warps.list",
-				new ArrayList<String>())) {
-			warps.add(Warp.get(warpName));
-		}
-		return warps;
 	}
 }

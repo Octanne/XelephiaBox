@@ -14,7 +14,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.SkullType;
@@ -89,7 +88,6 @@ public class XPlayer {
 		this.playerUUID = pUUID;
 		this.lastPlayerName = Bukkit.getOfflinePlayer(pUUID).getName();
 		this.menuStats = Bukkit.createInventory(null, 27, "§8Statistiques de §b" + this.lastPlayerName);
-		//Bukkit.getPluginManager().registerEvents(this, XelephiaPlugin.getInstance());
 
 		/*
 		 * DATABASE QUERRY OR CREATE
@@ -109,7 +107,7 @@ public class XPlayer {
 				this.actualKillStreak = rs.getInt("actualKillStreak");
 				this.highKillStreak = rs.getInt("highKillStreak");
 				this.hourLoot = rs.getInt("hourLoot");
-				this.hourLoot = rs.getInt("totalLoot");
+				this.totalLoot = rs.getInt("totalLoot");
 				this.lastLootDate = Utils.getGson().fromJson(rs.getString("lastLootDate"),
 						new TypeToken<Calendar>() {
 						}.getType());
@@ -121,9 +119,6 @@ public class XPlayer {
 				
 				Bukkit.getLogger().log(Level.INFO, "[Xelephia] Chargement du joueur : " + this.lastPlayerName + " !");
 			} else {
-				Location spawn = (Location) XelephiaPlugin.getTeleportConfig().getConfig().get("Spawn",
-						getBukkitPlayer().getWorld().getSpawnLocation());
-				getBukkitPlayer().teleport(spawn);
 				this.coins = 0;
 				this.killCount = 0;
 				this.deathCount = 0;
@@ -159,11 +154,6 @@ public class XPlayer {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public boolean eraseIntoDB() {
-		// TODO
-		return false;
 	}
 	
 	public boolean saveIntoDB() {
@@ -403,7 +393,7 @@ public class XPlayer {
 		}
 	}
 	
-	public  void sendMessage(MessageType type, String message) {
+	public void sendMessage(MessageType type, String message) {
 		
 		if(type.equals(MessageType.SUBTITLE)) {
 			PacketPlayOutTitle subTitle = new PacketPlayOutTitle(EnumTitleAction.SUBTITLE, ChatSerializer.a("{\"text\":\"" + message.replace("&", "§") + "\"}"),10,15,10);
@@ -417,6 +407,22 @@ public class XPlayer {
 		
 	}
 
+	/*
+	 * Reset The entire Player
+	 */
+	public void resetPlayer() {
+		this.actualKillStreak = 0;
+		this.coins = 0;
+		this.deathCount = 0;
+		this.highKillStreak = 0;
+		this.hourLoot = 0;
+		this.killCount = 0;
+		this.lastLootDate = null;
+		this.totalLoot = 0;
+		this.unlockKits = new ArrayList<>();
+		saveIntoDB();
+	}
+	
 	/*
 	 * open Stats Menu
 	 */
@@ -433,14 +439,14 @@ public class XPlayer {
 
 		// Head
 		ArrayList<String> loreHead = new ArrayList<String>();
-		loreHead.add("§8Grade : " + "§aindéfini");
-		loreHead.add("§8Coins : §e" + this.coins + " §l¢");
+		loreHead.add("§9Grade : " + "§aindéfini");
+		loreHead.add("§9Coins : §e" + this.coins + " §l¢");
 		menuStats.setItem(4, Utils.createItemSkull("§b" + this.lastPlayerName, loreHead, SkullType.PLAYER,
 				this.lastPlayerName, false));
 
 		// Remaining loot or recharge time
 		ArrayList<String> loreGold = new ArrayList<String>();
-		loreGold.add("§8Rechargé dans §a" + getTimeBeforeResetLoot());
+		loreGold.add("§9Rechargé dans §a" + getTimeBeforeResetLoot());
 		menuStats.setItem(10, Utils.createItemStack("§bLoot restant : §a" + (LootZoneManager.maxLootPerHour - this.hourLoot), Material.GOLD_INGOT, 1,
 				loreGold, 0, false));
 
@@ -451,13 +457,13 @@ public class XPlayer {
 		// KillStreak
 		ArrayList<String> loreGSword = new ArrayList<String>();
 		loreGSword.add(
-				"§8Record battu dans §a" + (highKillStreak - actualKillStreak) + " §8(§c" + highKillStreak + "§8)");
+				"§9Record battu dans §a" + (highKillStreak - actualKillStreak) + " §9(§c" + highKillStreak + "§9)");
 		menuStats.setItem(20, Utils.createItemStack("§bKillStreak : §a" + this.actualKillStreak, Material.GOLD_SWORD, 1,
 				loreGSword, 0, false));
 
 		// Death and Ratio
 		ArrayList<String> loreSkeleton = new ArrayList<String>();
-		loreSkeleton.add("§8Ratio (§ckills§8/§cmorts§8) : §a" + this.getRatio());
+		loreSkeleton.add("§9Ratio (§ckills§9/§cmorts§9) : §a" + this.getRatio());
 		menuStats.setItem(22, Utils.createItemSkull("§bMorts total : §a" + this.deathCount, loreSkeleton,
 				SkullType.SKELETON, p.getName(), false));
 

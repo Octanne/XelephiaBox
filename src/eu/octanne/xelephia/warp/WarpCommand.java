@@ -54,7 +54,7 @@ public class WarpCommand implements CommandExecutor {
 				return true;
 			}
 		} else {
-			sender.sendMessage("§4Réservé au client...");
+			sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("playerOnly"));
 			return false;
 		}
 		return false;

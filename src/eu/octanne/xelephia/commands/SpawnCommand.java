@@ -17,7 +17,7 @@ public class SpawnCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (sender instanceof Player) {
 			Player p = (Player) sender;
-			Location spawn = (Location) XelephiaPlugin.getTeleportConfig().getConfig().get("Spawn",
+			Location spawn = (Location) XelephiaPlugin.getMainConfig().getConfig().get("spawn",
 					p.getWorld().getSpawnLocation());
 			if (p.hasPermission("xelephia.bypass.tp")) {
 				if (args.length < 1) {
@@ -68,7 +68,7 @@ public class SpawnCommand implements CommandExecutor {
 				return true;
 			}
 		} else {
-			sender.sendMessage("§4Réservé au client...");
+			sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("playerOnly"));
 			return false;
 		}
 	}

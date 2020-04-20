@@ -1,49 +1,47 @@
 package eu.octanne.xelephia.warp;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import eu.octanne.xelephia.XelephiaPlugin;
-import eu.octanne.xelephia.util.Utils;
 
-public class Warp {
+public class Warp implements ConfigurationSerializable {
 
 	protected String name;
 	protected Location location;
 	protected ItemStack itemIcon;
-	protected int slotInMenu;
 
 	private int task;
-
-	private Warp(String name) {
-		if (XelephiaPlugin.getTeleportConfig().getConfig().isConfigurationSection("Warps." + name)) {
-			this.name = name;
-			@SuppressWarnings("unchecked")
-			ArrayList<String> desc = (ArrayList<String>) XelephiaPlugin.getTeleportConfig().getConfig()
-					.get("Warps." + name + ".desc");
-			ItemStack item = Utils.createItemStack(
-					XelephiaPlugin.getTeleportConfig().getConfig().getString("Warps." + name + ".name"),
-					Material.getMaterial(
-							XelephiaPlugin.getTeleportConfig().getConfig().getString("Warps." + name + ".itemIcon")),
-					1, desc, XelephiaPlugin.getTeleportConfig().getConfig().getInt("Warps." + name + ".dataID"), false);
-			itemIcon = item;
-			location = (Location) XelephiaPlugin.getTeleportConfig().getConfig().get("Warps." + name + ".coordonate");
-			slotInMenu = XelephiaPlugin.getTeleportConfig().getConfig().getInt("Warps." + name + ".slotNumber");
-		}
-	}
 
 	public Warp(String name, Location loc, ItemStack itemIcon) {
 		this.name = name;
 		location = loc;
 		this.itemIcon = itemIcon;
-		save();
 	}
-
+	
+	/*
+	 * SERIALIZE
+	 */
+	@Override
+	public Map<String, Object> serialize() {
+		Map<String, Object> map = new HashMap<>();
+		map.put("name", name);
+		map.put("loc", location);
+		map.put("itemIcon", itemIcon);
+		
+		return map;
+	}
+	
+	public static Warp deserialize(Map<String, Object> map) {
+		return new Warp((String)map.get("name"),(Location)map.get("loc"), (ItemStack)map.get("itemIcon"));
+	}
+	
 	/*
 	 * GETTERS
 	 */
@@ -57,10 +55,6 @@ public class Warp {
 
 	public ItemStack getItem() {
 		return itemIcon;
-	}
-
-	public int getSlot() {
-		return slotInMenu;
 	}
 
 	/*
@@ -106,42 +100,4 @@ public class Warp {
 		p.teleport(location);
 	}
 
-	/*
-	 * GET WARP
-	 */
-	static public Warp get(String name) {
-		Warp warp = new Warp(name);
-		if (warp.name != null) {
-			return warp;
-		} else
-			return null;
-	}
-
-	/*
-	 * SAVE WARP
-	 */
-	@SuppressWarnings({ "deprecation", "unchecked" })
-	private void save() {
-		if (!((ArrayList<String>) XelephiaPlugin.getTeleportConfig().getConfig().get("Warps.list",
-				new ArrayList<String>())).contains(name)) {
-			ArrayList<String> warpList = (ArrayList<String>) XelephiaPlugin.getTeleportConfig().getConfig()
-					.get("Warps.list", new ArrayList<String>());
-			warpList.add(name);
-			XelephiaPlugin.getTeleportConfig().set("Warps.list", warpList);
-			int size = warpList.size();
-			slotInMenu = size - 1;
-		}
-		ArrayList<String> lore = new ArrayList<String>();
-		if (itemIcon.getItemMeta().getLore() != null) {
-			lore = (ArrayList<String>) itemIcon.getItemMeta().getLore();
-		}
-		XelephiaPlugin.getTeleportConfig().getConfig().set("Warps." + name + ".name", name);
-		XelephiaPlugin.getTeleportConfig().getConfig().set("Warps." + name + ".desc", lore);
-		XelephiaPlugin.getTeleportConfig().getConfig().set("Warps." + name + ".itemIcon",
-				itemIcon.getType().toString());
-		XelephiaPlugin.getTeleportConfig().getConfig().set("Warps." + name + ".dataID", itemIcon.getData().getData());
-		XelephiaPlugin.getTeleportConfig().getConfig().set("Warps." + name + ".coordonate", location);
-		XelephiaPlugin.getTeleportConfig().getConfig().set("Warps." + name + ".slotNumber", slotInMenu);
-		XelephiaPlugin.getTeleportConfig().save();
-	}
 }

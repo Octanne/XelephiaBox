@@ -75,4 +75,44 @@ public class Utils {
 	static public Gson getGson() {
 		return gson;
 	}
+	
+	/*private boolean isPvPActive(Entity e){
+	if(Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
+		Player p;
+		if(e instanceof Projectile && (((Projectile)e).getShooter()) instanceof Player) {
+			p = (Player)((Projectile)e).getShooter();
+		}else if(!(e instanceof Player)) return false;
+		p = (Player)e;
+		try {
+			Class<?> classWorldGuardPlugin = Class.forName("com.sk89q.worldguard.bukkit.WorldGuardPlugin");
+			Class<?> classRegionContainer = Class.forName("com.sk89q.worldguard.bukkit.RegionContainer");
+			Class<?> classRegionQuery = Class.forName("com.sk89q.worldguard.bukkit.RegionQuery");
+			Class<?> classStateFlag = Class.forName("com.sk89q.worldguard.protection.flags.StateFlag");
+			Class<?> classDefaultFlag = Class.forName("com.sk89q.worldguard.protection.flags.DefaultFlag");
+			Class<?> classRegionAssociable = Class.forName("com.sk89q.worldguard.protection.association.RegionAssociable");
+
+			Object worldGuardPlugin = classWorldGuardPlugin.getMethod("inst").invoke(null);
+			Object regionContainer = classWorldGuardPlugin.getMethod("getRegionContainer").invoke(worldGuardPlugin);
+			Object query = classRegionContainer.getMethod("createQuery").invoke(regionContainer);
+
+			Class[] wrapPara = {Player.class};
+			Object wrapPlayer = classWorldGuardPlugin.getMethod("wrapPlayer", wrapPara).invoke(worldGuardPlugin, p);
+
+			Object pvpFlag = classDefaultFlag.getField("PVP");
+
+			Class[] queryPara = {Location.class, classRegionAssociable, classStateFlag};
+			if((boolean)classRegionQuery.getMethod("testState", queryPara).invoke(query, p.getLocation(), wrapPlayer, pvpFlag)) {
+				Bukkit.getLogger().info("[Xelephia] Work Function PVP ALLOW");
+				return true;
+			}else {
+				Bukkit.getLogger().info("[Xelephia] Work Function PvP Not Allow");
+				return false;
+			}
+		} catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | NoSuchFieldException e1) {
+			Bukkit.getLogger().info("[Xelephia] Error in WorldGuard Support System");
+			e1.printStackTrace();
+			return true;
+		}
+	}else return true;
+	}*/
 }

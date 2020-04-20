@@ -96,6 +96,7 @@ public class Kit {
 	}
 
 	public boolean give(Player p) {
+		if(p.getInventory().first(KitSystem.selectorItem) != -1)p.getInventory().clear(p.getInventory().first(KitSystem.selectorItem));
 		ItemStack[] contentsG = contents.clone();
 		for (ItemStack item : contentsG) {
 			if (item == null)

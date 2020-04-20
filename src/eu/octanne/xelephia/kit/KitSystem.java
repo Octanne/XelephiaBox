@@ -172,7 +172,6 @@ public class KitSystem implements Listener {
 							}
 							// Equip
 							else if(!xP.kitEquiped()){
-								if(xP.getBukkitPlayer().getInventory().first(selectorItem) != -1)xP.getBukkitPlayer().getInventory().clear(xP.getBukkitPlayer().getInventory().first(selectorItem));
 								kit.give(xP.getBukkitPlayer());
 								xP.getBukkitPlayer().closeInventory();
 								xP.getBukkitPlayer().playSound(xP.getBukkitPlayer().getLocation(), Sound.ORB_PICKUP, 3.0F,
