@@ -3,6 +3,7 @@ package eu.octanne.xelephia.lootzone;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -12,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -130,7 +132,19 @@ public class LootZone {
 	}
 
 	private void giveLoot(XPlayer p) {
-		
+		for(Loot loot : loots) {
+			Random r = new Random();
+			int prctInTenThousand = (int)loot.luckPrct*100;
+			int drawLoot = r.nextInt((10000) + 1);
+			if(drawLoot <= prctInTenThousand) {
+				int minAmount = loot.getItem().getAmount();
+				int rdmQuantity = r.nextInt((loot.max - minAmount) + 1) + minAmount;
+				ItemStack item = loot.item.clone();
+				item.setAmount(rdmQuantity);
+				if (p.getBukkitPlayer().getInventory().firstEmpty() != -1) p.getBukkitPlayer().getInventory().addItem(item);
+				else p.getBukkitPlayer().getWorld().dropItem(p.getBukkitPlayer().getLocation(), item);
+			}
+		}
 	}
 	
 	private void captureZone(XPlayer p) {
