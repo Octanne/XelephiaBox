@@ -54,19 +54,13 @@ public class XWorld implements ConfigurationSerializable{
 			Bukkit.getLogger().info("Start load world : " + worldName + " type : " + type.getName() 
 			+ " env : " + env);
 			WorldCreator creator = new WorldCreator(worldName);
-			Bukkit.getLogger().info("First");
 			creator.generateStructures(hasStructure);
-			Bukkit.getLogger().info("Second");
 			creator.environment(env);
-			Bukkit.getLogger().info("Three");
 			creator.type(type.getType());
-			Bukkit.getLogger().info("Fourth");
 			if(type.needGenerator())creator.generatorSettings(type.getName());
-			Bukkit.getLogger().info("Fivest");
 			Bukkit.createWorld(creator);
-			Bukkit.getLogger().info("Six");
 			isLoad = true;
-			Bukkit.getLogger().info("Start load world : " + worldName + " type : " + type.getName() 
+			Bukkit.getLogger().info("End load world : " + worldName + " type : " + type.getName() 
 			+ " env : " + env);
 			return true;
 		}else return false;
