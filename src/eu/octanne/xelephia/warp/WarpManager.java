@@ -38,6 +38,7 @@ public class WarpManager implements Listener {
 	 */
 	public void createWarp(String name, Location loc, ItemStack itemIcon) {
 		warpList.add(new Warp(name, loc, itemIcon));
+		save();
 	}
 
 	public Warp getWarp(String name) {

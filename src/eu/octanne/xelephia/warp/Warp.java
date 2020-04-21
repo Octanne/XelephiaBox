@@ -1,5 +1,6 @@
 package eu.octanne.xelephia.warp;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import eu.octanne.xelephia.XelephiaPlugin;
+import eu.octanne.xelephia.util.Utils;
 
 public class Warp implements ConfigurationSerializable {
 
@@ -22,7 +24,7 @@ public class Warp implements ConfigurationSerializable {
 	public Warp(String name, Location loc, ItemStack itemIcon) {
 		this.name = name;
 		location = loc;
-		this.itemIcon = itemIcon;
+		this.itemIcon = Utils.createItemStack(name, itemIcon.getType(), 1, new ArrayList<>(), itemIcon.getDurability(), false);
 	}
 	
 	/*
@@ -64,7 +66,7 @@ public class Warp implements ConfigurationSerializable {
 		if (p.hasPermission("xelephia.warp." + name)) {
 			int x = p.getLocation().getBlockX(), y = p.getLocation().getBlockY(), z = p.getLocation().getBlockZ();
 			p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("warpPreTeleport").replace("{WARP}",
-					getItem().getItemMeta().getDisplayName()));
+					name));
 			task = Bukkit.getScheduler().scheduleSyncRepeatingTask(XelephiaPlugin.getInstance(), new Runnable() {
 
 				int sec = 5;
@@ -73,7 +75,7 @@ public class Warp implements ConfigurationSerializable {
 				public void run() {
 					if (sec == 0) {
 						p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("warpTeleport")
-								.replace("{WARP}", getItem().getItemMeta().getDisplayName()));
+								.replace("{WARP}", name));
 						p.teleport(location);
 						sec = 5;
 						Bukkit.getScheduler().cancelTask(task);
@@ -96,7 +98,7 @@ public class Warp implements ConfigurationSerializable {
 
 	public void teleportByPass(Player p) {
 		p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("warpTeleport").replace("{WARP}",
-				getItem().getItemMeta().getDisplayName()));
+				name));
 		p.teleport(location);
 	}
 
