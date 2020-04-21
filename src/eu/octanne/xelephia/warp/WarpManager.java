@@ -32,8 +32,7 @@ public class WarpManager implements Listener {
 	 * CREATE NEW WARP
 	 */
 	public void createWarp(String name, Location loc, ItemStack itemIcon) {
-		@SuppressWarnings("unused")
-		Warp warp = new Warp(name, loc, itemIcon);
+		warpList.add(new Warp(name, loc, itemIcon));
 	}
 
 	public Warp getWarp(String name) {
