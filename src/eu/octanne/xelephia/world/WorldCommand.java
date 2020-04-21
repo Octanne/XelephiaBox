@@ -12,11 +12,58 @@ import eu.octanne.xelephia.XelephiaPlugin;
 
 public class WorldCommand implements CommandExecutor {
 
+	private String COMMAND_TAG = "§9World §8|§r ";
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		
-		
-		
+		if(sender.hasPermission("xelephia.worldmanager")) {
+			if(args.length > 0) {
+				if(args[0].equalsIgnoreCase("list")) {
+					sender.sendMessage(COMMAND_TAG+"§aListe des mondes :");
+					for(XWorld world : XelephiaPlugin.getWorldManager().getWorlds()) {
+						sender.sendMessage("      §e=> §9"+world.getName());
+					}
+					return true;
+				}else if(args[0].equalsIgnoreCase("info")) {
+					XWorld world;
+					if(args.length > 1 || !(sender instanceof Player)) {
+						world = XelephiaPlugin.getWorldManager().getWorld(args[1]);
+						if(world == null) {
+							sender.sendMessage(COMMAND_TAG+"§cLe monde §9"+args[1]+" §cn'existe pas !");
+							return false;
+						}
+					}else if(!(sender instanceof Player) && args.length < 1) {
+						sender.sendMessage(COMMAND_TAG+"§cUsage : /world info <monde>");
+						return false;
+					}else {
+						sender.sendMessage(COMMAND_TAG+"§aInformations du monde :");
+						sender.sendMessage("  §e=> Nom : §9"+world.getName());
+						sender.sendMessage("  §e=> Type : §9"+world.getType().getName());
+						sender.sendMessage("  §e=> Env. : §9"+world.getWorld().getEnvironment().name());
+						sender.sendMessage("  §e=> DefaultLoad : §9"+world.defaultLoad());
+						return true;
+					}
+				}else if(args[0].equalsIgnoreCase("load")) {
+
+				}else if(args[0].equalsIgnoreCase("unload")) {
+
+				}else if(args[0].equalsIgnoreCase("tp") || args[0].equalsIgnoreCase("teleport") ) {
+
+				}else if(args[0].equalsIgnoreCase("spawn")) {
+
+				}else if(args[0].equalsIgnoreCase("create")) {
+
+				}
+			}else {
+				sender.sendMessage(COMMAND_TAG+"§cUsage : /world <list, info, spawn, load, unload, tp or create>");
+				return false;
+			}
+		}else {
+			sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("noPermission"));
+			return false;
+		}
+
+
 		if (sender.hasPermission("xelephia.worldmanager")) {
 			if (args.length > 0) {
 				if (args[0].equalsIgnoreCase("list")) {
@@ -66,7 +113,7 @@ public class WorldCommand implements CommandExecutor {
 								Bukkit.getPlayer(args[2]).teleport(Bukkit.getWorld(args[1]).getSpawnLocation());
 								sender.sendMessage(
 										XelephiaPlugin.getMessageConfig().getConfig().getString("teleportPlayerInWorld")
-												.replace("{PLAYER}", args[2]).replace("{WORLD}", args[1]));
+										.replace("{PLAYER}", args[2]).replace("{WORLD}", args[1]));
 								return true;
 							} else {
 								sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
@@ -105,7 +152,7 @@ public class WorldCommand implements CommandExecutor {
 						File file = new File(args[1] + "/level.dat");
 						if (Bukkit.getWorld(args[1]) == null && file.exists()) {
 							sender.sendMessage("§eChargement du monde en cours...");
-							//XelephiaPlugin.getWorldManager().loadWorld(args[1]);
+							XelephiaPlugin.getWorldManager().loadWorld(args[1]);
 							sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("loadWorld")
 									.replace("{WORLD}", args[1]));
 							return true;

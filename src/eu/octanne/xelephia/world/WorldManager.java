@@ -39,27 +39,6 @@ public class WorldManager {
 		return null;
 	}
 	
-	public ArrayList<String> getWorlds(String format) {
-		if (format.equalsIgnoreCase("status")) {
-			File file = Bukkit.getWorldContainer();
-			String[] worlds = file.list();
-			ArrayList<String> world = new ArrayList<String>();
-
-			for (int nbr = 0; nbr < worlds.length; nbr++) {
-				File fileO = new File(worlds[nbr] + "/level.dat");
-				if (fileO.exists()) {
-					if (Bukkit.getWorld(worlds[nbr]) != null) {
-						world.add("§a" + worlds[nbr]);
-					} else {
-						world.add("§c" + worlds[nbr]);
-					}
-				}
-			}
-			return world;
-		} else
-			return null;
-	}
-
 	public boolean importWorld(String name) {
 		File file = new File(name+"/level.dat");
 		if(file.exists()) {
@@ -80,5 +59,9 @@ public class WorldManager {
 			worldConfig.save();
 			return true;
 		}else return false;
+	}
+	
+	public ArrayList<XWorld> getWorlds() {
+		return worldList;
 	}
 }
