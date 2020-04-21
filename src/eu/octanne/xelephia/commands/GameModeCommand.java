@@ -30,7 +30,7 @@ public class GameModeCommand implements CommandExecutor {
 							.replace("{PLAYER}", args[1]));
 					return false;
 				}
-				if(mode == "0" || mode == "s" || mode == "survival") {
+				if(mode.equalsIgnoreCase("0") || mode.equalsIgnoreCase("s") || mode.equalsIgnoreCase("survival")) {
 					p.setGameMode(GameMode.SURVIVAL);
 					if(sender instanceof Player && p.equals(sender))	p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
 							.getString("changeMeGameMode").replace("{GAMEMODE}", "Survie"));
@@ -41,7 +41,7 @@ public class GameModeCommand implements CommandExecutor {
 								.getString("changeMeGameMode").replace("{GAMEMODE}", "Survie"));
 					}
 					return true;
-				}else if(mode == "1" || mode == "c" || mode == "creative") {
+				}else if(mode.equalsIgnoreCase("1") || mode.equalsIgnoreCase("c") || mode.equalsIgnoreCase("creative")) {
 					p.setGameMode(GameMode.SURVIVAL);
 					if(sender instanceof Player && p.equals(sender))	p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
 							.getString("changeMeGameMode").replace("{GAMEMODE}", "Créatif"));
@@ -52,7 +52,7 @@ public class GameModeCommand implements CommandExecutor {
 								.getString("changeMeGameMode").replace("{GAMEMODE}", "Créatif"));
 					}
 					return true;
-				}else if(mode == "2" || mode == "a" || mode == "adventure") {
+				}else if(mode.equalsIgnoreCase("2") || mode.equalsIgnoreCase("a") || mode.equalsIgnoreCase("adventure")) {
 					p.setGameMode(GameMode.SURVIVAL);
 					if(sender instanceof Player && p.equals(sender))	p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
 							.getString("changeMeGameMode").replace("{GAMEMODE}", "Aventure"));
@@ -63,7 +63,7 @@ public class GameModeCommand implements CommandExecutor {
 								.getString("changeMeGameMode").replace("{GAMEMODE}", "Aventure"));
 					}
 					return true;
-				}else if(mode == "3" || mode == "spec" || mode == "spectator") {
+				}else if(mode.equalsIgnoreCase("3") || mode.equalsIgnoreCase("spec") || mode.equalsIgnoreCase("spectator")) {
 					p.setGameMode(GameMode.SURVIVAL);
 					if(sender instanceof Player && p.equals(sender))	p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
 							.getString("changeMeGameMode").replace("{GAMEMODE}", "Spectateur"));
