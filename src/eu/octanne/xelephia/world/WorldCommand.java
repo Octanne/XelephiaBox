@@ -1,12 +1,14 @@
 package eu.octanne.xelephia.world;
 
 import org.bukkit.Bukkit;
+import org.bukkit.WorldType;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import eu.octanne.xelephia.XelephiaPlugin;
+import eu.octanne.xelephia.world.XWorld.XWorldType;
 
 public class WorldCommand implements CommandExecutor {
 
@@ -138,9 +140,39 @@ public class WorldCommand implements CommandExecutor {
 						return true;
 					}
 				}else if(args[0].equalsIgnoreCase("create")) {
-					return false;
+					if(args.length > 5) {
+						if(WorldManager.getEnvByName(args[2]) != null && WorldType.getByName(args[3]) != null 
+								&& (args[4].equalsIgnoreCase("false") || args[4].equalsIgnoreCase("true"))) {
+							sender.sendMessage(COMMAND_TAG+"§aCréation du monde §9"+args[1]+" §a en cours...");
+							if(XelephiaPlugin.getWorldManager().createWorld(args[1], WorldManager.getEnvByName(args[2]), XWorldType.getByName(args[3]), Boolean.getBoolean(args[4]))) {
+								sender.sendMessage(COMMAND_TAG+"§aCréation du monde §9"+args[1]+" §a terminé !");
+								return true;
+							}else {
+								sender.sendMessage(COMMAND_TAG+"§cCréation du monde §9"+args[1]+" §c impossible !");
+								return false;
+							}
+						}else {
+							sender.sendMessage(COMMAND_TAG+"§cUsage : /world create <name> <NETHER, END or NORMAL> <VOID, NORMAL, FLAT...> <hasStructures>");
+							return false;
+						}
+					}else {
+						sender.sendMessage(COMMAND_TAG+"§cUsage : /world create <name> <NETHER, END or NORMAL> <VOID, NORMAL, FLAT...> <hasStructures>");
+						return false;
+					}
 				}else if(args[0].equalsIgnoreCase("import")) {
-					return false;
+					if(args.length > 1) {
+						sender.sendMessage(COMMAND_TAG+"§aImportation du monde §9"+args[1]+" §a en cours...");
+						if(XelephiaPlugin.getWorldManager().importWorld(args[1])) {
+							sender.sendMessage(COMMAND_TAG+"§aImportation du monde §9"+args[1]+" §a terminé !");
+							return true;
+						}else {
+							sender.sendMessage(COMMAND_TAG+"§cImportation du monde §9"+args[1]+" §c impossible !");
+							return false;
+						}
+					}else {
+						sender.sendMessage(COMMAND_TAG+"§cUsage : /world import <monde>");
+						return false;
+					}
 				}else {
 					sender.sendMessage(COMMAND_TAG+"§cUsage : /world <list, info, spawn, setspawn, load, unload, tp, create or import>");
 					return false;

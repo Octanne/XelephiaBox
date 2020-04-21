@@ -52,6 +52,8 @@ public class WorldManager {
 	}
 	
 	public boolean createWorld(String name, Environment env, XWorldType type, boolean structure) {
+		File file = new File(name);
+		if(file.exists()) return false;
 		XWorld world = new XWorld(name, env, type, structure, true);
 		world.load();
 		if(world.isLoad()) {
@@ -63,5 +65,15 @@ public class WorldManager {
 	
 	public ArrayList<XWorld> getWorlds() {
 		return worldList;
+	}
+	
+	static public Environment getEnvByName(String name) {
+		if(name.equalsIgnoreCase("NETHER")) {
+			return Environment.NETHER;
+		}else if(name.equalsIgnoreCase("END")) {
+			return Environment.THE_END;
+		}else if(name.equalsIgnoreCase("NORMAL")) {
+			return Environment.NORMAL;
+		}else return null;
 	}
 }

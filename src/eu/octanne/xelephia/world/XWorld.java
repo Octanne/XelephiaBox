@@ -151,7 +151,7 @@ public class XWorld implements ConfigurationSerializable{
 				return XWorldType.VOID;
 			}else if(name.equals("Xelephia:void")) {
 				return XWorldType.VOID;
-			}else return XWorldType.NORMAL;
+			}else return null;
 		}
 
 		static public XWorldType getByWorldType(WorldType type) {
@@ -168,7 +168,7 @@ public class XWorld implements ConfigurationSerializable{
 			}else if(type.equals(WorldType.VERSION_1_1)) {
 				return XWorldType.VERSION_1_1;
 			}else {
-				return XWorldType.NORMAL;
+				return null;
 			}
 		}
 	}
