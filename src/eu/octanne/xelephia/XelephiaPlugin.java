@@ -75,6 +75,11 @@ public class XelephiaPlugin extends JavaPlugin {
 	}
 
 	@Override
+	public void onLoad() {
+		worldManager = new WorldManager();
+	}
+	
+	@Override
 	public void onEnable() {
 		Bukkit.getLogger().log(Level.INFO, "[Xelephia] Chargement du plugin...");
 		dbPlayers = new DataBase("players");
@@ -83,7 +88,6 @@ public class XelephiaPlugin extends JavaPlugin {
 
 		// Manager
 		warpManager = new WarpManager();
-		worldManager = new WorldManager();
 		kitSystem = new KitSystem();
 		lootZoneManager = new LootZoneManager();
 
@@ -120,12 +124,12 @@ public class XelephiaPlugin extends JavaPlugin {
 		if (id.equals("void")) {
 			return new VoidChunkGenerator(true);
 		}
-		if(getWorldManager().getWorld(worldName).getType().needGenerator()) {
+		return new VoidChunkGenerator(false);
+		/*if(getWorldManager().getWorld(worldName).getType().needGenerator()) {
 			if(getWorldManager().getWorld(worldName).getType().getName().equalsIgnoreCase("void")) {
 				return new VoidChunkGenerator(true);
 			}
-		}
-		return new VoidChunkGenerator(false);
+		}*/
 	}
 
 	// Players DB

@@ -4,13 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.Listener;
 import org.bukkit.WorldCreator;
 
-import eu.octanne.xelephia.XelephiaPlugin;
 import eu.octanne.xelephia.util.ConfigYaml;
 import eu.octanne.xelephia.world.XWorld.XWorldType;
 
@@ -18,26 +16,21 @@ public class WorldManager implements Listener {
 
 	private ArrayList<XWorld> worldList;
 	
-	private ConfigYaml worldConfig = new ConfigYaml("worlds.yml");
+	private ConfigYaml worldConfig;
 
 	@SuppressWarnings("unchecked")
 	public WorldManager() {
 		// Serialization
 		ConfigurationSerialization.registerClass(XWorld.class, "XWorld");
+		worldConfig = new ConfigYaml("worlds.yml");
 		worldList = (ArrayList<XWorld>) worldConfig.getConfig().get("worlds", new ArrayList<>());
 		
-		Bukkit.getPluginManager().registerEvents(this, XelephiaPlugin.getInstance());
 		startLoad();
 	}
 	
 	private void startLoad() {
 		for(XWorld world : worldList) {
 			if(world.defaultLoad())world.load();
-		}
-		for(World world : Bukkit.getWorlds()) {
-			if(getWorld(world.getName()) == null) {
-				worldList.add(new XWorld(world));
-			}
 		}
 		save();
 	}
@@ -49,6 +42,11 @@ public class WorldManager implements Listener {
 		return null;
 	}
 	
+	public void save() {
+		worldConfig.set("worlds", worldList);
+		worldConfig.save();
+	}
+	
 	public boolean importWorld(String name) {
 		File file = new File(name+"/level.dat");
 		if(file.exists()) {
@@ -57,11 +55,6 @@ public class WorldManager implements Listener {
 			save();
 			return true;
 		}else return false;
-	}
-	
-	public void save() {
-		worldConfig.set("worlds", worldList);
-		worldConfig.save();
 	}
 	
 	public boolean createWorld(String name, Environment env, XWorldType type, boolean structure) {
