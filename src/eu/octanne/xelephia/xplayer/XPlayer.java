@@ -222,7 +222,7 @@ public class XPlayer {
 			sec %= 60;
 			int hour = min/60;
 			min %= 60;
-			return "§9Rechargé dans §c"+hour+"§eh §c"+min+"§emin §c"+sec+"§esec(s)";
+			return "§9Rechargé dans §c"+hour+"§eh§c"+min+"§em§c"+sec+"§es";
 		}else {
 			return "§9Entièrement chargé";
 		}

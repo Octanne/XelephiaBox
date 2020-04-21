@@ -145,6 +145,9 @@ public class XPlayerListener implements Listener {
 		if(xP.kitEquiped == false && !e.getPlayer().getInventory().contains(KitSystem.selectorItem)) {
 			e.getPlayer().getInventory().addItem(KitSystem.selectorItem);
 		}
+		// TP Spawn
+		e.setRespawnLocation((Location) XelephiaPlugin.getMainConfig().getConfig().get("spawn", e.getPlayer().getWorld()
+				.getSpawnLocation()));
 	}
 	
 	/*
