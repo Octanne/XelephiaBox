@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.WorldCreator;
@@ -30,6 +31,12 @@ public class WorldManager {
 		for(XWorld world : worldList) {
 			if(world.defaultLoad())world.load();
 		}
+		for(World world : Bukkit.getWorlds()) {
+			if(getWorld(world.getName()) == null) {
+				worldList.add(new XWorld(world));
+			}
+		}
+		save();
 	}
 	
 	public XWorld getWorld(String name) {
@@ -44,11 +51,14 @@ public class WorldManager {
 		if(file.exists()) {
 			XWorld world = new XWorld(Bukkit.createWorld(new WorldCreator(name)));
 			worldList.add(world);
-			worldConfig.save();
+			save();
 			return true;
 		}else return false;
-		
-		
+	}
+	
+	public void save() {
+		worldConfig.set("worlds", worldList);
+		worldConfig.save();
 	}
 	
 	public boolean createWorld(String name, Environment env, XWorldType type, boolean structure) {
@@ -58,7 +68,7 @@ public class WorldManager {
 		world.load();
 		if(world.isLoad()) {
 			worldList.add(world);
-			worldConfig.save();
+			save();
 			return true;
 		}else return false;
 	}

@@ -40,7 +40,7 @@ public class WorldCommand implements CommandExecutor {
 					}else {
 						sender.sendMessage(COMMAND_TAG+"§aInformations du monde :");
 						sender.sendMessage("  §e=> Nom : §9"+world.getName());
-						sender.sendMessage("  §e=> Type : §9"+world.getType().getName());
+						sender.sendMessage("  §e=> Type : §9"+world.getType().name());
 						sender.sendMessage("  §e=> Env. : §9"+world.getWorld().getEnvironment().name());
 						sender.sendMessage("  §e=> DefaultLoad : §9"+world.defaultLoad());
 						return true;
