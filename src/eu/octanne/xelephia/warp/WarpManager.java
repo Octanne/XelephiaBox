@@ -14,7 +14,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import eu.octanne.xelephia.XelephiaPlugin;
-import eu.octanne.xelephia.lootzone.Loot;
 import eu.octanne.xelephia.util.ConfigYaml;
 
 public class WarpManager implements Listener {
