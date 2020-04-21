@@ -19,6 +19,7 @@ public class WorldCommand implements CommandExecutor {
 			if(args.length > 0) {
 				if(args[0].equalsIgnoreCase("list")) {
 					sender.sendMessage(COMMAND_TAG+"§aListe des mondes :");
+					sender.sendMessage("      §e=> "+(XelephiaPlugin.getWorldManager().defaultWorld.isLoad() ? "§a": "§c")+XelephiaPlugin.getWorldManager().defaultWorld.getName());
 					for(XWorld world : XelephiaPlugin.getWorldManager().getWorlds()) {
 						sender.sendMessage("      §e=> "+(world.isLoad() ? "§a": "§c")+world.getName());
 					}
@@ -173,11 +174,11 @@ public class WorldCommand implements CommandExecutor {
 						return false;
 					}
 				}else {
-					sender.sendMessage(COMMAND_TAG+"§cUsage : /world <list, info, spawn, setspawn, load, unload, tp, create or import>");
+					sender.sendMessage(COMMAND_TAG+"§cUsage : /world <list, info, spawn, load, unload, tp, create or import>");
 					return false;
 				}
 			}else {
-				sender.sendMessage(COMMAND_TAG+"§cUsage : /world <list, info, spawn, setspawn, load, unload, tp, create or import>");
+				sender.sendMessage(COMMAND_TAG+"§cUsage : /world <list, info, spawn, load, unload, tp, create or import>");
 				return false;
 			}
 		}else {

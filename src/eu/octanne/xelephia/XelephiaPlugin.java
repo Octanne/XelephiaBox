@@ -85,13 +85,14 @@ public class XelephiaPlugin extends JavaPlugin {
 		dbPlayers = new DataBase("players");
 		dbPlayers.connect();
 		createTable(); // Create PLAYERS Table
-
+		
+		// World
+		worldManager = new WorldManager();
+		
 		// Manager
 		warpManager = new WarpManager();
 		kitSystem = new KitSystem();
 		lootZoneManager = new LootZoneManager();
-		// World
-		worldManager = new WorldManager();
 		
 		// Load File
 		messageConfig = new ConfigYaml("message.yml");
