@@ -224,6 +224,7 @@ public class XPlayerListener implements Listener {
 		// Killer
 		if(e.getEntity().getKiller() != null) {
 			XPlayer xPKiller = XelephiaPlugin.getXPlayer(e.getEntity().getKiller().getUniqueId());
+			xPKiller.getBukkitPlayer().setHealth(xPKiller.getBukkitPlayer().getHealth()+6);
 			xPKiller.actualKillStreak++;
 			xPKiller.killCount++;
 			if(xPKiller.getBukkitPlayer().getInventory().firstEmpty() == -1) xPKiller.getBukkitPlayer().getWorld()
