@@ -25,7 +25,8 @@ public class WorldCommand implements CommandExecutor {
 					}
 					return true;
 				}else if(args[0].equalsIgnoreCase("info")) {
-					XWorld world;
+					XWorld world = null;
+					if(sender instanceof Player) world = XelephiaPlugin.getWorldManager().getWorld(((Player) sender).getWorld().getName());
 					if(args.length > 1) {
 						world = XelephiaPlugin.getWorldManager().getWorld(args[1]);
 						if(world == null) {
@@ -86,7 +87,7 @@ public class WorldCommand implements CommandExecutor {
 					}
 				}else if(args[0].equalsIgnoreCase("tp") || args[0].equalsIgnoreCase("teleport") ) {
 					if(args.length > 1) {
-						Player p;
+						Player p = null;
 						if(sender instanceof Player) p = (Player) sender;
 						XWorld world = XelephiaPlugin.getWorldManager().getWorld(args[1]);
 						if(world == null) {
@@ -117,7 +118,7 @@ public class WorldCommand implements CommandExecutor {
 						return false;
 					}
 				}else if(args[0].equalsIgnoreCase("spawn")) {
-					Player p;
+					Player p = null;
 					if(sender instanceof Player) p = (Player) sender;
 					if(args.length > 1) {
 						p = Bukkit.getPlayer(args[1]);
@@ -136,121 +137,18 @@ public class WorldCommand implements CommandExecutor {
 							p.sendMessage(COMMAND_TAG+"§aVous avez été téléporté dans le monde §9"+p.getWorld().getName()+"§a.");
 							sender.sendMessage(COMMAND_TAG+"§9"+p.getName()+" §aa été téléporté dans le monde §9"+p.getWorld().getName()+"§a.");
 						}
+						return true;
 					}
 				}else if(args[0].equalsIgnoreCase("create")) {
-					
+					return false;
 				}else if(args[0].equalsIgnoreCase("import")) {
-					
+					return false;
 				}
 			}else {
 				sender.sendMessage(COMMAND_TAG+"§cUsage : /world <list, info, spawn, setspawn, load, unload, tp, create or import>");
 				return false;
 			}
 		}else {
-			sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("noPermission"));
-			return false;
-		}
-
-
-		if (sender.hasPermission("xelephia.worldmanager")) {
-			if (args.length > 0) {
-				if (args[0].equalsIgnoreCase("create")) {
-					if (args.length > 3) {
-						File file = new File(args[1] + "/level.dat");
-						if (!file.exists()) {
-							if ((args[2].equalsIgnoreCase("normal") || args[2].equalsIgnoreCase("flat")
-									|| args[2].equalsIgnoreCase("void"))
-									&& (args[3].equalsIgnoreCase("normal") || args[3].equalsIgnoreCase("end")
-											|| args[3].equalsIgnoreCase("nether"))) {
-								sender.sendMessage("§eCréation du monde en cours...");
-								if (args.length > 4 && args[4].equalsIgnoreCase("structure")) {
-									//XelephiaPlugin.getWorldManager().createWorld(args[1], args[2], args[3], true);
-								} else {
-									//XelephiaPlugin.getWorldManager().createWorld(args[1], args[2], args[3], true);
-								}
-							} else {
-								sender.sendMessage("§4Type de monde ou d'Environement inconnu.");
-								return false;
-							}
-							sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("createWorld")
-									.replace("{WORLD}", args[1]).replace("{TYPE}", args[2]).replace("{ENV}", args[3]));
-							return true;
-						} else {
-							sender.sendMessage("§4Erreur ce monde existe déjà !");
-							return false;
-						}
-					} else {
-						sender.sendMessage("§4Invalid usage: /world create <worldName> <typeWorld> <environmentWorld>");
-						return false;
-					}
-				} else if (args[0].equalsIgnoreCase("tp")) {
-					if (args.length > 2) {
-						if (Bukkit.getWorld(args[1]) != null) {
-							if (Bukkit.getPlayer(args[2]) != null) {
-								Bukkit.getPlayer(args[2]).teleport(Bukkit.getWorld(args[1]).getSpawnLocation());
-								sender.sendMessage(
-										XelephiaPlugin.getMessageConfig().getConfig().getString("teleportPlayerInWorld")
-										.replace("{PLAYER}", args[2]).replace("{WORLD}", args[1]));
-								return true;
-							} else {
-								sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
-										.getString("incorrectPlayer").replace("{PLAYER}", args[2]));
-								return false;
-							}
-						} else {
-							sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
-									.getString("inexistantOrNoLoadWorld").replace("{WORLD}", args[1]));
-							return false;
-						}
-					} else {
-						sender.sendMessage("§4Invalid usage: /world tp <world> <player>");
-						return false;
-					}
-				} else if (args[0].equalsIgnoreCase("unload")) {
-					if (args.length > 1) {
-						if (Bukkit.getWorld(args[1]) != null) {
-							sender.sendMessage("§eDéchargement du monde en cours...");
-							//XelephiaPlugin.getWorldManager().unloadWorld(args[1]);
-							sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("unloadWorld")
-									.replace("{WORLD}", args[1]));
-							return true;
-						} else {
-							sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
-									.getString("inexistantOrNoLoadWorld").replace("{WORLD}", args[1]));
-							return false;
-						}
-					} else {
-						sender.sendMessage("§4Invalid usage: /world unload <worldName>");
-						return false;
-					}
-
-				} else if (args[0].equalsIgnoreCase("load")) {
-					if (args.length > 1) {
-						File file = new File(args[1] + "/level.dat");
-						if (Bukkit.getWorld(args[1]) == null && file.exists()) {
-							sender.sendMessage("§eChargement du monde en cours...");
-							XelephiaPlugin.getWorldManager().loadWorld(args[1]);
-							sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("loadWorld")
-									.replace("{WORLD}", args[1]));
-							return true;
-						} else {
-							sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
-									.getString("inexistantOrAlwaysLoadWorld").replace("{WORLD}", args[1]));
-							return false;
-						}
-					} else {
-						sender.sendMessage("§4Invalid usage: /world load <worldName>");
-						return false;
-					}
-				} else {
-					sender.sendMessage("§4Invalid usage: /world <tp, unload, create, list, info or load>");
-					return false;
-				}
-			} else {
-				sender.sendMessage("§4Invalid usage: /world <tp, unload, create, list, info or load>");
-				return false;
-			}
-		} else {
 			sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("noPermission"));
 			return false;
 		}
