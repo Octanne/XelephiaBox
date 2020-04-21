@@ -8,7 +8,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import eu.octanne.xelephia.XelephiaPlugin;
-import eu.octanne.xelephia.world.XWorld.XWorldType;
 
 public class WorldCommand implements CommandExecutor {
 
@@ -141,10 +140,10 @@ public class WorldCommand implements CommandExecutor {
 					}
 				}else if(args[0].equalsIgnoreCase("create")) {
 					if(args.length > 5) {
-						if(WorldManager.getEnvByName(args[2]) != null && WorldType.getByName(args[3]) != null 
+						if(XWorldType.getEnvByName(args[2]) != null && WorldType.getByName(args[3]) != null 
 								&& (args[4].equalsIgnoreCase("false") || args[4].equalsIgnoreCase("true"))) {
 							sender.sendMessage(COMMAND_TAG+"§aCréation du monde §9"+args[1]+" §a en cours...");
-							if(XelephiaPlugin.getWorldManager().createWorld(args[1], WorldManager.getEnvByName(args[2]), XWorldType.getByName(args[3]), Boolean.getBoolean(args[4]))) {
+							if(XelephiaPlugin.getWorldManager().createWorld(args[1], XWorldType.getEnvByName(args[2]), XWorldType.getByName(args[3]), Boolean.getBoolean(args[4]))) {
 								sender.sendMessage(COMMAND_TAG+"§aCréation du monde §9"+args[1]+" §a terminé !");
 								return true;
 							}else {
