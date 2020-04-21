@@ -18,6 +18,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -116,6 +117,24 @@ public class XPlayerListener implements Listener {
 	public void onInteract(PlayerInteractEvent e) {
 		if(e.getItem() != null && e.getItem().equals(KitSystem.selectorItem)) XelephiaPlugin.getKitSystem().openMenu(e.getPlayer());
 		
+	}
+	
+	/*
+	 * InteractItemEvent
+	 */
+	@EventHandler
+	public void onConsume(PlayerItemConsumeEvent e) {
+		if(e.getItem().getType().equals(Material.GOLDEN_APPLE)) {
+			XPlayer xP = XelephiaPlugin.getXPlayer(e.getPlayer().getUniqueId());
+			int sec = xP.getTimeUntilApple();
+			if(sec == 0) {
+				xP.updateUntilAppleDate();
+				return;
+			}else {
+				xP.sendMessage(MessageType.SUBTITLE, "§9"+sec+" §csec avant la prochaine §6G-Apple §c!");
+				e.setCancelled(true);
+			}
+		}else return;
 	}
 	
 	/*

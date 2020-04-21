@@ -35,6 +35,9 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutTitle.EnumTitleAction;
 
 public class XPlayer {
 
+	static private int untilAppleTimeSec = 4;
+	static private int untilLootTimeHour = 1;
+	
 	public enum MessageType {
 		ACTIONBAR,
 		SUBTITLE
@@ -75,8 +78,10 @@ public class XPlayer {
 	
 	protected HashMap<String, Double> damageTaken = new HashMap<String, Double>();
 	protected double totalDamage = 0;
+	protected Calendar untilAppleDate;
 	
 	protected XPlayer lastMessenger;
+	
 
 	public XPlayer(UUID pUUID) {
 		// Decimal Format
@@ -207,17 +212,21 @@ public class XPlayer {
 		}else return false;
 	}
 	
+	public void updateUntilAppleDate() {
+		this.untilAppleDate = Calendar.getInstance();
+		this.untilAppleDate.add(Calendar.SECOND, untilAppleTimeSec);
+	}
+	
 	public void updateLastLootDate() {
 		this.lastLootDate = Calendar.getInstance();
-		this.lastLootDate.add(Calendar.HOUR_OF_DAY, 1);
+		this.lastLootDate.add(Calendar.HOUR_OF_DAY, untilLootTimeHour);
 	}
 	
 	public String getTimeBeforeResetLoot() {
 		Calendar now = Calendar.getInstance();
-		if(now.before(lastLootDate)) {
+		if(lastLootDate != null && now.before(lastLootDate)) {
 			long millis = lastLootDate.getTimeInMillis()-now.getTimeInMillis();
-			String millisStr = millis+"";
-			int sec = Integer.parseInt(millisStr.substring(0, millisStr.length()-3));
+			int sec = (int) (millis/1000);
 			int min = sec/60;
 			sec %= 60;
 			return "§9Rechargé dans §c"+min+" §9min.§c "+sec+" §9sec.";
@@ -225,6 +234,20 @@ public class XPlayer {
 			return "§9Entièrement chargé";
 		}
 		
+	}
+	
+	/*
+	 * @return time in sec
+	 */
+	public int getTimeUntilApple() {
+		Calendar now = Calendar.getInstance();
+		if(untilAppleDate != null && now.before(untilAppleDate)) {
+			long millis = untilAppleDate.getTimeInMillis()-now.getTimeInMillis();
+			int sec = (int) (millis/1000);
+			return sec;
+		}else {
+			return 0;
+		}
 	}
 	
 	/*

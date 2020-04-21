@@ -86,15 +86,15 @@ public class XelephiaPlugin extends JavaPlugin {
 		dbPlayers.connect();
 		createTable(); // Create PLAYERS Table
 		
+		// World
+		worldManager = new WorldManager();
+		
 		// Main Config
 		mainConfig = new ConfigYaml("config.yml");
 		loadMainConfig();
 		// Load File
 		messageConfig = new ConfigYaml("message.yml");
 		loadMessage();
-		
-		// World
-		worldManager = new WorldManager();
 		
 		// Manager
 		warpManager = new WarpManager();
