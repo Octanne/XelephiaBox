@@ -25,6 +25,7 @@ public class WorldManager implements Listener {
 		worldConfig = new ConfigYaml("worlds.yml");
 		worldList = (ArrayList<XWorld>) worldConfig.getConfig().get("worlds", new ArrayList<>());
 		
+		importLoadWorld();
 		startLoad();
 	}
 	
@@ -57,7 +58,7 @@ public class WorldManager implements Listener {
 	}
 	
 	public boolean importWorld(String name) {
-		File file = new File(name+"/level.dat");
+		File file = new File("worlds/"+name+"/level.dat");
 		if(file.exists()) {
 			XWorld world = new XWorld(Bukkit.createWorld(new WorldCreator(name)));
 			worldList.add(world);

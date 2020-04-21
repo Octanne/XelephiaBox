@@ -76,7 +76,7 @@ public class XelephiaPlugin extends JavaPlugin {
 
 	@Override
 	public void onLoad() {
-		worldManager = new WorldManager();
+
 	}
 	
 	@Override
@@ -90,8 +90,8 @@ public class XelephiaPlugin extends JavaPlugin {
 		warpManager = new WarpManager();
 		kitSystem = new KitSystem();
 		lootZoneManager = new LootZoneManager();
-		
-		worldManager.importLoadWorld();
+		// World
+		worldManager = new WorldManager();
 		
 		// Load File
 		messageConfig = new ConfigYaml("message.yml");
@@ -125,15 +125,15 @@ public class XelephiaPlugin extends JavaPlugin {
 
 	@Override
 	public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
-		if (id.equals("void")) {
+		if (id.equalsIgnoreCase("VOID")) {
 			return new VoidChunkGenerator(true);
 		}
-		return new VoidChunkGenerator(false);
-		/*if(getWorldManager().getWorld(worldName).getType().needGenerator()) {
+		if(getWorldManager().getWorld(worldName).getType().needGenerator()) {
 			if(getWorldManager().getWorld(worldName).getType().getName().equalsIgnoreCase("void")) {
 				return new VoidChunkGenerator(true);
 			}
-		}*/
+		}
+		return new VoidChunkGenerator(false);
 	}
 
 	// Players DB

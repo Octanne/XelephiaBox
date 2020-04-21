@@ -31,6 +31,7 @@ public class XWorld implements ConfigurationSerializable{
 
 	XWorld(World world){
 		this.worldName = world.getName();
+		this.isLoad = true;
 		this.type = XWorldType.getByWorldType(world.getWorldType());
 		this.env = world.getEnvironment();
 		this.hasStructure = world.canGenerateStructures();
@@ -43,24 +44,32 @@ public class XWorld implements ConfigurationSerializable{
 	public boolean unload() {
 		if(Bukkit.unloadWorld(getWorld(), true)) {
 			isLoad = false;
+			defaultLoad = false;
 			return true;
 		}else return false;
 	}
 
 	public boolean load() {
 		if(Bukkit.getWorld(worldName) == null) {
+			Bukkit.getLogger().info("Start load world : " + worldName + " type : " + type.getName() 
+			+ " env : " + env);
 			WorldCreator creator = new WorldCreator(worldName);
+			Bukkit.getLogger().info("First");
 			creator.generateStructures(hasStructure);
+			Bukkit.getLogger().info("Second");
 			creator.environment(env);
+			Bukkit.getLogger().info("Three");
 			creator.type(type.getType());
+			Bukkit.getLogger().info("Fourth");
 			if(type.needGenerator())creator.generatorSettings(type.getName());
-			Bukkit.createWorld(new WorldCreator(worldName));
+			Bukkit.getLogger().info("Fivest");
+			Bukkit.createWorld(creator);
+			Bukkit.getLogger().info("Six");
 			isLoad = true;
+			Bukkit.getLogger().info("Start load world : " + worldName + " type : " + type.getName() 
+			+ " env : " + env);
 			return true;
-		}else {
-			return false;
-		}
-
+		}else return false;
 	}
 
 	public boolean isLoad() {

@@ -18,6 +18,7 @@ public enum XWorldType {
 
 	XWorldType(String name, WorldType type, boolean needGen){
 		this.name = name;
+		this.type = type;
 		this.needGenerator = needGen;
 	}
 
@@ -36,19 +37,19 @@ public enum XWorldType {
 	static public XWorldType getByName(String name) {
 		if(name.equals("AMPLIFIED")) {
 			return XWorldType.VOID;
-		}else if(name.equals("CUSTOMIZED")) {
+		}else if(name.equalsIgnoreCase("CUSTOMIZED")) {
 			return XWorldType.CUSTOMIZED;
-		}else if(name.equals("FLAT")) {
+		}else if(name.equalsIgnoreCase("FLAT")) {
 			return XWorldType.FLAT;
-		}else if(name.equals("LARGE_BIOMES")) {
-			return XWorldType.VOID;
-		}else if(name.equals("NORMAL")) {
+		}else if(name.equalsIgnoreCase("LARGE_BIOMES")) {
+			return XWorldType.LARGE_BIOMES;
+		}else if(name.equalsIgnoreCase("NORMAL")) {
 			return XWorldType.NORMAL;
-		}else if(name.equals("VERSION_1_1")) {
+		}else if(name.equalsIgnoreCase("VERSION_1_1")) {
+			return XWorldType.VERSION_1_1;
+		}else if(name.equalsIgnoreCase("VOID")) {
 			return XWorldType.VOID;
-		}else if(name.equals("VOID")) {
-			return XWorldType.VOID;
-		}else return null;
+		}else return XWorldType.NORMAL;
 	}
 
 	static public XWorldType getByWorldType(WorldType type) {

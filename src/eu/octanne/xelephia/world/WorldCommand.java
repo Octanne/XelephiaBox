@@ -51,12 +51,12 @@ public class WorldCommand implements CommandExecutor {
 							sender.sendMessage(COMMAND_TAG+"§cLe monde §9"+args[1]+" §cn'existe pas !");
 							return false;
 						}else {
-							sender.sendMessage(COMMAND_TAG+"§aChargement du monde §9"+args[1]+" §a en cours...");
+							sender.sendMessage(COMMAND_TAG+"§aChargement du monde §9"+args[1]+" §aen cours...");
 							if(world.load()) {
-								sender.sendMessage(COMMAND_TAG+"§aChargement du monde §9"+args[1]+" §a terminé !");
+								sender.sendMessage(COMMAND_TAG+"§aChargement du monde §9"+args[1]+" §aterminé !");
 								return true;
 							}else {
-								sender.sendMessage(COMMAND_TAG+"§cChargement du monde §9"+args[1]+" §c impossible !");
+								sender.sendMessage(COMMAND_TAG+"§cChargement du monde §9"+args[1]+" §cimpossible !");
 								return false;
 							}
 						}
@@ -71,12 +71,12 @@ public class WorldCommand implements CommandExecutor {
 							sender.sendMessage(COMMAND_TAG+"§cLe monde §9"+args[1]+" §cn'existe pas !");
 							return false;
 						}else {
-							sender.sendMessage(COMMAND_TAG+"§aDéchargement du monde §9"+args[1]+" §a en cours...");
+							sender.sendMessage(COMMAND_TAG+"§aDéchargement du monde §9"+args[1]+" §aen cours...");
 							if(world.unload()) {
-								sender.sendMessage(COMMAND_TAG+"§aDéchargement du monde §9"+args[1]+" §a terminé !");
+								sender.sendMessage(COMMAND_TAG+"§aDéchargement du monde §9"+args[1]+" §aterminé !");
 								return true;
 							}else {
-								sender.sendMessage(COMMAND_TAG+"§cDéchargement du monde §9"+args[1]+" §c impossible !");
+								sender.sendMessage(COMMAND_TAG+"§cDéchargement du monde §9"+args[1]+" §cimpossible !");
 								return false;
 							}
 						}
@@ -139,15 +139,15 @@ public class WorldCommand implements CommandExecutor {
 						return true;
 					}
 				}else if(args[0].equalsIgnoreCase("create")) {
-					if(args.length > 5) {
+					if(args.length > 4) {
 						if(XWorldType.getEnvByName(args[2]) != null && WorldType.getByName(args[3]) != null 
 								&& (args[4].equalsIgnoreCase("false") || args[4].equalsIgnoreCase("true"))) {
-							sender.sendMessage(COMMAND_TAG+"§aCréation du monde §9"+args[1]+" §a en cours...");
+							sender.sendMessage(COMMAND_TAG+"§aCréation du monde §9"+args[1]+" §aen cours...");
 							if(XelephiaPlugin.getWorldManager().createWorld(args[1], XWorldType.getEnvByName(args[2]), XWorldType.getByName(args[3]), Boolean.getBoolean(args[4]))) {
-								sender.sendMessage(COMMAND_TAG+"§aCréation du monde §9"+args[1]+" §a terminé !");
+								sender.sendMessage(COMMAND_TAG+"§aCréation du monde §9"+args[1]+" §aterminé !");
 								return true;
 							}else {
-								sender.sendMessage(COMMAND_TAG+"§cCréation du monde §9"+args[1]+" §c impossible !");
+								sender.sendMessage(COMMAND_TAG+"§cCréation du monde §9"+args[1]+" §cimpossible !");
 								return false;
 							}
 						}else {
@@ -160,12 +160,12 @@ public class WorldCommand implements CommandExecutor {
 					}
 				}else if(args[0].equalsIgnoreCase("import")) {
 					if(args.length > 1) {
-						sender.sendMessage(COMMAND_TAG+"§aImportation du monde §9"+args[1]+" §a en cours...");
+						sender.sendMessage(COMMAND_TAG+"§aImportation du monde §9"+args[1]+" §aen cours...");
 						if(XelephiaPlugin.getWorldManager().importWorld(args[1])) {
-							sender.sendMessage(COMMAND_TAG+"§aImportation du monde §9"+args[1]+" §a terminé !");
+							sender.sendMessage(COMMAND_TAG+"§aImportation du monde §9"+args[1]+" §aterminé !");
 							return true;
 						}else {
-							sender.sendMessage(COMMAND_TAG+"§cImportation du monde §9"+args[1]+" §c impossible !");
+							sender.sendMessage(COMMAND_TAG+"§cImportation du monde §9"+args[1]+" §cimpossible !");
 							return false;
 						}
 					}else {
