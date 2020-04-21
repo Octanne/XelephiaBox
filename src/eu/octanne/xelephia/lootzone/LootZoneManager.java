@@ -64,7 +64,7 @@ public class LootZoneManager implements Listener {
 	protected File zoneFolder = new File("plugins/Xelephia/zone/");
 
 	public LootZoneManager() {
-		//Serialization
+		// Serialization
 		ConfigurationSerialization.registerClass(Loot.class, "Loot");
 
 		// LootZone load

@@ -14,6 +14,9 @@ public class WorldCommand implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		
+		
+		
 		if (sender.hasPermission("xelephia.worldmanager")) {
 			if (args.length > 0) {
 				if (args[0].equalsIgnoreCase("list")) {
@@ -37,9 +40,9 @@ public class WorldCommand implements CommandExecutor {
 											|| args[3].equalsIgnoreCase("nether"))) {
 								sender.sendMessage("§eCréation du monde en cours...");
 								if (args.length > 4 && args[4].equalsIgnoreCase("structure")) {
-									XelephiaPlugin.getWorldManager().createWorld(args[1], args[2], args[3], true);
+									//XelephiaPlugin.getWorldManager().createWorld(args[1], args[2], args[3], true);
 								} else {
-									XelephiaPlugin.getWorldManager().createWorld(args[1], args[2], args[3], true);
+									//XelephiaPlugin.getWorldManager().createWorld(args[1], args[2], args[3], true);
 								}
 							} else {
 								sender.sendMessage("§4Type de monde ou d'Environement inconnu.");
@@ -83,7 +86,7 @@ public class WorldCommand implements CommandExecutor {
 					if (args.length > 1) {
 						if (Bukkit.getWorld(args[1]) != null) {
 							sender.sendMessage("§eDéchargement du monde en cours...");
-							XelephiaPlugin.getWorldManager().unloadWorld(args[1]);
+							//XelephiaPlugin.getWorldManager().unloadWorld(args[1]);
 							sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("unloadWorld")
 									.replace("{WORLD}", args[1]));
 							return true;
@@ -102,7 +105,7 @@ public class WorldCommand implements CommandExecutor {
 						File file = new File(args[1] + "/level.dat");
 						if (Bukkit.getWorld(args[1]) == null && file.exists()) {
 							sender.sendMessage("§eChargement du monde en cours...");
-							XelephiaPlugin.getWorldManager().loadWorld(args[1]);
+							//XelephiaPlugin.getWorldManager().loadWorld(args[1]);
 							sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("loadWorld")
 									.replace("{WORLD}", args[1]));
 							return true;

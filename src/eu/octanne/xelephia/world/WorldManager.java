@@ -4,28 +4,41 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World.Environment;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.WorldCreator;
-import org.bukkit.WorldType;
-import org.bukkit.entity.Player;
 
-import eu.octanne.xelephia.XelephiaPlugin;
 import eu.octanne.xelephia.util.ConfigYaml;
+import eu.octanne.xelephia.world.XWorld.XWorldType;
 
 public class WorldManager {
 
-	public ConfigYaml worldConfig = new ConfigYaml("worlds.yml");
+	public ArrayList<XWorld> worldList;
+	
+	private ConfigYaml worldConfig = new ConfigYaml("worlds.yml");
 
+	@SuppressWarnings("unchecked")
 	public WorldManager() {
-		@SuppressWarnings("unchecked")
-		ArrayList<String> worldList = (ArrayList<String>) worldConfig.getConfig().get("worlds",
-				new ArrayList<String>());
-		for (String worldName : worldList) {
-			Bukkit.createWorld(new WorldCreator(worldName));
-		}
+		// Serialization
+		ConfigurationSerialization.registerClass(XWorld.class, "XWorld");
+		worldList = (ArrayList<XWorld>) worldConfig.getConfig().get("worlds", new ArrayList<>());
+		
+		startLoad();
 	}
 
+	private void startLoad() {
+		for(XWorld world : worldList) {
+			if(world.defaultLoad())world.load();
+		}
+	}
+	
+	public XWorld getWorld(String name) {
+		for(XWorld world : worldList) {
+			if(world.getName().equalsIgnoreCase(name)) return world;
+		}
+		return null;
+	}
+	
 	public ArrayList<String> getWorlds(String format) {
 		if (format.equalsIgnoreCase("status")) {
 			File file = Bukkit.getWorldContainer();
@@ -47,60 +60,25 @@ public class WorldManager {
 			return null;
 	}
 
-	public void createWorld(String worldName, String typeWorld, String envWorld, boolean withStructure) {
-		WorldCreator worldC = new WorldCreator(worldName);
-		if (envWorld.equalsIgnoreCase("end")) {
-			worldC.environment(Environment.THE_END);
-		} else if (typeWorld.equalsIgnoreCase("nether")) {
-			worldC.environment(Environment.NETHER);
-		} else if (typeWorld.equalsIgnoreCase("normal")) {
-			worldC.environment(Environment.NORMAL);
-		}
-		if (typeWorld.equalsIgnoreCase("normal")) {
-			worldC.type(WorldType.NORMAL);
-		} else if (typeWorld.equalsIgnoreCase("flat")) {
-			worldC.type(WorldType.FLAT);
-		} else if (typeWorld.equalsIgnoreCase("void")) {
-			worldC.type(WorldType.NORMAL);
-			worldC.generator("Xelephia:void");
-		}
-		if (withStructure) {
-			worldC.generateStructures(true);
-		} else
-			worldC.generateStructures(false);
-		Bukkit.createWorld(worldC);
-		Bukkit.getWorld(worldName).save();
-		Bukkit.getWorld(worldName).setSpawnLocation(4, 65, 4);
-		@SuppressWarnings("unchecked")
-		ArrayList<String> worldList = (ArrayList<String>) worldConfig.getConfig().get("worlds",
-				new ArrayList<String>());
-		worldList.add(worldName);
-		worldConfig.set("worlds", worldList);
-		worldConfig.save();
+	public boolean importWorld(String name) {
+		File file = new File(name+"/level.dat");
+		if(file.exists()) {
+			XWorld world = new XWorld(Bukkit.createWorld(new WorldCreator(name)));
+			worldList.add(world);
+			worldConfig.save();
+			return true;
+		}else return false;
+		
+		
 	}
-
-	public void unloadWorld(String worldName) {
-		for (Player p : Bukkit.getWorld(worldName).getPlayers()) {
-			p.teleport((Location) XelephiaPlugin.getMainConfig().getConfig().get("spawn",
-					Bukkit.getWorlds().get(0).getSpawnLocation()));
-		}
-		Bukkit.unloadWorld(worldName, true);
-		Bukkit.getWorlds().remove(Bukkit.getWorld(worldName));
-		@SuppressWarnings("unchecked")
-		ArrayList<String> worldList = (ArrayList<String>) worldConfig.getConfig().get("worlds",
-				new ArrayList<String>());
-		worldList.remove(worldName);
-		worldConfig.set("worlds", worldList);
-		worldConfig.save();
-	}
-
-	public void loadWorld(String worldName) {
-		Bukkit.createWorld(new WorldCreator(worldName));
-		@SuppressWarnings("unchecked")
-		ArrayList<String> worldList = (ArrayList<String>) worldConfig.getConfig().get("worlds",
-				new ArrayList<String>());
-		worldList.add(worldName);
-		worldConfig.set("worlds", worldList);
-		worldConfig.save();
+	
+	public boolean createWorld(String name, Environment env, XWorldType type, boolean structure) {
+		XWorld world = new XWorld(name, env, type, structure, true);
+		world.load();
+		if(world.isLoad()) {
+			worldList.add(world);
+			worldConfig.save();
+			return true;
+		}else return false;
 	}
 }

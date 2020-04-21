@@ -24,7 +24,7 @@ public class WarpManager implements Listener {
 	
 	@SuppressWarnings("unchecked")
 	public WarpManager() {
-		//Serialization
+		// Serialization
 		ConfigurationSerialization.registerClass(Warp.class, "Warp");
 		
 		warpConfig = new ConfigYaml("warps.yml");
