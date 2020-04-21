@@ -213,7 +213,20 @@ public class XPlayer {
 	}
 	
 	public String getTimeBeforeResetLoot() {
-		return "à définir";
+		Calendar now = Calendar.getInstance();
+		if(now.before(lastLootDate)) {
+			long millis = lastLootDate.getTimeInMillis()-now.getTimeInMillis();
+			String millisStr = millis+"";
+			int sec = Integer.parseInt(millisStr.substring(0, millisStr.length()-3));
+			int min = sec/60;
+			sec %= 60;
+			int hour = min/60;
+			min %= 60;
+			return "§9Rechargé dans §c"+hour+"§eh §c"+min+"§emin §c"+sec+"§esec(s)";
+		}else {
+			return "§9Entièrement chargé";
+		}
+		
 	}
 	
 	/*
@@ -446,7 +459,7 @@ public class XPlayer {
 
 		// Remaining loot or recharge time
 		ArrayList<String> loreGold = new ArrayList<String>();
-		loreGold.add("§9Rechargé dans §a" + getTimeBeforeResetLoot());
+		loreGold.add(getTimeBeforeResetLoot());
 		menuStats.setItem(10, Utils.createItemStack("§bLoot restant : §a" + (LootZoneManager.maxLootPerHour - this.hourLoot), Material.GOLD_INGOT, 1,
 				loreGold, 0, false));
 

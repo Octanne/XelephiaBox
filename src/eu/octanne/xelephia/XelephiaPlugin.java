@@ -86,6 +86,13 @@ public class XelephiaPlugin extends JavaPlugin {
 		dbPlayers.connect();
 		createTable(); // Create PLAYERS Table
 		
+		// Main Config
+		mainConfig = new ConfigYaml("config.yml");
+		loadMainConfig();
+		// Load File
+		messageConfig = new ConfigYaml("message.yml");
+		loadMessage();
+		
 		// World
 		worldManager = new WorldManager();
 		
@@ -93,13 +100,6 @@ public class XelephiaPlugin extends JavaPlugin {
 		warpManager = new WarpManager();
 		kitSystem = new KitSystem();
 		lootZoneManager = new LootZoneManager();
-		
-		// Load File
-		messageConfig = new ConfigYaml("message.yml");
-		loadMessage();
-		
-		// Main Config
-		mainConfig = new ConfigYaml("config.yml");
 
 		// Load Command
 		loadCommand();
@@ -256,6 +256,13 @@ public class XelephiaPlugin extends JavaPlugin {
 
 	}
 
+	public void loadMainConfig() {
+		if (!mainConfig.getFile().exists()) {
+			mainConfig.getConfig().set("maxLootPerHour", 5);
+			mainConfig.save();
+		}
+	}
+	
 	public void loadMessage() {
 		if (!messageConfig.getFile().exists()) {
 			messageConfig.set("joinPlayer",
