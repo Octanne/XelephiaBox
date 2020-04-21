@@ -9,7 +9,7 @@ import eu.octanne.xelephia.xplayer.XPlayer;
 
 public class ResetPlayerCommand implements CommandExecutor{
 
-	private String COMMAND_TAG = "§9Joueurs §8|§r ";
+	private String COMMAND_TAG = "§9Joueur §8|§r ";
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -21,7 +21,7 @@ public class ResetPlayerCommand implements CommandExecutor{
 					sender.sendMessage(COMMAND_TAG+"§aLe joueur §9"+xP.getName()+" §aviens d'être réinitialisé.");
 				}
 			}else {
-				sender.sendMessage(COMMAND_TAG+"§cErreur : /resetplayer <player>");
+				sender.sendMessage(COMMAND_TAG+"§cUsage : /resetplayer <player>");
 				return false;
 			}
 		}else {
