@@ -26,13 +26,14 @@ public class WorldCommand implements CommandExecutor {
 					return true;
 				}else if(args[0].equalsIgnoreCase("info")) {
 					XWorld world;
-					if(args.length > 1 || !(sender instanceof Player)) {
+					if(args.length > 1) {
 						world = XelephiaPlugin.getWorldManager().getWorld(args[1]);
 						if(world == null) {
 							sender.sendMessage(COMMAND_TAG+"§cLe monde §9"+args[1]+" §cn'existe pas !");
 							return false;
 						}
-					}else if(!(sender instanceof Player) && args.length < 1) {
+					}
+					if(!(sender instanceof Player) && args.length < 1) {
 						sender.sendMessage(COMMAND_TAG+"§cUsage : /world info <monde>");
 						return false;
 					}else {
@@ -84,16 +85,65 @@ public class WorldCommand implements CommandExecutor {
 						return false;
 					}
 				}else if(args[0].equalsIgnoreCase("tp") || args[0].equalsIgnoreCase("teleport") ) {
-					
+					if(args.length > 1) {
+						Player p;
+						if(sender instanceof Player) p = (Player) sender;
+						XWorld world = XelephiaPlugin.getWorldManager().getWorld(args[1]);
+						if(world == null) {
+							sender.sendMessage(COMMAND_TAG+"§cLe monde §9"+args[1]+" §cn'existe pas !");
+							return false;
+						}
+						if(args.length > 2) {
+							p = Bukkit.getPlayer(args[2]);
+							if(p == null) {
+								sender.sendMessage(COMMAND_TAG+"§cLe joueur §9"+args[2]+" §cn'est pas connecté !");
+								return false;
+							}
+						}
+						if(!(sender instanceof Player) && args.length < 1) {
+							sender.sendMessage(COMMAND_TAG+"§cUsage : /world tp <monde> <joueur>");
+							return false;
+						}else {
+							p.teleport(world.getWorld().getSpawnLocation());
+							if(p.equals(sender)) p.sendMessage(COMMAND_TAG+"§aVous avez été téléporté dans le monde §9"+world.getName()+"§a.");
+							else {
+								p.sendMessage(COMMAND_TAG+"§aVous avez été téléporté dans le monde §9"+world.getName()+"§a.");
+								sender.sendMessage(COMMAND_TAG+"§9"+p.getName()+" §aa été téléporté dans le monde §9"+world.getName()+"§a.");
+							}
+							return true;
+						}
+					}else{
+						sender.sendMessage(COMMAND_TAG+"§cUsage : /world tp <monde> "+(sender instanceof Player ? "[joueur]" : "<joueur>"));
+						return false;
+					}
 				}else if(args[0].equalsIgnoreCase("spawn")) {
-					
+					Player p;
+					if(sender instanceof Player) p = (Player) sender;
+					if(args.length > 1) {
+						p = Bukkit.getPlayer(args[1]);
+						if(p == null) {
+							sender.sendMessage(COMMAND_TAG+"§cLe joueur §9"+args[1]+" §cn'est pas connecté !");
+							return false;
+						}
+					}
+					if(!(sender instanceof Player) && args.length < 1) {
+						sender.sendMessage(COMMAND_TAG+"§cUsage : /world spawn [joueur]");
+						return false;
+					}else {
+						p.teleport(p.getWorld().getSpawnLocation());
+						if(p.equals(sender)) p.sendMessage(COMMAND_TAG+"§aVous avez été téléporté dans le monde §9"+p.getWorld().getName()+"§a.");
+						else {
+							p.sendMessage(COMMAND_TAG+"§aVous avez été téléporté dans le monde §9"+p.getWorld().getName()+"§a.");
+							sender.sendMessage(COMMAND_TAG+"§9"+p.getName()+" §aa été téléporté dans le monde §9"+p.getWorld().getName()+"§a.");
+						}
+					}
 				}else if(args[0].equalsIgnoreCase("create")) {
 					
 				}else if(args[0].equalsIgnoreCase("import")) {
 					
 				}
 			}else {
-				sender.sendMessage(COMMAND_TAG+"§cUsage : /world <list, info, spawn, load, unload, tp, create or import>");
+				sender.sendMessage(COMMAND_TAG+"§cUsage : /world <list, info, spawn, setspawn, load, unload, tp, create or import>");
 				return false;
 			}
 		}else {
