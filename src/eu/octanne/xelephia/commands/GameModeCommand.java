@@ -42,7 +42,7 @@ public class GameModeCommand implements CommandExecutor {
 					}
 					return true;
 				}else if(mode.equalsIgnoreCase("1") || mode.equalsIgnoreCase("c") || mode.equalsIgnoreCase("creative")) {
-					p.setGameMode(GameMode.SURVIVAL);
+					p.setGameMode(GameMode.CREATIVE);
 					if(sender instanceof Player && p.equals(sender))	p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
 							.getString("changeMeGameMode").replace("{GAMEMODE}", "Créatif"));
 					else {
@@ -53,7 +53,7 @@ public class GameModeCommand implements CommandExecutor {
 					}
 					return true;
 				}else if(mode.equalsIgnoreCase("2") || mode.equalsIgnoreCase("a") || mode.equalsIgnoreCase("adventure")) {
-					p.setGameMode(GameMode.SURVIVAL);
+					p.setGameMode(GameMode.ADVENTURE);
 					if(sender instanceof Player && p.equals(sender))	p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
 							.getString("changeMeGameMode").replace("{GAMEMODE}", "Aventure"));
 					else {
@@ -64,7 +64,7 @@ public class GameModeCommand implements CommandExecutor {
 					}
 					return true;
 				}else if(mode.equalsIgnoreCase("3") || mode.equalsIgnoreCase("spec") || mode.equalsIgnoreCase("spectator")) {
-					p.setGameMode(GameMode.SURVIVAL);
+					p.setGameMode(GameMode.SPECTATOR);
 					if(sender instanceof Player && p.equals(sender))	p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
 							.getString("changeMeGameMode").replace("{GAMEMODE}", "Spectateur"));
 					else {

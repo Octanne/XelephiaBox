@@ -65,7 +65,7 @@ public class XPlayerListener implements Listener {
 		XPlayer xP = XelephiaPlugin.getXPlayer(e.getPlayer().getUniqueId());
 		if (XelephiaPlugin.getXPlayersOnline().contains(xP)) {
 			// DECO COMBAT
-			if(xP.inCombat()) {
+			if(xP.inCombat() && !xP.getBukkitPlayer().isDead()) {
 				xP.combatTask.cancel();
 				xP.inCombat = false;
 				xP.decoInCombat = true;
@@ -135,7 +135,13 @@ public class XPlayerListener implements Listener {
 	public void onRespawn(PlayerRespawnEvent e) {
 		XPlayer xP = XelephiaPlugin.getXPlayer(e.getPlayer().getUniqueId());
 		((CraftPlayer) e.getPlayer()).getHandle().getDataWatcher().watch(9, (byte) 0);
-		//Give kit Item
+		
+		// REMOVE COMBAT MODE
+		if(xP.inCombat) {
+			xP.combatTask.cancel();
+			xP.inCombat = false;
+		}
+		// Give kit Item
 		if(xP.kitEquiped == false && !e.getPlayer().getInventory().contains(KitSystem.selectorItem)) {
 			e.getPlayer().getInventory().addItem(KitSystem.selectorItem);
 		}
@@ -146,7 +152,7 @@ public class XPlayerListener implements Listener {
 	 */
 	@EventHandler
 	public void onTakeDamage(EntityDamageByEntityEvent e) {
-		if(e.getEntity() instanceof Player && !e.isCancelled()) {
+		if(e.getEntity() instanceof Player && !e.isCancelled() && !e.getEntity().isDead()) {
 			XPlayer xPVictim = XelephiaPlugin.getXPlayer(e.getEntity().getUniqueId());
 			XPlayer xPDamager = null;
 
@@ -226,7 +232,7 @@ public class XPlayerListener implements Listener {
 			if (xPKiller.highKillStreak < xPKiller.actualKillStreak)
 				xPKiller.highKillStreak = xPKiller.actualKillStreak;
 		}
-		// Trie items
+		// Triage des items
 		for(ItemStack item : e.getDrops()) {
 			if(item.hasItemMeta() && item.getItemMeta().hasLore()) {
 				if(item.isSimilar(KitSystem.selectorItem)) {
@@ -253,7 +259,10 @@ public class XPlayerListener implements Listener {
 		for(ItemStack item : removeItems) {
 			e.getDrops().remove(item);
 		}
-
+		// XP 
+		e.setNewExp((int) (e.getEntity().getTotalExperience()*0.85));
+		e.setDroppedExp((int) (e.getEntity().getTotalExperience()*0.15));
+		
 		/*
 		 * Custom Death Message
 		 */
