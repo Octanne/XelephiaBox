@@ -23,7 +23,7 @@ public class WarpManager implements Listener {
 	
 	@SuppressWarnings("unchecked")
 	public WarpManager() {
-		warpList = (ArrayList<Warp>) warpConfig.getConfig().get("", new ArrayList<>());
+		warpList = (ArrayList<Warp>) warpConfig.getConfig().get("warps", new ArrayList<>());
 		
 		Bukkit.getPluginManager().registerEvents(this, XelephiaPlugin.getInstance());
 	}
