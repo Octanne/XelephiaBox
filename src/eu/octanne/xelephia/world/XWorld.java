@@ -58,7 +58,9 @@ public class XWorld implements ConfigurationSerializable{
 			Bukkit.createWorld(new WorldCreator(worldName));
 			isLoad = true;
 			return true;
-		}else return false;
+		}else {
+			return false;
+		}
 
 	}
 
@@ -94,26 +96,26 @@ public class XWorld implements ConfigurationSerializable{
 		Map<String, Object> map = new HashMap<>();
 		map.put("name", worldName);
 		map.put("type", type.getName());
-		map.put("environment", env);
+		map.put("environment", env.name());
 		map.put("load", isLoad);
 		return map;
 	}
 
 	public static XWorld deserialize(Map<String, Object> map) {
-		return new XWorld((String)map.get("name"), (Environment)map.get("environment"), XWorldType.getByName((String)map.get("type")), (boolean)map.get("structure"), (boolean)map.get("load"));
+		return new XWorld((String)map.get("name"), WorldManager.getEnvByName((String)map.get("environment")), XWorldType.getByName((String)map.get("type")), (boolean)map.get("structure"), (boolean)map.get("load"));
 	}
 
 	/*
 	 * Enum
 	 */
-	protected enum XWorldType {
+	public enum XWorldType {
 		AMPLIFIED("AMPLIFIED", WorldType.AMPLIFIED, false),
 		CUSTOMIZED("CUSTOMIZED", WorldType.CUSTOMIZED, false),
 		FLAT("FLAT", WorldType.FLAT, false),
 		LARGE_BIOMES("LARGE_BIOMES", WorldType.LARGE_BIOMES, false),
 		NORMAL("NORMAL", WorldType.NORMAL, false),
 		VERSION_1_1("VERSION_1_1", WorldType.VERSION_1_1, false),
-		VOID("Xelephia:void", WorldType.NORMAL, true);
+		VOID("VOID", WorldType.NORMAL, true);
 
 		private String name;
 		private WorldType type;

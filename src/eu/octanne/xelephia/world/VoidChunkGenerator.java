@@ -26,6 +26,7 @@ public class VoidChunkGenerator extends ChunkGenerator {
 				}
 			}
 		}
+		if(hasPlatform == false) super.generateChunkData(world, random, chunkX, chunkZ, biome);
 		return chunk;
 	}
 }

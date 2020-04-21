@@ -120,6 +120,11 @@ public class XelephiaPlugin extends JavaPlugin {
 		if (id.equals("void")) {
 			return new VoidChunkGenerator(true);
 		}
+		if(getWorldManager().getWorld(worldName).getType().needGenerator()) {
+			if(getWorldManager().getWorld(worldName).getType().getName().equalsIgnoreCase("void")) {
+				return new VoidChunkGenerator(true);
+			}
+		}
 		return new VoidChunkGenerator(false);
 	}
 

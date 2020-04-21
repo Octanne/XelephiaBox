@@ -7,14 +7,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.event.Listener;
 import org.bukkit.WorldCreator;
 
+import eu.octanne.xelephia.XelephiaPlugin;
 import eu.octanne.xelephia.util.ConfigYaml;
 import eu.octanne.xelephia.world.XWorld.XWorldType;
 
-public class WorldManager {
+public class WorldManager implements Listener {
 
-	public ArrayList<XWorld> worldList;
+	private ArrayList<XWorld> worldList;
 	
 	private ConfigYaml worldConfig = new ConfigYaml("worlds.yml");
 
@@ -24,9 +26,10 @@ public class WorldManager {
 		ConfigurationSerialization.registerClass(XWorld.class, "XWorld");
 		worldList = (ArrayList<XWorld>) worldConfig.getConfig().get("worlds", new ArrayList<>());
 		
+		Bukkit.getPluginManager().registerEvents(this, XelephiaPlugin.getInstance());
 		startLoad();
 	}
-
+	
 	private void startLoad() {
 		for(XWorld world : worldList) {
 			if(world.defaultLoad())world.load();
@@ -80,7 +83,7 @@ public class WorldManager {
 	static public Environment getEnvByName(String name) {
 		if(name.equalsIgnoreCase("NETHER")) {
 			return Environment.NETHER;
-		}else if(name.equalsIgnoreCase("END")) {
+		}else if(name.equalsIgnoreCase("END") || name.equalsIgnoreCase("THE_END") ) {
 			return Environment.THE_END;
 		}else if(name.equalsIgnoreCase("NORMAL")) {
 			return Environment.NORMAL;
