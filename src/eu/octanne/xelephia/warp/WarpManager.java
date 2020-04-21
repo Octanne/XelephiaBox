@@ -24,10 +24,15 @@ public class WarpManager implements Listener {
 	@SuppressWarnings("unchecked")
 	public WarpManager() {
 		warpList = (ArrayList<Warp>) warpConfig.getConfig().get("warps", new ArrayList<>());
-		
+		save();
 		Bukkit.getPluginManager().registerEvents(this, XelephiaPlugin.getInstance());
 	}
 
+	public void save() {
+		warpConfig.getConfig().set("warps", warpList);
+		warpConfig.save();
+	}
+	
 	/*
 	 * CREATE NEW WARP
 	 */
