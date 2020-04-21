@@ -220,7 +220,7 @@ public class XPlayer {
 			int sec = Integer.parseInt(millisStr.substring(0, millisStr.length()-3));
 			int min = sec/60;
 			sec %= 60;
-			return "§9Rechargé dans §c"+min+"§9min§c "+sec+"§9sec(s)";
+			return "§9Rechargé dans §c"+min+" §9min.§c "+sec+" §9sec.";
 		}else {
 			return "§9Entièrement chargé";
 		}
