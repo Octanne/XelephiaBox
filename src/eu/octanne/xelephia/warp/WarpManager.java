@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,6 +14,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import eu.octanne.xelephia.XelephiaPlugin;
+import eu.octanne.xelephia.lootzone.Loot;
 import eu.octanne.xelephia.util.ConfigYaml;
 
 public class WarpManager implements Listener {
@@ -23,6 +25,9 @@ public class WarpManager implements Listener {
 	
 	@SuppressWarnings("unchecked")
 	public WarpManager() {
+		//Serialization
+		ConfigurationSerialization.registerClass(Warp.class, "Warp");
+		
 		warpList = (ArrayList<Warp>) warpConfig.getConfig().get("warps", new ArrayList<>());
 		save();
 		Bukkit.getPluginManager().registerEvents(this, XelephiaPlugin.getInstance());
