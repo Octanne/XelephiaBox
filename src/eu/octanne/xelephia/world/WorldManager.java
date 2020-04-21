@@ -4,13 +4,13 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.Listener;
 import org.bukkit.WorldCreator;
 
 import eu.octanne.xelephia.util.ConfigYaml;
-import eu.octanne.xelephia.world.XWorld.XWorldType;
 
 public class WorldManager implements Listener {
 
@@ -26,6 +26,15 @@ public class WorldManager implements Listener {
 		worldList = (ArrayList<XWorld>) worldConfig.getConfig().get("worlds", new ArrayList<>());
 		
 		startLoad();
+	}
+	
+	public void importLoadWorld() {
+		for(World world : Bukkit.getWorlds()) {
+			if(getWorld(world.getName()) == null) {
+				worldList.add(new XWorld(world));
+			}
+		}
+		save();
 	}
 	
 	private void startLoad() {
@@ -71,15 +80,5 @@ public class WorldManager implements Listener {
 	
 	public ArrayList<XWorld> getWorlds() {
 		return worldList;
-	}
-	
-	static public Environment getEnvByName(String name) {
-		if(name.equalsIgnoreCase("NETHER")) {
-			return Environment.NETHER;
-		}else if(name.equalsIgnoreCase("END") || name.equalsIgnoreCase("THE_END") ) {
-			return Environment.THE_END;
-		}else if(name.equalsIgnoreCase("NORMAL")) {
-			return Environment.NORMAL;
-		}else return null;
 	}
 }

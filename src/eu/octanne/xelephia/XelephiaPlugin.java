@@ -90,10 +90,14 @@ public class XelephiaPlugin extends JavaPlugin {
 		warpManager = new WarpManager();
 		kitSystem = new KitSystem();
 		lootZoneManager = new LootZoneManager();
-
+		
+		worldManager.importLoadWorld();
+		
 		// Load File
 		messageConfig = new ConfigYaml("message.yml");
 		loadMessage();
+		
+		// Main Config
 		mainConfig = new ConfigYaml("config.yml");
 
 		// Load Command
