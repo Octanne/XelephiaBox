@@ -1,7 +1,5 @@
 package eu.octanne.xelephia.world;
 
-import java.io.File;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -142,6 +140,9 @@ public class WorldCommand implements CommandExecutor {
 				}else if(args[0].equalsIgnoreCase("create")) {
 					return false;
 				}else if(args[0].equalsIgnoreCase("import")) {
+					return false;
+				}else {
+					sender.sendMessage(COMMAND_TAG+"§cUsage : /world <list, info, spawn, setspawn, load, unload, tp, create or import>");
 					return false;
 				}
 			}else {
