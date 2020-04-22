@@ -64,7 +64,7 @@ public class Grade {
 	
 	public void applyTag(XPlayer p) {
 		String tabName = tabPrefix;
-		for(int i = 0; tabName.length() < 16; i++) {
+		for(int i = 0; tabName.length() < 16 && i < p.getName().length(); i++) {
 			tabName+= p.getName().charAt(i);
 		}
 		p.getBukkitPlayer().setPlayerListName(tabName);
