@@ -89,6 +89,7 @@ public class XPlayer {
 	protected XPlayer lastMessenger;
 	
 	public void finalize() throws Throwable {
+		Bukkit.getLogger().info("Libération mémoire XPlayer : "+lastPlayerName);
 		saveIntoDB();
 	}
 	
