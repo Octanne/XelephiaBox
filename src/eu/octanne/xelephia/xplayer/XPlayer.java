@@ -20,6 +20,7 @@ import org.bukkit.SkullType;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -47,6 +48,8 @@ public class XPlayer {
 	// Decimal Format
 	DecimalFormat df = new DecimalFormat("#.##");
 
+	public PermissionAttachment perms = null;
+	
 	protected BukkitTask combatTask;
 	protected boolean inCombat = false, decoInCombat = false;
 	private boolean combatRelaunch = false;
@@ -209,6 +212,10 @@ public class XPlayer {
 			return false;
 	}
 	
+	public void setGrade(Grade grade) {
+		this.grade = grade;
+	}
+	
 	/*
 	 * updateLoots & return true if update
 	 */
@@ -245,6 +252,8 @@ public class XPlayer {
 	}
 	
 	public Grade getGrade() {
+		grade.applyPermissions(this);
+		grade.applyTag(this);
 		return grade;
 	}
 	

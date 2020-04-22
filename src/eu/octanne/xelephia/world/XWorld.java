@@ -100,7 +100,7 @@ public class XWorld implements ConfigurationSerializable{
 		map.put("type", type.getName());
 		map.put("environment", env.name());
 		map.put("structure", hasStructure);
-		map.put("load", isLoad);
+		map.put("load", defaultLoad);
 		return map;
 	}
 

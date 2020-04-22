@@ -18,6 +18,7 @@ public class GradeCommand implements CommandExecutor{
 				if(Bukkit.getPlayer(args[0]) != null) {
 					if(XelephiaPlugin.getGradeManager().getGradeWithNull(args[0]) != null) {
 						sender.sendMessage(COMMAND_TAG+" §aLe joueur §9"+args[0]+" §a a desormais le grade "+XelephiaPlugin.getGradeManager().getGrade(args[0]).getName()+"§a.");
+						XelephiaPlugin.getXPlayer(args[0]).setGrade(XelephiaPlugin.getGradeManager().getGrade(args[0]));
 						return true;
 					}else {
 						sender.sendMessage(COMMAND_TAG+" §cErreur : Le grade §9"+args[0]+" §cest incorrect.");
