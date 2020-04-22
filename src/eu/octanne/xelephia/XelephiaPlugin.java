@@ -35,6 +35,7 @@ import eu.octanne.xelephia.commands.StatsCommand;
 import eu.octanne.xelephia.commands.SunCommand;
 import eu.octanne.xelephia.commands.TPACommand;
 import eu.octanne.xelephia.commands.TpAllCommand;
+import eu.octanne.xelephia.grade.GradeManager;
 import eu.octanne.xelephia.kit.KitCommand;
 import eu.octanne.xelephia.kit.KitSystem;
 import eu.octanne.xelephia.lootzone.LootCommand;
@@ -68,6 +69,7 @@ public class XelephiaPlugin extends JavaPlugin {
 	private static WorldManager worldManager;
 	private static KitSystem kitSystem;
 	private static LootZoneManager lootZoneManager;
+	private static GradeManager gradeManager;
 
 	@Override
 	public void onLoad() {
@@ -96,6 +98,7 @@ public class XelephiaPlugin extends JavaPlugin {
 		warpManager = new WarpManager();
 		kitSystem = new KitSystem();
 		lootZoneManager = new LootZoneManager();
+		gradeManager = new GradeManager();
 
 		// Load Online Players
 		for (Player p : Bukkit.getOnlinePlayers()) {
@@ -197,11 +200,18 @@ public class XelephiaPlugin extends JavaPlugin {
 
 	private void createTable() {
 		dbPlayers.createTable("CREATE TABLE IF NOT EXISTS players (\n" + "    uuid txt NOT NULL,\n"
-				+ "    playerName txt NOT NULL,\n" + "    coins REAL NOT NULL,\n"
-				+ "    killCount integer NOT NULL,\n" + "    deathCount integer NOT NULL,\n"
-				+ "    actualKillStreak integer NOT NULL,\n" + "    highKillStreak integer NOT NULL\n,"
-				+ "    lastLootDate txt,\n" + "    totalLoot integer NOT NULL,\n" + "    hourLoot integer NOT NULL,\n"
-				+ "    unlockKits txt NOT NULL,\n" + "    kitEquiped txt NOT NULL\n" + 
+				+ "    playerName txt NOT NULL,\n" 
+				+ "    grade txt NOT NULL,\n" 
+				+ "    coins REAL NOT NULL,\n"
+				+ "    killCount integer NOT NULL,\n" 
+				+ "    deathCount integer NOT NULL,\n"
+				+ "    actualKillStreak integer NOT NULL,\n" 
+				+ "    highKillStreak integer NOT NULL\n,"
+				+ "    lastLootDate txt,\n" 
+				+ "    totalLoot integer NOT NULL,\n" 
+				+ "    hourLoot integer NOT NULL,\n"
+				+ "    unlockKits txt NOT NULL,\n" 
+				+ "    kitEquiped txt NOT NULL\n" + 
 				");");
 	}
 
@@ -219,6 +229,9 @@ public class XelephiaPlugin extends JavaPlugin {
 	}
 	static public LootZoneManager getLootZoneManager() {
 		return lootZoneManager;
+	}
+	static public GradeManager getGradeManager() {
+		return gradeManager;
 	}
 
 	public void loadCommand() {

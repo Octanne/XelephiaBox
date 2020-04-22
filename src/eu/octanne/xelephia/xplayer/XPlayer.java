@@ -26,6 +26,7 @@ import org.bukkit.scheduler.BukkitTask;
 import com.google.gson.reflect.TypeToken;
 
 import eu.octanne.xelephia.XelephiaPlugin;
+import eu.octanne.xelephia.grade.Grade;
 import eu.octanne.xelephia.lootzone.LootZoneManager;
 import eu.octanne.xelephia.util.Utils;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent.ChatSerializer;
@@ -50,6 +51,8 @@ public class XPlayer {
 	protected boolean inCombat = false, decoInCombat = false;
 	private boolean combatRelaunch = false;
 	protected String lastDamagerName;
+	
+	protected Grade grade;
 	
 	protected UUID playerUUID;
 	protected String lastPlayerName;
@@ -100,7 +103,7 @@ public class XPlayer {
 		try {
 			PreparedStatement q = XelephiaPlugin.getPlayersDB().getConnection()
 					.prepareStatement("SELECT playerName, uuid, coins, killCount, deathCount, actualKillStreak, "
-							+ "highKillStreak, lastLootDate, totalLoot, hourLoot, unlockKits, kitEquiped FROM players WHERE uuid=?");
+							+ "highKillStreak, lastLootDate, totalLoot, hourLoot, unlockKits, kitEquiped, grade FROM players WHERE uuid=?");
 			q.setString(1, pUUID.toString());
 			ResultSet rs = q.executeQuery();
 			boolean isExist = rs.next();
@@ -121,6 +124,7 @@ public class XPlayer {
 						}.getType());
 				if(rs.getString("kitEquiped").equalsIgnoreCase("true")) this.kitEquiped = true;
 				else this.kitEquiped = false;
+				this.grade = XelephiaPlugin.getGradeManager().getGrade(rs.getString("grade"));
 				
 				Bukkit.getLogger().log(Level.INFO, "[Xelephia] Chargement du joueur : " + this.lastPlayerName + " !");
 			} else {
@@ -133,10 +137,11 @@ public class XPlayer {
 				this.hourLoot = 0;
 				this.unlockKits = new ArrayList<String>();
 				this.kitEquiped = false;
+				this.grade = XelephiaPlugin.getGradeManager().getDefault();
 				
 				PreparedStatement qCreate = XelephiaPlugin.getPlayersDB().getConnection()
 						.prepareStatement("INSERT INTO players (playerName, uuid, coins, killCount, deathCount, "
-								+ "actualKillStreak, highKillStreak, lastLootDate, totalLoot, hourLoot, unlockKits, kitEquiped) "
+								+ "actualKillStreak, highKillStreak, lastLootDate, totalLoot, hourLoot, unlockKits, kitEquiped, grade) "
 								+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
 				qCreate.setString(1, this.lastPlayerName);
 				qCreate.setString(2, this.playerUUID.toString());
@@ -150,6 +155,8 @@ public class XPlayer {
 				qCreate.setInt(10, this.hourLoot);
 				qCreate.setString(11, Utils.getGson().toJson(unlockKits));
 				qCreate.setString(12, ""+this.kitEquiped);
+				qCreate.setString(13, grade.getName());
+				
 				
 				qCreate.execute();
 				qCreate.close();
@@ -166,7 +173,7 @@ public class XPlayer {
 			PreparedStatement qCreate = XelephiaPlugin.getPlayersDB().getConnection()
 					.prepareStatement("UPDATE players SET playerName = ?, coins = ?, killCount = ?, "
 							+ "deathCount = ?, actualKillStreak = ?, highKillStreak = ?, lastLootDate = ?, "
-							+ "totalLoot = ?, hourLoot = ?, unlockKits = ?, kitEquiped = ? WHERE uuid = ?");
+							+ "totalLoot = ?, hourLoot = ?, unlockKits = ?, kitEquiped = ?, grade = ? WHERE uuid = ?");
 			qCreate.setString(1, this.lastPlayerName);
 			qCreate.setDouble(2, this.coins);
 			qCreate.setInt(3, this.killCount);
@@ -178,8 +185,9 @@ public class XPlayer {
 			qCreate.setInt(9, this.hourLoot);
 			qCreate.setString(10, Utils.getGson().toJson(unlockKits));
 			qCreate.setString(11, ""+this.kitEquiped);
+			qCreate.setString(12, this.grade.getName());
 			
-			qCreate.setString(12, this.playerUUID.toString());
+			qCreate.setString(13, this.playerUUID.toString());
 			// ADD Capture Zone Date
 			qCreate.execute();
 			qCreate.close();
@@ -234,6 +242,10 @@ public class XPlayer {
 			return "§9Entièrement chargé";
 		}
 		
+	}
+	
+	public Grade getGrade() {
+		return grade;
 	}
 	
 	/*

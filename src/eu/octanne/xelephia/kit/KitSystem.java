@@ -1,6 +1,7 @@
 package eu.octanne.xelephia.kit;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -57,7 +58,8 @@ public class KitSystem implements Listener {
 	}
 
 	private void loadKits() {
-		for (File kitFile : kitsFolder.listFiles()) {
+		FilenameFilter filter = (dir, name) -> name.endsWith(".yml");
+		for (File kitFile : kitsFolder.listFiles(filter)) {
 			Kit kit = new Kit(kitFile.getName());
 			if (kit.getName() != null)
 				kitsList.add(kit);

@@ -1,6 +1,7 @@
 package eu.octanne.xelephia.lootzone;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,13 +79,15 @@ public class LootZoneManager implements Listener {
 	}
 
 	protected void load() {
-		if(zoneFolder.isDirectory() && zoneFolder.listFiles() != null)
-			for(File file : zoneFolder.listFiles()) {
+		if(zoneFolder.isDirectory() && zoneFolder.listFiles() != null) {
+			FilenameFilter filter = (dir, name) -> name.endsWith(".yml");
+			for(File file : zoneFolder.listFiles(filter)) {
 				if(file.getName().contains(".yml")) {
 					LootZone zone = new LootZone(file.getName().split(".yml")[0]);
 					if(zone.getName() != null)lootZones.add(zone);
 				}
 			}
+		}
 	}
 
 	protected void save() {
