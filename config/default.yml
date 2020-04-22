@@ -1,6 +1,0 @@
-name: Joueur
-prefix: "[Joueur]"
-tabPrefix : "[J] "
-default: true
-permissions: []
-inheritences: []

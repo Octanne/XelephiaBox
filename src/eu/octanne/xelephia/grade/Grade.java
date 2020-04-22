@@ -6,7 +6,6 @@ import java.util.List;
 import org.bukkit.permissions.PermissionAttachment;
 
 import eu.octanne.xelephia.XelephiaPlugin;
-import eu.octanne.xelephia.util.ConfigYaml;
 import eu.octanne.xelephia.xplayer.XPlayer;
 
 public class Grade {
@@ -22,19 +21,28 @@ public class Grade {
 	
 	private GradeManager parent;
 	
-	private ConfigYaml config;
+	//private ConfigYaml config;
 	
 	@SuppressWarnings("unchecked")
-	public Grade(String path, GradeManager manager){
+	public Grade(String section, GradeManager manager){
 		parent = manager;
-		config = new ConfigYaml("grades/"+path);
+		
+		this.name = parent.gradeConfig.get().getString(section+".name", "");
+		this.prefix = parent.gradeConfig.get().getString(section+".prefix", "");
+		this.tabPrefix = parent.gradeConfig.get().getString(section+".tabPrefix", "");
+		this.permissions = (List<String>) parent.gradeConfig.get().getList(section+".permissions", new ArrayList<>());
+		this.inheritence = (List<String>) parent.gradeConfig.get().getList(".inheritences", new ArrayList<>());
+		this.isDefault = parent.gradeConfig.get().getBoolean(section+".default", true);
+		if(isDefault) parent.defaultGrade = this;
+		
+		/*config = new ConfigYaml("grades/"+path);
 		this.name = config.get().getString("name", "");
 		this.prefix = config.get().getString("prefix", "");
 		this.tabPrefix = config.get().getString("tabPrefix", "");
 		this.permissions = (List<String>) config.get().getList("permissions", new ArrayList<>());
 		this.inheritence = (List<String>) config.get().getList("inheritences", new ArrayList<>());
 		this.isDefault = config.get().getBoolean("default", false);
-		if(isDefault) parent.defaultGrade = this;
+		if(isDefault) parent.defaultGrade = this;*/
 	}
 	
 	public String getName() {

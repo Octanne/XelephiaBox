@@ -1,0 +1,14 @@
+Joueur:
+  name: Joueur
+  prefix: "[Joueur]"
+  tabPrefix : "[J] "
+  default: true
+  permissions: []
+  inheritences: []
+Administrateur:
+  name: Administrateur
+  prefix: "[Administrateur]"
+  tabPrefix : "[Admin] "
+  default: false
+  permissions: []
+  inheritences: []

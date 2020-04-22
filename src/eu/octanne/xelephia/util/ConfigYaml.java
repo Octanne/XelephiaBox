@@ -44,6 +44,10 @@ public class ConfigYaml {
 		}
 	}
 
+	public void reload() {
+		config = YamlConfiguration.loadConfiguration(file);
+	}
+	
 	public void save(YamlConfiguration config) {
 		this.config = config;
 		try {
