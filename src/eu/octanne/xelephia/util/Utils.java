@@ -83,8 +83,6 @@ public class Utils {
 	
 	static public void copyAStream(InputStream stream, File target) {
 		try {
-			stream = new FileInputStream(
-				      new File("src/main/resources/sample.txt"));
 			byte[] buffer = new byte[stream.available()];
 			stream.read(buffer);
     	 
