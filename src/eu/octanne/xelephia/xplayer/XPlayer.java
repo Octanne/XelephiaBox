@@ -95,8 +95,6 @@ public class XPlayer {
 	
 	public XPlayer(UUID pUUID) {
 		
-
-		
 		// Decimal Format
 		df.setRoundingMode(RoundingMode.HALF_EVEN);
 		DecimalFormatSymbols dfs = df.getDecimalFormatSymbols();
@@ -221,6 +219,8 @@ public class XPlayer {
 	
 	public void setGrade(Grade grade) {
 		this.grade = grade;
+		this.grade.applyPermissions(this);
+		this.grade.applyTag(this);
 	}
 	
 	/*
@@ -259,8 +259,6 @@ public class XPlayer {
 	}
 	
 	public Grade getGrade() {
-		grade.applyPermissions(this);
-		grade.applyTag(this);
 		return grade;
 	}
 	
