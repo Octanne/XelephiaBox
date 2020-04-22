@@ -257,7 +257,9 @@ public class XelephiaPlugin extends JavaPlugin {
 	 */
 	public void loadMainConfig() {
 		if(mainConfig.get().isSet("maxLootPerHour"))mainConfig.set("maxLootPerHour", 5);
-		
+		if(mainConfig.get().isSet("coucheDelSelector"))mainConfig.set("coucheDelSelector", 150);
+		if(mainConfig.get().isSet("untilAppleTimeSec"))mainConfig.set("untilAppleTimeSec", 6);
+		if(mainConfig.get().isSet("untilLootTimeHour"))mainConfig.set("untilLootTimeHour", 1);
 		mainConfig.save();
 	}
 	public void loadMessage() {

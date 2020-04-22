@@ -33,8 +33,8 @@ import eu.octanne.xelephia.xplayer.XPlayer.MessageType;
 public class XPlayerListener implements Listener {
 
 	DecimalFormat df = new DecimalFormat("#.##");
-
-	private int coucheDelSelector = 150;
+	
+	static private int coucheDelSelector = XelephiaPlugin.getMainConfig().get().getInt("coucheDelSelector",150);
 	
 	/*
 	 * PlayerJoinEvent

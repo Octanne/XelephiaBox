@@ -35,8 +35,8 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutTitle.EnumTitleAction;
 
 public class XPlayer {
 
-	static private int untilAppleTimeSec = 6;
-	static private int untilLootTimeHour = 1;
+	static private int untilAppleTimeSec = XelephiaPlugin.getMainConfig().get().getInt("untilAppleTimeSec",6);
+	static private int untilLootTimeHour = XelephiaPlugin.getMainConfig().get().getInt("untilLootTimeHour",1);
 	
 	public enum MessageType {
 		ACTIONBAR,
