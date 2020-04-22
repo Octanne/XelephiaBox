@@ -192,7 +192,7 @@ public class XelephiaPlugin extends JavaPlugin {
 				return null;
 			String strUUID = rs.getString("uuid");
 			q.close();
-			return new XPlayer(UUID.fromString(strUUID));
+			return getXPlayer(UUID.fromString(strUUID));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;

@@ -88,8 +88,14 @@ public class XPlayer {
 	
 	protected XPlayer lastMessenger;
 	
-
+	public void finalize() throws Throwable {
+		saveIntoDB();
+	}
+	
 	public XPlayer(UUID pUUID) {
+		
+
+		
 		// Decimal Format
 		df.setRoundingMode(RoundingMode.HALF_EVEN);
 		DecimalFormatSymbols dfs = df.getDecimalFormatSymbols();
