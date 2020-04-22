@@ -2,7 +2,12 @@ package eu.octanne.xelephia.grade;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+
+import eu.octanne.xelephia.XelephiaPlugin;
+import eu.octanne.xelephia.util.Utils;
 
 public class GradeManager {
 	
@@ -10,11 +15,19 @@ public class GradeManager {
 	
 	private File gradeFolder = new File("plugins/Xelephia/grades");
 	
-	private Grade defaultGrade;
+	protected Grade defaultGrade;
 	
 	public GradeManager(){
 		if(!gradeFolder.exists()) {
 			gradeFolder.mkdirs();
+			File defaultFile = new File("plugins/Xelephia/grades/default.yml");
+			try {
+				defaultFile.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			InputStream stream = XelephiaPlugin.getInstance().getResource("grades/default.yml");
+			Utils.copyAStream(stream, defaultFile);
 		}
 		load();
 	}

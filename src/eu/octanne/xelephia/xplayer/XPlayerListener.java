@@ -16,6 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -54,6 +55,8 @@ public class XPlayerListener implements Listener {
 		if(xp.kitEquiped == false && !e.getPlayer().getInventory().contains(KitSystem.selectorItem) && !e.getPlayer().isDead()) {
 			e.getPlayer().getInventory().addItem(KitSystem.selectorItem);
 		}
+		// LOAD PERMISSION
+		xp.getGrade().applyPermissions(xp);
 		// CUSTOM MESSAGE
 		e.setJoinMessage(XelephiaPlugin.getMessageConfig().get().getString("joinPlayer").replace("{PLAYER}", xp.getName()));
 	}
@@ -87,10 +90,20 @@ public class XPlayerListener implements Listener {
 	}
 
 	/*
-	 * PlayerMoveEvent
+	 * PlayerSendMessageEvent
 	 */
 	@EventHandler
-	public void onPlayerMoveEvent(PlayerMoveEvent e) {
+	public void onSendMessage(AsyncPlayerChatEvent e) {
+		Bukkit.broadcastMessage("Format : "+e.getFormat());
+		Bukkit.broadcastMessage("Message : "+e.getMessage());
+		Bukkit.broadcastMessage("Sender : "+e.getPlayer().getName());
+	}
+	
+	/*
+	 * MoveEvent
+	 */
+	@EventHandler
+	public void onPlayerMove(PlayerMoveEvent e) {
 		Player p = e.getPlayer();
 		if(e.getTo().getY() < coucheDelSelector && p.getInventory().first(KitSystem.selectorItem) != -1) {
 			p.getInventory().clear(p.getInventory().first(KitSystem.selectorItem));
@@ -120,7 +133,7 @@ public class XPlayerListener implements Listener {
 	}
 	
 	/*
-	 * InteractItemEvent
+	 * ItemConsumeEvent
 	 */
 	@EventHandler
 	public void onConsume(PlayerItemConsumeEvent e) {
@@ -138,7 +151,7 @@ public class XPlayerListener implements Listener {
 	}
 	
 	/*
-	 * PlayerDropEvent
+	 * DropEvent
 	 */
 	@EventHandler
 	public void onDropItem(PlayerDropItemEvent e) {

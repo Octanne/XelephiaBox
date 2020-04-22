@@ -1,5 +1,9 @@
 package eu.octanne.xelephia.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import org.bukkit.Material;
@@ -10,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import com.google.common.io.Files;
 import com.google.gson.Gson;
 
 public class Utils {
@@ -74,6 +79,19 @@ public class Utils {
 
 	static public Gson getGson() {
 		return gson;
+	}
+	
+	static public void copyAStream(InputStream stream, File target) {
+		try {
+			stream = new FileInputStream(
+				      new File("src/main/resources/sample.txt"));
+			byte[] buffer = new byte[stream.available()];
+			stream.read(buffer);
+    	 
+    	    Files.write(buffer, target);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/*private boolean isPvPActive(Entity e){

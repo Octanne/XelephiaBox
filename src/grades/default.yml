@@ -1,0 +1,5 @@
+name: Joueur
+prefix: "§7[§§eJoueur§7]§r"
+default: true
+permissions: []
+inheritences: []

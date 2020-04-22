@@ -14,8 +14,10 @@ public class Grade {
 	private String name;
 	private String prefix;
 	
+	private boolean isDefault;
+	
 	private List<String> permissions;
-	private List<String> inheritance;
+	private List<String> inheritence;
 	
 	private GradeManager parent;
 	
@@ -28,7 +30,9 @@ public class Grade {
 		this.name = config.get().getString("name");
 		this.prefix = config.get().getString("prefix");
 		this.permissions = (List<String>) config.get().getList("permissions", new ArrayList<>());
-		this.inheritance = (List<String>) config.get().getList("inheritance", new ArrayList<>());
+		this.inheritence = (List<String>) config.get().getList("inheritences", new ArrayList<>());
+		this.isDefault = config.get().getBoolean("default", false);
+		if(isDefault) parent.defaultGrade = this;
 	}
 	
 	public String getName() {
@@ -41,7 +45,7 @@ public class Grade {
 	
 	public void applyPermissions(XPlayer p) {
 		PermissionAttachment perm = p.getBukkitPlayer().addAttachment(XelephiaPlugin.getInstance());
-		for(String gradeStr : inheritance) {
+		for(String gradeStr : inheritence) {
 			Grade g = parent.getGrade(gradeStr);
 			g.applyPermissions(p);
 		}
