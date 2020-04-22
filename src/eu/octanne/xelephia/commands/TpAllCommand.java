@@ -27,15 +27,15 @@ public class TpAllCommand implements CommandExecutor {
 			for (Player p : Bukkit.getOnlinePlayers()) {
 				if (!p.hasPermission("xelephia.tpall.bypass") && p != senderP) {
 					p.teleport(senderP);
-					p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("tpallPlayerTeleport")
+					p.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("tpallPlayerTeleport")
 							.replace("{PLAYER}", sender.getName()).replace("{REASON}", reason));
 				}
 			}
-			sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("tpallPlayerExecutor")
+			sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("tpallPlayerExecutor")
 					.replace("{REASON}", reason));
 			return true;
 		} else {
-			sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("noPermission"));
+			sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("noPermission"));
 			return false;
 		}
 	}

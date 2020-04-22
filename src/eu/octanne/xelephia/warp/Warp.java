@@ -65,7 +65,7 @@ public class Warp implements ConfigurationSerializable {
 	public void teleport(Player p) {
 		if (p.hasPermission("xelephia.warp." + name)) {
 			int x = p.getLocation().getBlockX(), y = p.getLocation().getBlockY(), z = p.getLocation().getBlockZ();
-			p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("warpPreTeleport").replace("{WARP}",
+			p.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("warpPreTeleport").replace("{WARP}",
 					name));
 			task = Bukkit.getScheduler().scheduleSyncRepeatingTask(XelephiaPlugin.getInstance(), new Runnable() {
 
@@ -74,7 +74,7 @@ public class Warp implements ConfigurationSerializable {
 				@Override
 				public void run() {
 					if (sec == 0) {
-						p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("warpTeleport")
+						p.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("warpTeleport")
 								.replace("{WARP}", name));
 						p.teleport(location);
 						sec = 5;
@@ -83,7 +83,7 @@ public class Warp implements ConfigurationSerializable {
 						if (x != p.getLocation().getBlockX() || y != p.getLocation().getBlockY()
 								|| z != p.getLocation().getBlockZ()) {
 							sec = 5;
-							p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("CancelTeleport"));
+							p.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("CancelTeleport"));
 							Bukkit.getScheduler().cancelTask(task);
 						} else {
 							sec--;
@@ -92,12 +92,12 @@ public class Warp implements ConfigurationSerializable {
 				}
 			}, 0, 20);
 		} else {
-			p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("noPermission"));
+			p.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("noPermission"));
 		}
 	}
 
 	public void teleportByPass(Player p) {
-		p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("warpTeleport").replace("{WARP}",
+		p.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("warpTeleport").replace("{WARP}",
 				name));
 		p.teleport(location);
 	}

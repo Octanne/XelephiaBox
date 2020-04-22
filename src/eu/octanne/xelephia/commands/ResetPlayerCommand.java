@@ -25,7 +25,7 @@ public class ResetPlayerCommand implements CommandExecutor{
 				return false;
 			}
 		}else {
-			sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("noPermission"));
+			sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("noPermission"));
 		}
 		return false;
 	}

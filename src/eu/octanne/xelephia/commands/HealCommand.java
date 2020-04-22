@@ -20,12 +20,12 @@ public class HealCommand implements CommandExecutor {
 					pt.setHealth(20);
 					pt.setFoodLevel(20);
 					if (sender != pt)
-						sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("healOtherCommand")
+						sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("healOtherCommand")
 								.replace("{PLAYER}", pt.getName()));
-					pt.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("healMeCommand"));
+					pt.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("healMeCommand"));
 					return true;
 				} else {
-					sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("incorrectPlayer")
+					sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("incorrectPlayer")
 							.replace("{PLAYER}", args[1]));
 					return false;
 				}
@@ -33,14 +33,14 @@ public class HealCommand implements CommandExecutor {
 				Player p = ((Player) sender);
 				p.setHealth(20);
 				p.setFoodLevel(20);
-				p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("healMeCommand"));
+				p.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("healMeCommand"));
 				return true;
 			} else {
 				sender.sendMessage("§4Invalid usage: /heal <joueur>");
 				return false;
 			}
 		} else {
-			sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("noPermission"));
+			sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("noPermission"));
 			return false;
 		}
 	}

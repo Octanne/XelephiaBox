@@ -24,7 +24,7 @@ public class WorldManager implements Listener {
 		// Serialization
 		ConfigurationSerialization.registerClass(XWorld.class, "XWorld");
 		worldConfig = new ConfigYaml("worlds.yml");
-		worldList = (ArrayList<XWorld>) worldConfig.getConfig().get("worlds", new ArrayList<>());
+		worldList = (ArrayList<XWorld>) worldConfig.get().get("worlds", new ArrayList<>());
 
 		initDefaultWorld();
 		startLoad();

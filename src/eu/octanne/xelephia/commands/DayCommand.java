@@ -15,10 +15,10 @@ public class DayCommand implements CommandExecutor {
 		if (sender.hasPermission("xelephia.commands.day") && sender instanceof Player) {
 			Player p = (Player) sender;
 			p.getWorld().setTime(1000);
-			sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("dayCommand"));
+			sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("dayCommand"));
 			return true;
 		} else {
-			sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("noPermission"));
+			sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("noPermission"));
 			return false;
 		}
 	}

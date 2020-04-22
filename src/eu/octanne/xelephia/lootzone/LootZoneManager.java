@@ -68,7 +68,7 @@ public class LootZoneManager implements Listener {
 		ConfigurationSerialization.registerClass(Loot.class, "Loot");
 
 		// LootMax
-		maxLootPerHour = XelephiaPlugin.getMainConfig().getConfig().getInt("maxLootPerHour", 5);
+		maxLootPerHour = XelephiaPlugin.getMainConfig().get().getInt("maxLootPerHour", 5);
 		
 		// LootZone load
 		load();

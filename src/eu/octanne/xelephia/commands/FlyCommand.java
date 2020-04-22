@@ -20,12 +20,12 @@ public class FlyCommand implements CommandExecutor {
 					if (senderPlayer.getAllowFlight()) {
 						senderPlayer.setAllowFlight(false);
 						senderPlayer.sendMessage(
-								XelephiaPlugin.getMessageConfig().getConfig().getString("FLY_DISABLE_PLAYER_ME"));
+								XelephiaPlugin.getMessageConfig().get().getString("FLY_DISABLE_PLAYER_ME"));
 						return true;
 					} else {
 						senderPlayer.setAllowFlight(true);
 						senderPlayer.sendMessage(
-								XelephiaPlugin.getMessageConfig().getConfig().getString("FLY_ENABLE_PLAYER_ME"));
+								XelephiaPlugin.getMessageConfig().get().getString("FLY_ENABLE_PLAYER_ME"));
 						return true;
 					}
 				} else {
@@ -40,22 +40,22 @@ public class FlyCommand implements CommandExecutor {
 						if (p.getAllowFlight()) {
 							p.setAllowFlight(false);
 							p.sendMessage(
-									XelephiaPlugin.getMessageConfig().getConfig().getString("FLY_DISABLE_PLAYER_ME"));
+									XelephiaPlugin.getMessageConfig().get().getString("FLY_DISABLE_PLAYER_ME"));
 							if (sender != p)
-								sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
+								sender.sendMessage(XelephiaPlugin.getMessageConfig().get()
 										.getString("FLY_DISABLE_PLAYER_YOU").replace("{PLAYER}", p.getName()));
 							return true;
 						} else {
 							p.setAllowFlight(true);
 							p.sendMessage(
-									XelephiaPlugin.getMessageConfig().getConfig().getString("FLY_ENABLE_PLAYER_ME"));
+									XelephiaPlugin.getMessageConfig().get().getString("FLY_ENABLE_PLAYER_ME"));
 							if (sender != p)
-								sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
+								sender.sendMessage(XelephiaPlugin.getMessageConfig().get()
 										.getString("FLY_ENABLE_PLAYER_YOU").replace("{PLAYER}", p.getName()));
 							return true;
 						}
 					} else {
-						sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("incorrectPlayer")
+						sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("incorrectPlayer")
 								.replace("{PLAYER}", args[0]));
 						return false;
 					}
@@ -69,7 +69,7 @@ public class FlyCommand implements CommandExecutor {
 
 			}
 		} else {
-			sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("noPermission"));
+			sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("noPermission"));
 			return false;
 		}
 

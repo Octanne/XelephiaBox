@@ -14,10 +14,10 @@ public class NightCommand implements CommandExecutor {
 		if (sender.hasPermission("xelephia.commands.night") && sender instanceof Player) {
 			Player p = (Player) sender;
 			p.getWorld().setTime(13000);
-			sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("nightCommand"));
+			sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("nightCommand"));
 			return true;
 		} else {
-			sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("noPermission"));
+			sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("noPermission"));
 			return false;
 		}
 	}

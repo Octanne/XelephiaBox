@@ -9,7 +9,7 @@ import eu.octanne.xelephia.XelephiaPlugin;
 public class DiscordCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("discordCommand"));
+		sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("discordCommand"));
 		return true;
 	}
 }

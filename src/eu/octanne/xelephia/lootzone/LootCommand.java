@@ -102,11 +102,11 @@ public class LootCommand implements CommandExecutor {
 					return false;
 				}
 			}else {
-				p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("noPermission"));
+				p.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("noPermission"));
 				return false;
 			}
 		}else {
-			sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("playerOnly"));
+			sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("playerOnly"));
 			return false;
 		}
 	}

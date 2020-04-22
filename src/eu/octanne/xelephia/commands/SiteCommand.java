@@ -10,7 +10,7 @@ public class SiteCommand implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("siteCommand"));
+		sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("siteCommand"));
 		return true;
 	}
 

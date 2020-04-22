@@ -105,6 +105,18 @@ public class KitSystem implements Listener {
 	public ArrayList<Kit> getKits() {
 		return kitsList;
 	}
+	
+	private Kit getKit(int slot) {
+		return kitsList.get(slot);
+	}
+
+	private Kit getKit(String name) {
+		for (Kit kit : kitsList) {
+			if (kit.getUnName().equalsIgnoreCase(name))
+				return kit;
+		}
+		return null;
+	}
 
 	public void openMenu(Player p) {
 		Inventory menuKit = Bukkit.createInventory(null, 27, "§6Kit | §eChoix des kits");
@@ -132,7 +144,9 @@ public class KitSystem implements Listener {
 		p.openInventory(menuKit);
 	}
 
-	// Kit Listener
+	/*
+	 * Listener
+	 */
 	@EventHandler
 	public void onInKitsMenu(InventoryClickEvent e) {
 		if (e.getWhoClicked() instanceof Player && e.getClickedInventory() != null) {
@@ -197,7 +211,6 @@ public class KitSystem implements Listener {
 			}
 		}
 	}
-
 	@EventHandler
 	public void onCloseMenu(InventoryCloseEvent e) {
 		if (e.getInventory().getName().equals("§9Visualisation du kit")) {
@@ -232,17 +245,5 @@ public class KitSystem implements Listener {
 						e.getPlayer().getLocation().getPitch());
 			}
 		}
-	}
-
-	private Kit getKit(int slot) {
-		return kitsList.get(slot);
-	}
-
-	private Kit getKit(String name) {
-		for (Kit kit : kitsList) {
-			if (kit.getUnName().equalsIgnoreCase(name))
-				return kit;
-		}
-		return null;
 	}
 }

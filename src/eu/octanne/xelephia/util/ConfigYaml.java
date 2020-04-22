@@ -18,7 +18,7 @@ public class ConfigYaml {
 	/*
 	 * GET
 	 */
-	public YamlConfiguration getConfig() {
+	public YamlConfiguration get() {
 		return config;
 	}
 

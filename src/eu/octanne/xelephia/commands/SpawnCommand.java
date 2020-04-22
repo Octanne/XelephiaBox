@@ -17,23 +17,23 @@ public class SpawnCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (sender instanceof Player) {
 			Player p = (Player) sender;
-			Location spawn = (Location) XelephiaPlugin.getMainConfig().getConfig().get("spawn",
+			Location spawn = (Location) XelephiaPlugin.getMainConfig().get().get("spawn",
 					p.getWorld().getSpawnLocation());
 			if (p.hasPermission("xelephia.bypass.tp")) {
 				if (args.length < 1) {
-					sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("spawnTeleport"));
+					sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("spawnTeleport"));
 					p.teleport(spawn);
 					return true;
 				} else {
 					if (Bukkit.getPlayer(args[0]) != null) {
 						Bukkit.getPlayer(args[0])
-								.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("spawnTeleport"));
+								.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("spawnTeleport"));
 						Bukkit.getPlayer(args[0]).teleport(spawn);
-						sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
+						sender.sendMessage(XelephiaPlugin.getMessageConfig().get()
 								.getString("spawnPlayerTeleport").replace("{PLAYER}", args[0]));
 						return true;
 					} else {
-						sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("incorrectPlayer")
+						sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("incorrectPlayer")
 								.replace("{PLAYER}", args[0]));
 						return false;
 					}
@@ -41,14 +41,14 @@ public class SpawnCommand implements CommandExecutor {
 			} else {
 				int x = p.getLocation().getBlockX(), y = p.getLocation().getBlockY(), z = p.getLocation().getBlockZ();
 
-				sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("spawnPreTeleport"));
+				sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("spawnPreTeleport"));
 				task = Bukkit.getScheduler().scheduleSyncRepeatingTask(XelephiaPlugin.getInstance(), new Runnable() {
 
 					@Override
 					public void run() {
 						if (sec == 0) {
 							sender.sendMessage(
-									XelephiaPlugin.getMessageConfig().getConfig().getString("spawnTeleport"));
+									XelephiaPlugin.getMessageConfig().get().getString("spawnTeleport"));
 							p.teleport(spawn);
 							sec = 5;
 							Bukkit.getScheduler().cancelTask(task);
@@ -57,7 +57,7 @@ public class SpawnCommand implements CommandExecutor {
 									|| z != p.getLocation().getBlockZ()) {
 								sec = 5;
 								sender.sendMessage(
-										XelephiaPlugin.getMessageConfig().getConfig().getString("CancelTeleport"));
+										XelephiaPlugin.getMessageConfig().get().getString("CancelTeleport"));
 								Bukkit.getScheduler().cancelTask(task);
 							} else {
 								sec--;
@@ -68,7 +68,7 @@ public class SpawnCommand implements CommandExecutor {
 				return true;
 			}
 		} else {
-			sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("playerOnly"));
+			sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("playerOnly"));
 			return false;
 		}
 	}

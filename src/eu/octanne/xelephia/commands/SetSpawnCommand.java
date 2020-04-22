@@ -18,7 +18,7 @@ public class SetSpawnCommand implements CommandExecutor {
 			sender.sendMessage("Le spawn viens d'être configuré.");
 			return true;
 		} else {
-			sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("noPermission"));
+			sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("noPermission"));
 			return false;
 		}
 	}

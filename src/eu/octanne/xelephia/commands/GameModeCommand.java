@@ -26,62 +26,62 @@ public class GameModeCommand implements CommandExecutor {
 				String mode = args[0];
 				Player p = args.length > 1 ? Bukkit.getPlayer(args[1]) : (Player)sender;
 				if(p == null) {
-					sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("incorrectPlayer")
+					sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("incorrectPlayer")
 							.replace("{PLAYER}", args[1]));
 					return false;
 				}
 				if(mode.equalsIgnoreCase("0") || mode.equalsIgnoreCase("s") || mode.equalsIgnoreCase("survival")) {
 					p.setGameMode(GameMode.SURVIVAL);
-					if(sender instanceof Player && p.equals(sender))	p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
+					if(sender instanceof Player && p.equals(sender))	p.sendMessage(XelephiaPlugin.getMessageConfig().get()
 							.getString("changeMeGameMode").replace("{GAMEMODE}", "Survie"));
 					else {
-						sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("changeOtherPlayerGameMode")
+						sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("changeOtherPlayerGameMode")
 								.replace("{GAMEMODE}", "Survie").replace("{PLAYER}", p.getName()));
-						p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
+						p.sendMessage(XelephiaPlugin.getMessageConfig().get()
 								.getString("changeMeGameMode").replace("{GAMEMODE}", "Survie"));
 					}
 					return true;
 				}else if(mode.equalsIgnoreCase("1") || mode.equalsIgnoreCase("c") || mode.equalsIgnoreCase("creative")) {
 					p.setGameMode(GameMode.CREATIVE);
-					if(sender instanceof Player && p.equals(sender))	p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
+					if(sender instanceof Player && p.equals(sender))	p.sendMessage(XelephiaPlugin.getMessageConfig().get()
 							.getString("changeMeGameMode").replace("{GAMEMODE}", "Créatif"));
 					else {
-						sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("changeOtherPlayerGameMode")
+						sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("changeOtherPlayerGameMode")
 								.replace("{GAMEMODE}", "Survie").replace("{PLAYER}", p.getName()));
-						p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
+						p.sendMessage(XelephiaPlugin.getMessageConfig().get()
 								.getString("changeMeGameMode").replace("{GAMEMODE}", "Créatif"));
 					}
 					return true;
 				}else if(mode.equalsIgnoreCase("2") || mode.equalsIgnoreCase("a") || mode.equalsIgnoreCase("adventure")) {
 					p.setGameMode(GameMode.ADVENTURE);
-					if(sender instanceof Player && p.equals(sender))	p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
+					if(sender instanceof Player && p.equals(sender))	p.sendMessage(XelephiaPlugin.getMessageConfig().get()
 							.getString("changeMeGameMode").replace("{GAMEMODE}", "Aventure"));
 					else {
-						sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("changeOtherPlayerGameMode")
+						sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("changeOtherPlayerGameMode")
 								.replace("{GAMEMODE}", "Survie").replace("{PLAYER}", p.getName()));
-						p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
+						p.sendMessage(XelephiaPlugin.getMessageConfig().get()
 								.getString("changeMeGameMode").replace("{GAMEMODE}", "Aventure"));
 					}
 					return true;
 				}else if(mode.equalsIgnoreCase("3") || mode.equalsIgnoreCase("spec") || mode.equalsIgnoreCase("spectator")) {
 					p.setGameMode(GameMode.SPECTATOR);
-					if(sender instanceof Player && p.equals(sender))	p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
+					if(sender instanceof Player && p.equals(sender))	p.sendMessage(XelephiaPlugin.getMessageConfig().get()
 							.getString("changeMeGameMode").replace("{GAMEMODE}", "Spectateur"));
 					else {
-						sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("changeOtherPlayerGameMode")
+						sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("changeOtherPlayerGameMode")
 								.replace("{GAMEMODE}", "Survie").replace("{PLAYER}", p.getName()));
-						p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
+						p.sendMessage(XelephiaPlugin.getMessageConfig().get()
 								.getString("changeMeGameMode").replace("{GAMEMODE}", "Spectateur"));
 					}
 					return true;
 				}else {
-					sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("incorrectGameMode")
+					sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("incorrectGameMode")
 							.replace("{GAMEMODE}", args[0]));
 					return false;
 				}
 			}
 		}else {
-			sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("noPermission"));
+			sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("noPermission"));
 			return false;
 		}
 	}

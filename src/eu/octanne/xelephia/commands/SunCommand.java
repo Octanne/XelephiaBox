@@ -17,10 +17,10 @@ public class SunCommand implements CommandExecutor {
 			p.getWorld().setThundering(false);
 			p.getWorld().setStorm(false);
 
-			sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("sunCommand"));
+			sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("sunCommand"));
 			return true;
 		} else {
-			sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("noPermission"));
+			sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("noPermission"));
 			return false;
 		}
 	}

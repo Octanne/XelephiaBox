@@ -48,14 +48,14 @@ public class XPlayerListener implements Listener {
 		// SET WEATHER
 		p.setPlayerWeather(WeatherType.CLEAR);
 		// WORLD TP
-		p.teleport((Location) XelephiaPlugin.getMainConfig().getConfig().get("spawn", p.getWorld()
+		p.teleport((Location) XelephiaPlugin.getMainConfig().get().get("spawn", p.getWorld()
 				.getSpawnLocation()));
 		// SELECTOR KIT
 		if(xp.kitEquiped == false && !e.getPlayer().getInventory().contains(KitSystem.selectorItem) && !e.getPlayer().isDead()) {
 			e.getPlayer().getInventory().addItem(KitSystem.selectorItem);
 		}
 		// CUSTOM MESSAGE
-		e.setJoinMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("joinPlayer").replace("{PLAYER}", xp.getName()));
+		e.setJoinMessage(XelephiaPlugin.getMessageConfig().get().getString("joinPlayer").replace("{PLAYER}", xp.getName()));
 	}
 
 	/*
@@ -83,7 +83,7 @@ public class XPlayerListener implements Listener {
 			XelephiaPlugin.xplayersOnline.remove(xP);
 		}
 		// CUSTOM MESSAGE
-		e.setQuitMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("quitPlayer").replace("{PLAYER}", e.getPlayer().getName()));
+		e.setQuitMessage(XelephiaPlugin.getMessageConfig().get().getString("quitPlayer").replace("{PLAYER}", e.getPlayer().getName()));
 	}
 
 	/*
@@ -165,7 +165,7 @@ public class XPlayerListener implements Listener {
 			e.getPlayer().getInventory().addItem(KitSystem.selectorItem);
 		}
 		// TP Spawn
-		e.setRespawnLocation((Location) XelephiaPlugin.getMainConfig().getConfig().get("spawn", e.getPlayer().getWorld()
+		e.setRespawnLocation((Location) XelephiaPlugin.getMainConfig().get().get("spawn", e.getPlayer().getWorld()
 				.getSpawnLocation()));
 	}
 	

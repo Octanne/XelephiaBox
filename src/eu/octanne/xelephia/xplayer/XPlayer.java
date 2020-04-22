@@ -35,7 +35,7 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutTitle.EnumTitleAction;
 
 public class XPlayer {
 
-	static private int untilAppleTimeSec = 4;
+	static private int untilAppleTimeSec = 6;
 	static private int untilLootTimeHour = 1;
 	
 	public enum MessageType {

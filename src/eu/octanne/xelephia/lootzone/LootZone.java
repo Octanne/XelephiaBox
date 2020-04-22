@@ -73,21 +73,21 @@ public class LootZone {
 	}
 
 	protected void save() {
-		config.getConfig().set("name", this.name);
-		config.getConfig().set("pos", this.pos);
-		config.getConfig().set("time", this.controlTime);
-		config.getConfig().set("minPlayers", this.minPlayers);
-		config.getConfig().set("loots", this.loots);
+		config.get().set("name", this.name);
+		config.get().set("pos", this.pos);
+		config.get().set("time", this.controlTime);
+		config.get().set("minPlayers", this.minPlayers);
+		config.get().set("loots", this.loots);
 		config.save();
 	}
 
 	@SuppressWarnings("unchecked")
 	protected void load() {
-		this.name = config.getConfig().getString("name", null);
-		this.pos = (Location) config.getConfig().get("pos", null);
-		this.controlTime = config.getConfig().getInt("time", 5);
-		this.minPlayers = config.getConfig().getInt("minPlayers", 3);
-		loots = (List<Loot>) config.getConfig().get("loots", new ArrayList<Loot>());
+		this.name = config.get().getString("name", null);
+		this.pos = (Location) config.get().get("pos", null);
+		this.controlTime = config.get().getInt("time", 5);
+		this.minPlayers = config.get().getInt("minPlayers", 3);
+		loots = (List<Loot>) config.get().get("loots", new ArrayList<Loot>());
 	}
 
 	public void addLoot(Loot loot) {

@@ -21,7 +21,7 @@ public class SpeedCommand implements CommandExecutor {
 						try {
 							Integer.parseInt(args[0]);
 						} catch (NumberFormatException e) {
-							sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
+							sender.sendMessage(XelephiaPlugin.getMessageConfig().get()
 									.getString("incorrectNumber").replace("{NUMBER}", args[0]));
 							return false;
 						}
@@ -29,30 +29,30 @@ public class SpeedCommand implements CommandExecutor {
 						if (speedValue >= 0 && speedValue < 11) {
 							if (pt.getPlayer().isFlying()) {
 								if (sender != pt)
-									p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
+									p.sendMessage(XelephiaPlugin.getMessageConfig().get()
 											.getString("changeYourSpeed").replace("{SPEED}", "" + speedValue)
 											.replace("{PLAYER}", pt.getName()));
-								pt.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("changeMeSpeed")
+								pt.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("changeMeSpeed")
 										.replace("{SPEED}", "" + speedValue));
 								pt.setFlySpeed(speedValue / 10f);
 								return true;
 							} else {
 								if (sender != pt)
-									p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
+									p.sendMessage(XelephiaPlugin.getMessageConfig().get()
 											.getString("changeYourSpeed").replace("{SPEED}", "" + speedValue)
 											.replace("{PLAYER}", pt.getName()));
-								pt.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("changeMeSpeed")
+								pt.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("changeMeSpeed")
 										.replace("{SPEED}", "" + speedValue));
 								pt.setWalkSpeed(speedValue / 10f);
 								return true;
 							}
 						} else {
-							sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
+							sender.sendMessage(XelephiaPlugin.getMessageConfig().get()
 									.getString("incorrectNumber").replace("{NUMBER}", args[0]));
 							return false;
 						}
 					} else {
-						sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("incorrectPlayer")
+						sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("incorrectPlayer")
 								.replace("{PLAYER}", args[1]));
 						return false;
 					}
@@ -63,25 +63,25 @@ public class SpeedCommand implements CommandExecutor {
 						try {
 							Integer.parseInt(args[0]);
 						} catch (NumberFormatException e) {
-							sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
+							sender.sendMessage(XelephiaPlugin.getMessageConfig().get()
 									.getString("incorrectNumber").replace("{NUMBER}", strSpeed));
 							return false;
 						}
 						int speedValue = Integer.parseInt(args[0]);
 						if (speedValue >= 0 && speedValue < 11) {
 							if (p.getPlayer().isFlying()) {
-								sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
+								sender.sendMessage(XelephiaPlugin.getMessageConfig().get()
 										.getString("changeMeSpeed").replace("{SPEED}", "" + speedValue));
 								p.setFlySpeed(speedValue / 10f);
 								return true;
 							} else {
-								sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
+								sender.sendMessage(XelephiaPlugin.getMessageConfig().get()
 										.getString("changeMeSpeed").replace("{SPEED}", "" + speedValue));
 								p.setWalkSpeed(speedValue / 10f);
 								return true;
 							}
 						} else {
-							sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
+							sender.sendMessage(XelephiaPlugin.getMessageConfig().get()
 									.getString("incorrectNumber").replace("{NUMBER}", args[0]));
 							return false;
 						}
@@ -95,7 +95,7 @@ public class SpeedCommand implements CommandExecutor {
 				return false;
 			}
 		} else {
-			sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("noPermission"));
+			sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("noPermission"));
 			return false;
 		}
 	}

@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
-import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -53,7 +52,7 @@ import eu.octanne.xelephia.xplayer.XPlayerListener;
 
 public class XelephiaPlugin extends JavaPlugin {
 	
-	// Players
+	// PLAYERS
 	static private DataBase dbPlayers;
 	static public Collection<XPlayer> xplayersOnline = new ArrayList<XPlayer>();
 
@@ -64,15 +63,11 @@ public class XelephiaPlugin extends JavaPlugin {
 	// TPA REQUEST
 	static public HashMap<Player, Player> requestTPA = new HashMap<Player, Player>();
 
-	// Manager
+	// MANAGER
 	private static WarpManager warpManager;
 	private static WorldManager worldManager;
 	private static KitSystem kitSystem;
 	private static LootZoneManager lootZoneManager;
-
-	static public Plugin getInstance() {
-		return Bukkit.getPluginManager().getPlugin("Xelephia");
-	}
 
 	@Override
 	public void onLoad() {
@@ -81,19 +76,20 @@ public class XelephiaPlugin extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
-		Bukkit.getLogger().log(Level.INFO, "[Xelephia] Chargement du plugin...");
+		// Players DB
 		dbPlayers = new DataBase("players");
 		dbPlayers.connect();
-		createTable(); // Create PLAYERS Table
+		createTable();
 		
 		// World
 		worldManager = new WorldManager();
 		
-		// Main Config
-		mainConfig = new ConfigYaml("config.yml");
+		/*
+		 * Config
+		 */
+		mainConfig = new ConfigYaml("config.yml"); // Main
 		loadMainConfig();
-		// Load File
-		messageConfig = new ConfigYaml("message.yml");
+		messageConfig = new ConfigYaml("message.yml"); // Message
 		loadMessage();
 		
 		// Manager
@@ -101,26 +97,27 @@ public class XelephiaPlugin extends JavaPlugin {
 		kitSystem = new KitSystem();
 		lootZoneManager = new LootZoneManager();
 
-		// Load Command
-		loadCommand();
-
+		// Load Online Players
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			XPlayer xp = XelephiaPlugin.getXPlayer(p.getUniqueId());
 			XelephiaPlugin.xplayersOnline.add(xp);
 		}
 
+		// Register Command
+		loadCommand();
+		
 		// Listener
 		Bukkit.getPluginManager().registerEvents(new XPlayerListener(), this);
 	}
 
 	@Override
 	public void onDisable() {
-		Bukkit.getLogger().log(Level.INFO, "[Xelephia] Déchargement du plugin...");
-
-		// Save all XPlayer Online
+		// Save Player Online
 		for (XPlayer xp : xplayersOnline) {
 			xp.saveIntoDB();
 		}
+		
+		// Players DB
 		dbPlayers.disconnect();
 	}
 
@@ -137,18 +134,23 @@ public class XelephiaPlugin extends JavaPlugin {
 		return new VoidChunkGenerator(false);
 	}
 
+	// Plugin Instance
+	static public Plugin getInstance() {
+		return Bukkit.getPluginManager().getPlugin("Xelephia");
+	}
+	
 	// Players DB
 	static public DataBase getPlayersDB() {
 		return dbPlayers;
 	}
 
-	// XPlayers Online
+	// Online XPlayers 
 	static public final Collection<XPlayer> getXPlayersOnline() {
 		return xplayersOnline;
 	}
 
 	/*
-	 * Config File
+	 * CONFIG
 	 */
 	static public ConfigYaml getMessageConfig() {
 		return messageConfig;
@@ -171,7 +173,6 @@ public class XelephiaPlugin extends JavaPlugin {
 		else
 			return null;
 	}
-
 	static public XPlayer getXPlayer(String pName) {
 		for (XPlayer xp : getXPlayersOnline()) {
 			if (xp.getName().equals(pName))
@@ -210,15 +211,12 @@ public class XelephiaPlugin extends JavaPlugin {
 	static public WarpManager getWarpManager() {
 		return warpManager;
 	}
-
 	static public WorldManager getWorldManager() {
 		return worldManager;
 	}
-
 	static public KitSystem getKitSystem() {
 		return kitSystem;
 	}
-
 	static public LootZoneManager getLootZoneManager() {
 		return lootZoneManager;
 	}
@@ -252,17 +250,16 @@ public class XelephiaPlugin extends JavaPlugin {
 		getCommand("coins").setExecutor(new CoinsCommand());
 		getCommand("loot").setExecutor(new LootCommand());
 		getCommand("resetplayer").setExecutor(new ResetPlayerCommand());
-		// Temp Command
-
 	}
 
+	/*
+	 * Load Config
+	 */
 	public void loadMainConfig() {
-		if (!mainConfig.getFile().exists()) {
-			mainConfig.getConfig().set("maxLootPerHour", 5);
-			mainConfig.save();
-		}
+		if(mainConfig.get().isSet("maxLootPerHour"))mainConfig.set("maxLootPerHour", 5);
+		
+		mainConfig.save();
 	}
-	
 	public void loadMessage() {
 		if (!messageConfig.getFile().exists()) {
 			messageConfig.set("joinPlayer",

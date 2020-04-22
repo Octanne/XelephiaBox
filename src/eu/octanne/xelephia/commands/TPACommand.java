@@ -40,7 +40,7 @@ public class TPACommand implements CommandExecutor {
 						}, 2400);
 						return true;
 					} else {
-						sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("incorrectPlayer")
+						sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("incorrectPlayer")
 								.replace("{PLAYER}", args[0]));
 						return false;
 					}
@@ -57,9 +57,9 @@ public class TPACommand implements CommandExecutor {
 					// DELETE REQUEST
 					XelephiaPlugin.requestTPA.remove(p);
 					// SEND MESSAGE
-					p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("acceptTeleportRequest")
+					p.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("acceptTeleportRequest")
 							.replace("{PLAYER}", pTarget.getName()));
-					pTarget.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("tpaPreTeleport")
+					pTarget.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("tpaPreTeleport")
 							.replace("{PLAYER}", p.getName()));
 					// TELEPORT
 					task = Bukkit.getScheduler().scheduleSyncRepeatingTask(XelephiaPlugin.getInstance(),
@@ -68,7 +68,7 @@ public class TPACommand implements CommandExecutor {
 								@Override
 								public void run() {
 									if (sec == 0) {
-										pTarget.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
+										pTarget.sendMessage(XelephiaPlugin.getMessageConfig().get()
 												.getString("tpaTeleport").replace("{PLAYER}", p.getName()));
 										pTarget.teleport(p.getLocation());
 										sec = 5;
@@ -78,7 +78,7 @@ public class TPACommand implements CommandExecutor {
 												|| y != pTarget.getLocation().getBlockY()
 												|| z != pTarget.getLocation().getBlockZ()) {
 											sec = 5;
-											pTarget.sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
+											pTarget.sendMessage(XelephiaPlugin.getMessageConfig().get()
 													.getString("CancelTeleport"));
 											Bukkit.getScheduler().cancelTask(task);
 										} else {
@@ -90,27 +90,27 @@ public class TPACommand implements CommandExecutor {
 					return true;
 				} else {
 					sender.sendMessage(
-							XelephiaPlugin.getMessageConfig().getConfig().getString("noTeleportRequestFound"));
+							XelephiaPlugin.getMessageConfig().get().getString("noTeleportRequestFound"));
 					return false;
 				}
 			} else if ((label.equalsIgnoreCase("tpno") || label.equalsIgnoreCase("tpdenny"))
 					&& sender.hasPermission("xelephia.commands.tpa")) {
 				if (XelephiaPlugin.requestTPA.containsKey(p)) {
 					// SEND MESSAGE
-					XelephiaPlugin.requestTPA.get(p).sendMessage(XelephiaPlugin.getMessageConfig().getConfig()
+					XelephiaPlugin.requestTPA.get(p).sendMessage(XelephiaPlugin.getMessageConfig().get()
 							.getString("denyYouTeleportRequest").replace("{PLAYER}", sender.getName()));
-					sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("denyTeleportRequest")
+					sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("denyTeleportRequest")
 							.replace("{PLAYER}", XelephiaPlugin.requestTPA.get(p).getName()));
 					// DELETE REQUEST
 					XelephiaPlugin.requestTPA.remove(p);
 					return true;
 				} else {
 					sender.sendMessage(
-							XelephiaPlugin.getMessageConfig().getConfig().getString("noTeleportRequestFound"));
+							XelephiaPlugin.getMessageConfig().get().getString("noTeleportRequestFound"));
 					return false;
 				}
 			} else {
-				sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("noPermission"));
+				sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("noPermission"));
 				return false;
 			}
 		} else {

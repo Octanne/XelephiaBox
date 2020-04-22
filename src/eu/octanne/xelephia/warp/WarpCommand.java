@@ -27,7 +27,7 @@ public class WarpCommand implements CommandExecutor {
 							return true;
 						}
 					} else {
-						p.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("inexistantWarp")
+						p.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("inexistantWarp")
 								.replace("{WARP}", args[0]));
 						return false;
 					}
@@ -37,7 +37,7 @@ public class WarpCommand implements CommandExecutor {
 							Player pT = Bukkit.getPlayer(args[1]);
 							XelephiaPlugin.getWarpManager().getWarp(args[0]).teleportByPass(pT);
 							p.sendMessage(
-									XelephiaPlugin.getMessageConfig().getConfig().getString("playerWarpTp")
+									XelephiaPlugin.getMessageConfig().get().getString("playerWarpTp")
 											.replace("{WARP}",
 													XelephiaPlugin.getWarpManager().getWarp(args[0]).getItem()
 															.getItemMeta().getDisplayName())
@@ -54,7 +54,7 @@ public class WarpCommand implements CommandExecutor {
 				return true;
 			}
 		} else {
-			sender.sendMessage(XelephiaPlugin.getMessageConfig().getConfig().getString("playerOnly"));
+			sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("playerOnly"));
 			return false;
 		}
 		return false;

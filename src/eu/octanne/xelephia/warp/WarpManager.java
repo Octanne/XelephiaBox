@@ -28,13 +28,13 @@ public class WarpManager implements Listener {
 		ConfigurationSerialization.registerClass(Warp.class, "Warp");
 		
 		warpConfig = new ConfigYaml("warps.yml");
-		warpList = (ArrayList<Warp>) warpConfig.getConfig().get("warps", new ArrayList<>());
+		warpList = (ArrayList<Warp>) warpConfig.get().get("warps", new ArrayList<>());
 		save();
 		Bukkit.getPluginManager().registerEvents(this, XelephiaPlugin.getInstance());
 	}
 
 	public void save() {
-		warpConfig.getConfig().set("warps", warpList);
+		warpConfig.get().set("warps", warpList);
 		warpConfig.save();
 	}
 	

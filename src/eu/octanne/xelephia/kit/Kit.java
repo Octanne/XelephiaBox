@@ -35,14 +35,14 @@ public class Kit {
 	}
 
 	private boolean load() {
-		nameKit = config.getConfig().getString("name", "null");
+		nameKit = config.get().getString("name", "null");
 		if (nameKit == "null")
 			return false;
-		cost = config.getConfig().getInt("cost", -1);
+		cost = config.get().getInt("cost", -1);
 		@SuppressWarnings("unchecked")
-		ArrayList<ItemStack> contentsTemp = (ArrayList<ItemStack>) config.getConfig().get("contents");
+		ArrayList<ItemStack> contentsTemp = (ArrayList<ItemStack>) config.get().get("contents");
 		contents = contentsTemp.toArray(new ItemStack[contentsTemp.size()]);
-		logo = Material.getMaterial(config.getConfig().getString("logo", "IRON_SWORD"));
+		logo = Material.getMaterial(config.get().getString("logo", "IRON_SWORD"));
 		return true;
 	}
 
