@@ -103,7 +103,6 @@ public class XPlayer {
 		df.setDecimalFormatSymbols(dfs);
 
 		this.playerUUID = pUUID;
-		this.lastPlayerName = Bukkit.getOfflinePlayer(pUUID).getName();
 		this.menuStats = Bukkit.createInventory(null, 27, "§8Statistiques de §b" + this.lastPlayerName);
 
 		/*
@@ -117,6 +116,7 @@ public class XPlayer {
 			ResultSet rs = q.executeQuery();
 			boolean isExist = rs.next();
 			if (isExist) {
+				this.lastPlayerName = Bukkit.getPlayer(pUUID) != null ? Bukkit.getPlayer(pUUID).getName() : rs.getString("playerName");
 				this.playerUUID = UUID.fromString(rs.getString("uuid"));
 				this.coins = rs.getInt("coins");
 				this.killCount = rs.getInt("killCount");
