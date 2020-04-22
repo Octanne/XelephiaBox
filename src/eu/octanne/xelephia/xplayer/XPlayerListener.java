@@ -57,6 +57,7 @@ public class XPlayerListener implements Listener {
 		}
 		// LOAD PERMISSION
 		xp.getGrade().applyPermissions(xp);
+		xp.getGrade().applyTag(xp);
 		// CUSTOM MESSAGE
 		e.setJoinMessage(XelephiaPlugin.getMessageConfig().get().getString("joinPlayer").replace("{PLAYER}", xp.getName()));
 	}

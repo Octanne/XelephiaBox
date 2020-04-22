@@ -13,6 +13,7 @@ public class Grade {
 
 	private String name;
 	private String prefix;
+	private String tabPrefix;
 	
 	private boolean isDefault;
 	
@@ -27,8 +28,9 @@ public class Grade {
 	public Grade(String path, GradeManager manager){
 		parent = manager;
 		config = new ConfigYaml("grades/"+path);
-		this.name = config.get().getString("name");
-		this.prefix = config.get().getString("prefix");
+		this.name = config.get().getString("name", "");
+		this.prefix = config.get().getString("prefix", "");
+		this.tabPrefix = config.get().getString("tabPrefix", "");
 		this.permissions = (List<String>) config.get().getList("permissions", new ArrayList<>());
 		this.inheritence = (List<String>) config.get().getList("inheritences", new ArrayList<>());
 		this.isDefault = config.get().getBoolean("default", false);
@@ -43,6 +45,10 @@ public class Grade {
 		return prefix;
 	}
 	
+	public String getTabPrefix() {
+		return tabPrefix;
+	}
+	
 	public void applyPermissions(XPlayer p) {
 		PermissionAttachment perm = p.getBukkitPlayer().addAttachment(XelephiaPlugin.getInstance());
 		for(String gradeStr : inheritence) {
@@ -54,5 +60,13 @@ public class Grade {
 			if(permStr.startsWith("-"))status = false;
 			perm.setPermission(permStr.startsWith("-") ? permStr.substring(1) : permStr, status);
 		}
+	}
+	
+	public void applyTag(XPlayer p) {
+		String tabName = tabPrefix;
+		for(int i = 0; tabName.length() < 16; i++) {
+			tabName+= p.getName().charAt(i);
+		}
+		p.getBukkitPlayer().setPlayerListName(tabName);
 	}
 }
