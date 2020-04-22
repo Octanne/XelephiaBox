@@ -104,6 +104,8 @@ public class XelephiaPlugin extends JavaPlugin {
 		// Load Online Players
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			XPlayer xp = XelephiaPlugin.getXPlayer(p.getUniqueId());
+			xp.getGrade().applyPermissions(xp);
+			xp.getGrade().applyTag(xp);
 			XelephiaPlugin.xplayersOnline.add(xp);
 		}
 
@@ -275,6 +277,7 @@ public class XelephiaPlugin extends JavaPlugin {
 		if(!mainConfig.get().isSet("coucheDelSelector"))mainConfig.set("coucheDelSelector", 150);
 		if(!mainConfig.get().isSet("untilAppleTimeSec"))mainConfig.set("untilAppleTimeSec", 6);
 		if(!mainConfig.get().isSet("untilLootTimeHour"))mainConfig.set("untilLootTimeHour", 1);
+		if(!mainConfig.get().isSet("maxLengthTag"))mainConfig.set("maxLengthTag", 30);
 		if(!mainConfig.get().isSet("chatFormat"))mainConfig.set("chatFormat", "{PREFIX} {PLAYERNAME} §7≫§r {MESSAGE}");
 		mainConfig.save();
 	}

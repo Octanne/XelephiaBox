@@ -23,7 +23,6 @@ public class GradeManager {
 		
 		gradeConfig = new ConfigYaml("grades.yml");
 		if(!gradeConfig.getFile().exists()){
-			gradeConfig.getFile().mkdirs();
 			try {
 				gradeConfig.getFile().createNewFile();
 			} catch (IOException e) {

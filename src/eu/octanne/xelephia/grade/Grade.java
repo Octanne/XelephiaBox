@@ -9,7 +9,9 @@ import eu.octanne.xelephia.XelephiaPlugin;
 import eu.octanne.xelephia.xplayer.XPlayer;
 
 public class Grade {
-
+	
+	public static int maxLengthTag = XelephiaPlugin.getMainConfig().get().getInt("maxLengthTag", 30);;
+	
 	private String name;
 	private String prefix;
 	private String tabPrefix;
@@ -75,7 +77,7 @@ public class Grade {
 	
 	public void applyTag(XPlayer p) {
 		String tabName = tabPrefix;
-		for(int i = 0; tabName.length() < 26 && i < p.getName().length(); i++) {
+		for(int i = 0; tabName.length() < maxLengthTag && i < p.getName().length(); i++) {
 			tabName+= p.getName().charAt(i);
 		}
 		p.getBukkitPlayer().setPlayerListName(tabName);
