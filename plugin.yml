@@ -69,3 +69,5 @@ commands:
     aliases: [stat]
   resetplayer:
     description: reset a player
+  setgrade:
+    description: set a grade

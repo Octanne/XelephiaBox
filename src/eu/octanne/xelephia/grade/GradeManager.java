@@ -48,4 +48,11 @@ public class GradeManager {
 		}
 		return defaultGrade;
 	}
+	
+	public Grade getGradeWithNull(String name) {
+		for(Grade grade : grade) {
+			if(grade.getName().equalsIgnoreCase(name))return grade;
+		}
+		return null;
+	}
 }

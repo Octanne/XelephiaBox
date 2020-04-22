@@ -35,6 +35,7 @@ import eu.octanne.xelephia.commands.StatsCommand;
 import eu.octanne.xelephia.commands.SunCommand;
 import eu.octanne.xelephia.commands.TPACommand;
 import eu.octanne.xelephia.commands.TpAllCommand;
+import eu.octanne.xelephia.grade.GradeCommand;
 import eu.octanne.xelephia.grade.GradeManager;
 import eu.octanne.xelephia.kit.KitCommand;
 import eu.octanne.xelephia.kit.KitSystem;
@@ -263,6 +264,7 @@ public class XelephiaPlugin extends JavaPlugin {
 		getCommand("coins").setExecutor(new CoinsCommand());
 		getCommand("loot").setExecutor(new LootCommand());
 		getCommand("resetplayer").setExecutor(new ResetPlayerCommand());
+		getCommand("setgrade").setExecutor(new GradeCommand());
 	}
 
 	/*

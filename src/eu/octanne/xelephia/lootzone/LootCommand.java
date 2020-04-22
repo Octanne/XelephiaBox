@@ -21,7 +21,7 @@ public class LootCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (sender instanceof Player) {
 			Player p = (Player) sender;
-			if(p.hasPermission("lootzone.admin")) {
+			if(p.hasPermission("xelephia.commands.loot")) {
 				if(args.length >= 1) {
 					if(args[0].equalsIgnoreCase("list")) {
 						p.sendMessage(COMMAND_TAG+"§aListe des zones :");

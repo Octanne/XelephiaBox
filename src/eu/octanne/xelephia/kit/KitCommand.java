@@ -1,6 +1,5 @@
 package eu.octanne.xelephia.kit;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,7 +12,7 @@ public class KitCommand implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (sender instanceof Player && sender.hasPermission("kit.admin")) {
+		if (sender instanceof Player && sender.hasPermission("xelephia.commands.kit")) {
 			if (args.length >= 1) {
 				if (args[0].equalsIgnoreCase("create")) {
 					if (args.length >= 3 && !((Player) sender).getItemInHand().getType().equals(Material.AIR)) {
@@ -91,8 +90,7 @@ public class KitCommand implements CommandExecutor {
 				return false;
 			}
 		} else {
-			sender.sendMessage(Bukkit.spigot().getConfig().getString("messages.unknown-command",
-					"Commande inconnue. Faites \"/aide\" pour l'aide."));
+			sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("noPermission"));
 			return false;
 		}
 	}

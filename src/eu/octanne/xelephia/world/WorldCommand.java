@@ -15,7 +15,7 @@ public class WorldCommand implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if(sender.hasPermission("xelephia.worldmanager")) {
+		if(sender.hasPermission("xelephia.commands.world")) {
 			if(args.length > 0) {
 				if(args[0].equalsIgnoreCase("list")) {
 					sender.sendMessage(COMMAND_TAG+"§aListe des mondes :");
