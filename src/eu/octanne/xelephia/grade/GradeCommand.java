@@ -17,7 +17,7 @@ public class GradeCommand implements CommandExecutor{
 				if(XelephiaPlugin.getXPlayer(args[0]) != null) {
 					if(XelephiaPlugin.getGradeManager().getGradeWithNull(args[1]) != null) {
 						Grade grade = XelephiaPlugin.getGradeManager().getGrade(args[1]);
-						sender.sendMessage(COMMAND_TAG+"§aLe joueur §9"+args[0]+" §aa desormais le grade §9"+grade.getName()+"§a.");
+						sender.sendMessage(COMMAND_TAG+"§aLe joueur §9"+args[0]+" §aa desormais le grade §9"+grade.getDisplayName()+"§a.");
 						XelephiaPlugin.getXPlayer(args[0]).setGrade(grade);
 						return true;
 					}else {

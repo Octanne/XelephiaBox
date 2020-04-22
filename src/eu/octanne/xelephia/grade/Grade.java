@@ -3,6 +3,7 @@ package eu.octanne.xelephia.grade;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.permissions.PermissionAttachment;
 
 import eu.octanne.xelephia.XelephiaPlugin;
@@ -12,6 +13,7 @@ public class Grade {
 	
 	public static int maxLengthTag = XelephiaPlugin.getMainConfig().get().getInt("maxLengthTag", 30);;
 	
+	private String sectionName;
 	private String name;
 	private String prefix;
 	private String tabPrefix;
@@ -29,6 +31,9 @@ public class Grade {
 	public Grade(String section, GradeManager manager){
 		parent = manager;
 		
+		Bukkit.getLogger().info("Chargement du grade : "+section+"...");
+		
+		this.sectionName = section;
 		this.name = parent.gradeConfig.get().getString(section+".name", "");
 		this.prefix = parent.gradeConfig.get().getString(section+".prefix", "");
 		this.tabPrefix = parent.gradeConfig.get().getString(section+".tabPrefix", "");
@@ -48,6 +53,10 @@ public class Grade {
 	}
 	
 	public String getName() {
+		return sectionName;
+	}
+	
+	public String getDisplayName() {
 		return name;
 	}
 	

@@ -219,8 +219,8 @@ public class XPlayer {
 	
 	public void setGrade(Grade grade) {
 		this.grade = grade;
-		this.grade.applyPermissions(this);
-		this.grade.applyTag(this);
+		if(isOnline())this.grade.applyPermissions(this);
+		if(isOnline())this.grade.applyTag(this);
 	}
 	
 	/*
@@ -499,7 +499,7 @@ public class XPlayer {
 
 		// Head
 		ArrayList<String> loreHead = new ArrayList<String>();
-		loreHead.add("§9Grade : "+grade.getName());
+		loreHead.add("§9Grade : "+grade.getDisplayName());
 		loreHead.add("§9Coins : §e" + this.coins + " §l¢");
 		menuStats.setItem(4, Utils.createItemSkull("§b" + this.lastPlayerName, loreHead, SkullType.PLAYER,
 				this.lastPlayerName, false));
