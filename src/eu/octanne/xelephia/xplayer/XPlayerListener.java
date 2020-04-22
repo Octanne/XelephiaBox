@@ -94,6 +94,13 @@ public class XPlayerListener implements Listener {
 	 */
 	@EventHandler
 	public void onSendMessage(AsyncPlayerChatEvent e) {
+		XPlayer xp = XelephiaPlugin.getXPlayer(e.getPlayer().getUniqueId());
+		String format = XelephiaPlugin.getMainConfig().get().getString("chatFormat");
+		format.replaceAll("%prefix%", xp.getGrade().getPrefix());
+		format.replaceAll("%playername%", "%1$s");
+		format.replaceAll("%message%", "%2$s");
+		
+		e.setFormat(format);
 		Bukkit.broadcastMessage("Format : "+e.getFormat());
 		Bukkit.broadcastMessage("Message : "+e.getMessage());
 		Bukkit.broadcastMessage("Sender : "+e.getPlayer().getName());

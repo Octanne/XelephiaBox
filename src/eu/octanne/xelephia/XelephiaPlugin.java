@@ -269,10 +269,11 @@ public class XelephiaPlugin extends JavaPlugin {
 	 * Load Config
 	 */
 	public void loadMainConfig() {
-		if(mainConfig.get().isSet("maxLootPerHour"))mainConfig.set("maxLootPerHour", 5);
-		if(mainConfig.get().isSet("coucheDelSelector"))mainConfig.set("coucheDelSelector", 150);
-		if(mainConfig.get().isSet("untilAppleTimeSec"))mainConfig.set("untilAppleTimeSec", 6);
-		if(mainConfig.get().isSet("untilLootTimeHour"))mainConfig.set("untilLootTimeHour", 1);
+		if(!mainConfig.get().isSet("maxLootPerHour"))mainConfig.set("maxLootPerHour", 5);
+		if(!mainConfig.get().isSet("coucheDelSelector"))mainConfig.set("coucheDelSelector", 150);
+		if(!mainConfig.get().isSet("untilAppleTimeSec"))mainConfig.set("untilAppleTimeSec", 6);
+		if(!mainConfig.get().isSet("untilLootTimeHour"))mainConfig.set("untilLootTimeHour", 1);
+		if(!mainConfig.get().isSet("chatFormat"))mainConfig.set("chatFormat", "%prefix% %playername% §7≫§r %message%");
 		mainConfig.save();
 	}
 	public void loadMessage() {

@@ -25,7 +25,7 @@ public class GradeManager {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			InputStream stream = getClass().getResourceAsStream("/grades/default.yml");
+			InputStream stream = getClass().getResourceAsStream("/config/default.yml");
 			Utils.copyAStream(stream, defaultFile);
 		}
 		load();
@@ -46,6 +46,6 @@ public class GradeManager {
 		for(Grade grade : grade) {
 			if(grade.getName().equalsIgnoreCase(name))return grade;
 		}
-		return null;
+		return defaultGrade;
 	}
 }
