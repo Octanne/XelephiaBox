@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import eu.octanne.xelephia.XelephiaPlugin;
 import eu.octanne.xelephia.util.Utils;
 
 public class GradeManager {
@@ -26,7 +25,7 @@ public class GradeManager {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			InputStream stream = XelephiaPlugin.getInstance().getResource("grades/default.yml");
+			InputStream stream = getClass().getResourceAsStream("/grades/default.yml");
 			Utils.copyAStream(stream, defaultFile);
 		}
 		load();
