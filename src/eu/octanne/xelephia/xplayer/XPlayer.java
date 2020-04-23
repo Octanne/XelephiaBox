@@ -102,7 +102,6 @@ public class XPlayer {
 		df.setDecimalFormatSymbols(dfs);
 
 		this.playerUUID = pUUID;
-		this.menuStats = Bukkit.createInventory(null, 27, "§8Statistiques de §b" + this.lastPlayerName);
 
 		/*
 		 * DATABASE QUERRY OR CREATE
@@ -168,6 +167,7 @@ public class XPlayer {
 				
 				qCreate.execute();
 				qCreate.close();
+				this.menuStats = Bukkit.createInventory(null, 27, "§8Statistiques de §b" + this.lastPlayerName);
 				Bukkit.getLogger().log(Level.INFO, "[Xelephia] Création du joueur : " + this.lastPlayerName + " !");
 			}
 			q.close();
