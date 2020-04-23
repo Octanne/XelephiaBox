@@ -95,7 +95,7 @@ public class LootZone {
 	}
 
 	public boolean inZone(Location loc) {
-		if(loc.getWorld().equals(pos.getWorld()) && loc.distance(pos) <= 5) {
+		if(loc.getWorld().equals(pos.getWorld()) && loc.distance(pos) <= 5 && pos.getY() <= loc.getY()) {
 			return true;
 		}else return false;
 	}
