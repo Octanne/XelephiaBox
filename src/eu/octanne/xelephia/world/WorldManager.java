@@ -26,12 +26,8 @@ public class WorldManager implements Listener {
 		worldConfig = new ConfigYaml("worlds.yml");
 		worldList = (ArrayList<XWorld>) worldConfig.get().get("worlds", new ArrayList<>());
 
-		initDefaultWorld();
-		startLoad();
-	}
-
-	public void initDefaultWorld() {
 		defaultWorld = new XWorld(Bukkit.getWorlds().get(0));
+		startLoad();
 	}
 
 	private void startLoad() {
@@ -45,6 +41,7 @@ public class WorldManager implements Listener {
 		for(XWorld world : worldList) {
 			if(world.getName().equalsIgnoreCase(name)) return world;
 		}
+		if(defaultWorld.getName().equalsIgnoreCase(name)) return defaultWorld;
 		return null;
 	}
 
@@ -54,8 +51,8 @@ public class WorldManager implements Listener {
 	}
 
 	public boolean importWorld(String name) {
-		File file = new File("worlds/"+name+"/level.dat");
-		if(file.exists()) {
+		File file = new File(Bukkit.getWorldContainer().getPath()+name+"/level.dat");
+		if(file.exists() && !defaultWorld.getName().equalsIgnoreCase(name)) {
 			XWorld world = new XWorld(Bukkit.createWorld(new WorldCreator(name)));
 			worldList.add(world);
 			save();
