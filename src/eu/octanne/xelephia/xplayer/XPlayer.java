@@ -523,7 +523,7 @@ public class XPlayer {
 		// Head
 		ArrayList<String> loreHead = new ArrayList<String>();
 		loreHead.add("§9Grade : "+grade.getDisplayName());
-		loreHead.add("§9Coins : §e" + this.coins + " §l¢");
+		loreHead.add("§9Coins : §e" + getCoins() + " §l¢");
 		menuStats.setItem(4, Utils.createItemSkull("§b" + this.lastPlayerName, loreHead, SkullType.PLAYER,
 				this.lastPlayerName, false));
 

@@ -63,7 +63,10 @@ public class XWorld implements ConfigurationSerializable{
 			Bukkit.getLogger().info("End load world : " + worldName + " type : " + type.getName() 
 			+ " env : " + env);
 			return true;
-		}else return false;
+		}else {
+			isLoad = true;
+			return false;
+		}
 	}
 
 	public boolean isLoad() {

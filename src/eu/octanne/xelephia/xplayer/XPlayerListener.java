@@ -93,8 +93,15 @@ public class XPlayerListener implements Listener {
 		}
 		// TABLIST
 		for(XPlayer xpF : XelephiaPlugin.xplayersOnline) {
-			xpF.setFooterAndHeader(XelephiaPlugin.getMainConfig().get().getString("tabList.header"), 
-					XelephiaPlugin.getMainConfig().get().getString("tabList.footer"));
+			String header = XelephiaPlugin.getMainConfig().get().getString("tabList.header");
+			header = header.replace("{MAX}", Bukkit.getMaxPlayers()+"");
+			header = header.replace("{ONLINE}", Bukkit.getOnlinePlayers().size()+"");
+			header = header.replace("{PLAYERNAME}", xpF.getName());
+			String footer = XelephiaPlugin.getMainConfig().get().getString("tabList.footer");
+			footer = footer.replace("{MAX}", Bukkit.getMaxPlayers()+"");
+			footer = footer.replace("{ONLINE}", Bukkit.getOnlinePlayers().size()+"");
+			footer = footer.replace("{PLAYERNAME}", xpF.getName());
+			xpF.setFooterAndHeader(header, footer);
 		}
 		// CUSTOM MESSAGE
 		e.setQuitMessage(XelephiaPlugin.getMessageConfig().get().getString("quitPlayer").replace("{PLAYER}", e.getPlayer().getName()));
