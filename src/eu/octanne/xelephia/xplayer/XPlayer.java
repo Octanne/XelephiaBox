@@ -167,13 +167,14 @@ public class XPlayer {
 				
 				qCreate.execute();
 				qCreate.close();
-				this.menuStats = Bukkit.createInventory(null, 27, "§8Statistiques de §b" + this.lastPlayerName);
 				Bukkit.getLogger().log(Level.INFO, "[Xelephia] Création du joueur : " + this.lastPlayerName + " !");
 			}
 			q.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
+		this.menuStats = Bukkit.createInventory(null, 27, "§8Statistiques de §b" + this.lastPlayerName);
 	}
 	
 	public boolean saveIntoDB() {
