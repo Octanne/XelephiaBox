@@ -60,6 +60,11 @@ public class XPlayerListener implements Listener {
 		xp.getGrade().applyTag(xp);
 		// CUSTOM MESSAGE
 		e.setJoinMessage(XelephiaPlugin.getMessageConfig().get().getString("joinPlayer").replace("{PLAYER}", xp.getName()));
+		// TABLIST
+		for(XPlayer xpF : XelephiaPlugin.xplayersOnline) {
+			xpF.setFooterAndHeader(XelephiaPlugin.getMainConfig().get().getString("tabList.header"), 
+					XelephiaPlugin.getMainConfig().get().getString("tabList.footer"));
+		}
 	}
 
 	/*
@@ -98,7 +103,7 @@ public class XPlayerListener implements Listener {
 		XPlayer xp = XelephiaPlugin.getXPlayer(e.getPlayer().getUniqueId());
 		String format = XelephiaPlugin.getMainConfig().get().getString("chatFormat");
 		String message = e.getMessage();
-		if(e.getPlayer().hasPermission("xelephia.chatcolor"))message = message.replaceAll("&", "§");
+		if(e.getPlayer().hasPermission("xelephia.chatcolor"))message = message.replace("&", "§");
 		format = format.replace("{PREFIX}", xp.getGrade().getPrefix());
 		format = format.replace("{PLAYERNAME}", "%1$s");
 		format = format.replace("{MESSAGE}", "%2$s");

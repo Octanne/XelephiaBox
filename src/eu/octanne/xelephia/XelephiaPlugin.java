@@ -107,6 +107,9 @@ public class XelephiaPlugin extends JavaPlugin {
 			xp.getGrade().applyPermissions(xp);
 			xp.getGrade().applyTag(xp);
 			XelephiaPlugin.xplayersOnline.add(xp);
+			// TABLIST
+			xp.setFooterAndHeader(XelephiaPlugin.getMainConfig().get().getString("tabList.header"), 
+				XelephiaPlugin.getMainConfig().get().getString("tabList.footer"));
 		}
 
 		// Register Command
@@ -279,6 +282,9 @@ public class XelephiaPlugin extends JavaPlugin {
 		if(!mainConfig.get().isSet("untilLootTimeHour"))mainConfig.set("untilLootTimeHour", 1);
 		if(!mainConfig.get().isSet("maxLengthTag"))mainConfig.set("maxLengthTag", 30);
 		if(!mainConfig.get().isSet("chatFormat"))mainConfig.set("chatFormat", "{PREFIX} {PLAYERNAME} §7≫§r {MESSAGE}");
+		if(!mainConfig.get().isSet("tabList.header"))mainConfig.set("tabList.header", "      §9▶ §6§lXelephia §bv§30.8 §a- §3PvP§8/§cBox §aRéinventé §9◀");
+		if(!mainConfig.get().isSet("tabList.footer"))mainConfig.set("tabList.footer", "§bJoueurs : §7{ONLINE}§8/§7{MAX}\\n§3Bon jeu §b{PLAYERNAME} §3! §9| §3IP : §bplay.xelephia.fr");
+		
 		mainConfig.save();
 	}
 	public void loadMessage() {

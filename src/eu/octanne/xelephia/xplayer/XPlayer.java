@@ -1,5 +1,6 @@
 package eu.octanne.xelephia.xplayer;
 
+import java.lang.reflect.Field;
 import java.math.RoundingMode;
 
 import java.sql.PreparedStatement;
@@ -32,6 +33,7 @@ import eu.octanne.xelephia.lootzone.LootZoneManager;
 import eu.octanne.xelephia.util.Utils;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
+import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerListHeaderFooter;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle.EnumTitleAction;
 
@@ -39,7 +41,7 @@ public class XPlayer {
 
 	static private int untilAppleTimeSec = XelephiaPlugin.getMainConfig().get().getInt("untilAppleTimeSec",6);
 	static private int untilLootTimeHour = XelephiaPlugin.getMainConfig().get().getInt("untilLootTimeHour",1);
-	
+
 	public enum MessageType {
 		ACTIONBAR,
 		SUBTITLE
@@ -49,17 +51,17 @@ public class XPlayer {
 	DecimalFormat df = new DecimalFormat("#.##");
 
 	public PermissionAttachment perms = null;
-	
+
 	protected BukkitTask combatTask;
 	protected boolean inCombat = false, decoInCombat = false;
 	private boolean combatRelaunch = false;
 	protected String lastDamagerName;
-	
+
 	protected Grade grade;
-	
+
 	protected UUID playerUUID;
 	protected String lastPlayerName;
-	
+
 	// Stats INV Menu
 	protected Inventory menuStats;
 
@@ -75,26 +77,26 @@ public class XPlayer {
 	protected int totalLoot;
 
 	protected boolean kitEquiped;
-	
+
 	protected int hourLoot;
 	// Last Loot date is in reality the date when hourLoot will be reset
 	protected Calendar lastLootDate;
 
 	protected ArrayList<String> unlockKits;
-	
+
 	protected HashMap<String, Double> damageTaken = new HashMap<String, Double>();
 	protected double totalDamage = 0;
 	protected Calendar untilAppleDate;
-	
+
 	protected XPlayer lastMessenger;
-	
+
 	public void finalize() throws Throwable {
 		Bukkit.getLogger().info("Libération mémoire XPlayer : "+lastPlayerName);
 		saveIntoDB();
 	}
-	
+
 	public XPlayer(UUID pUUID) {
-		
+
 		// Decimal Format
 		df.setRoundingMode(RoundingMode.HALF_EVEN);
 		DecimalFormatSymbols dfs = df.getDecimalFormatSymbols();
@@ -125,14 +127,14 @@ public class XPlayer {
 				this.totalLoot = rs.getInt("totalLoot");
 				this.lastLootDate = Utils.getGson().fromJson(rs.getString("lastLootDate"),
 						new TypeToken<Calendar>() {
-						}.getType());
+				}.getType());
 				this.unlockKits = Utils.getGson().fromJson(rs.getString("unlockKits"),
 						new TypeToken<ArrayList<String>>() {
-						}.getType());
+				}.getType());
 				if(rs.getString("kitEquiped").equalsIgnoreCase("true")) this.kitEquiped = true;
 				else this.kitEquiped = false;
 				this.grade = XelephiaPlugin.getGradeManager().getGrade(rs.getString("grade"));
-				
+
 				Bukkit.getLogger().log(Level.INFO, "[Xelephia] Chargement du joueur : " + this.lastPlayerName + " !");
 			} else {
 				this.coins = 0;
@@ -146,7 +148,7 @@ public class XPlayer {
 				this.kitEquiped = false;
 				this.lastPlayerName = Bukkit.getPlayer(pUUID).getName();
 				this.grade = XelephiaPlugin.getGradeManager().getDefault();
-				
+
 				PreparedStatement qCreate = XelephiaPlugin.getPlayersDB().getConnection()
 						.prepareStatement("INSERT INTO players (playerName, uuid, coins, killCount, deathCount, "
 								+ "actualKillStreak, highKillStreak, lastLootDate, totalLoot, hourLoot, unlockKits, kitEquiped, grade) "
@@ -164,8 +166,8 @@ public class XPlayer {
 				qCreate.setString(11, Utils.getGson().toJson(unlockKits));
 				qCreate.setString(12, ""+this.kitEquiped);
 				qCreate.setString(13, grade.getName());
-				
-				
+
+
 				qCreate.execute();
 				qCreate.close();
 				Bukkit.getLogger().log(Level.INFO, "[Xelephia] Création du joueur : " + this.lastPlayerName + " !");
@@ -174,10 +176,10 @@ public class XPlayer {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		this.menuStats = Bukkit.createInventory(null, 27, "§8Statistiques de §b" + this.lastPlayerName);
 	}
-	
+
 	public boolean saveIntoDB() {
 		try {
 			PreparedStatement qCreate = XelephiaPlugin.getPlayersDB().getConnection()
@@ -196,7 +198,7 @@ public class XPlayer {
 			qCreate.setString(10, Utils.getGson().toJson(unlockKits));
 			qCreate.setString(11, ""+this.kitEquiped);
 			qCreate.setString(12, this.grade.getName());
-			
+
 			qCreate.setString(13, this.playerUUID.toString());
 			// ADD Capture Zone Date
 			qCreate.execute();
@@ -218,13 +220,13 @@ public class XPlayer {
 		else
 			return false;
 	}
-	
+
 	public void setGrade(Grade grade) {
 		this.grade = grade;
 		if(isOnline())this.grade.applyPermissions(this);
 		if(isOnline())this.grade.applyTag(this);
 	}
-	
+
 	/*
 	 * updateLoots & return true if update
 	 */
@@ -235,17 +237,17 @@ public class XPlayer {
 			return true;
 		}else return false;
 	}
-	
+
 	public void updateUntilAppleDate() {
 		this.untilAppleDate = Calendar.getInstance();
 		this.untilAppleDate.add(Calendar.SECOND, untilAppleTimeSec);
 	}
-	
+
 	public void updateLastLootDate() {
 		this.lastLootDate = Calendar.getInstance();
 		this.lastLootDate.add(Calendar.HOUR_OF_DAY, untilLootTimeHour);
 	}
-	
+
 	public String getTimeBeforeResetLoot() {
 		Calendar now = Calendar.getInstance();
 		if(lastLootDate != null && now.before(lastLootDate)) {
@@ -257,13 +259,13 @@ public class XPlayer {
 		}else {
 			return "§9Entièrement chargé";
 		}
-		
+
 	}
-	
+
 	public Grade getGrade() {
 		return grade;
 	}
-	
+
 	/*
 	 * @return time in sec
 	 */
@@ -277,7 +279,7 @@ public class XPlayer {
 			return 0;
 		}
 	}
-	
+
 	/*
 	 * getPlayer
 	 */
@@ -314,20 +316,20 @@ public class XPlayer {
 	 */
 	public double getCoins() {
 		String coinsStr = df.format(coins);
-		
+
 		return Double.parseDouble(coinsStr);
 	}
 
 	public boolean kitEquiped() {
 		return kitEquiped;
 	}
-	
+
 	public void setCoins(double coins) {
 		if (coins < 0)
 			coins = 0;
 		this.coins = coins;
 	}
-	
+
 	public void setKitEquiped(boolean status) {
 		kitEquiped = status;
 	}
@@ -345,35 +347,35 @@ public class XPlayer {
 	public boolean inCombat() {
 		return inCombat;
 	}
-	
+
 	public void combat() {
 		if(inCombat != true) {
 			inCombat = true;
-			
+
 			sendMessage(MessageType.SUBTITLE,"§4「§c✗§4」§c Vous êtes en combat ! (20 secs)");
 			combatTask = new BukkitRunnable() {
-		        
+
 				int sec = 20;
-				
-			    @Override
-			    public void run() {
-			       if (sec > 0 && combatRelaunch == false && inCombat == true) {
-			           sec--;
-			       }else if(sec > 0 && combatRelaunch == true && inCombat == true) {
-			    	   sec = 20;
-			    	   combatRelaunch = false;
-			       }else {
-			    	   this.cancel();
-			    	   inCombat = false;
-			    	   sendMessage(MessageType.SUBTITLE,"§7「§a✓§7」§a Vous n'êtes plus en combat.");
-			       }
-			    }
+
+				@Override
+				public void run() {
+					if (sec > 0 && combatRelaunch == false && inCombat == true) {
+						sec--;
+					}else if(sec > 0 && combatRelaunch == true && inCombat == true) {
+						sec = 20;
+						combatRelaunch = false;
+					}else {
+						this.cancel();
+						inCombat = false;
+						sendMessage(MessageType.SUBTITLE,"§7「§a✓§7」§a Vous n'êtes plus en combat.");
+					}
+				}
 			}.runTaskTimer(XelephiaPlugin.getInstance(), 0, 20);
 		}else {
 			combatRelaunch = true;
 		}
 	}
-	
+
 	/*
 	 * getKillCount
 	 */
@@ -429,14 +431,14 @@ public class XPlayer {
 	public void incrementHourLoot() {
 		hourLoot+=1;
 	}
-	
+
 	/*
 	 * incrementTotalLoot
 	 */
 	public void incrementTotalLoot() {
 		totalLoot+=1;
 	}
-	
+
 	/*
 	 * getLastLootDate
 	 */
@@ -454,9 +456,9 @@ public class XPlayer {
 			return Double.parseDouble(df.format((double) killCount / deathCount));
 		}
 	}
-	
+
 	public void sendMessage(MessageType type, String message) {
-		
+
 		if(type.equals(MessageType.SUBTITLE)) {
 			PacketPlayOutTitle subTitle = new PacketPlayOutTitle(EnumTitleAction.SUBTITLE, ChatSerializer.a("{\"text\":\"" + message.replace("&", "§") + "\"}"),10,15,10);
 			PacketPlayOutTitle title = new PacketPlayOutTitle(EnumTitleAction.TITLE, ChatSerializer.a("{\"text\":\" \"}"),10,15,10);
@@ -466,7 +468,26 @@ public class XPlayer {
 			PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message.replace("&", "§") + "\"}"), (byte) 2);
 			((CraftPlayer) getBukkitPlayer()).getHandle().playerConnection.sendPacket(packet);
 		}
-		
+
+	}
+
+	public void setFooterAndHeader(String header, String footer) {
+		header = header.replace("{MAX}", Bukkit.getMaxPlayers()+"");
+		header = header.replace("{ONLINE}", Bukkit.getOnlinePlayers().size()+"");
+		header = header.replace("{PLAYERNAME}", getName());
+		footer = footer.replace("{MAX}", Bukkit.getMaxPlayers()+"");
+		footer = footer.replace("{ONLINE}", Bukkit.getOnlinePlayers().size()+"");
+		footer = footer.replace("{PLAYERNAME}", getName());
+		PacketPlayOutPlayerListHeaderFooter headerAndFooter = new PacketPlayOutPlayerListHeaderFooter(ChatSerializer.a("{\"text\":\"" + header.replace("&", "§") + "\"}"));
+		try {
+			Field footerField = headerAndFooter.getClass().getDeclaredField("b");
+			footerField.setAccessible(true);
+			footerField.set(headerAndFooter, ChatSerializer.a("{\"text\":\"" + footer.replace("&", "§") + "\"}"));
+		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		((CraftPlayer) getBukkitPlayer()).getHandle().playerConnection.sendPacket(headerAndFooter);
 	}
 
 	/*
@@ -484,7 +505,7 @@ public class XPlayer {
 		this.unlockKits = new ArrayList<>();
 		saveIntoDB();
 	}
-	
+
 	/*
 	 * open Stats Menu
 	 */
