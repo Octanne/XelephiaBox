@@ -18,11 +18,10 @@ public class BroadcastCommand implements CommandExecutor {
 				return false;
 			} else {
 				String message = "";
-				for (int nbr = 0; nbr <= args.length - 1; nbr++) {
+				for (int nbr = 0; nbr < args.length; nbr++) {
 					message += " " + args[nbr];
 				}
-				Bukkit.broadcastMessage(
-						ChatColor.RED + "[Message] " + ChatColor.translateAlternateColorCodes('&', message));
+				Bukkit.broadcastMessage("§e[§6Annonce§e]§b" + ChatColor.translateAlternateColorCodes('&', message));
 				return true;
 			}
 		} else {
