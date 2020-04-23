@@ -97,9 +97,12 @@ public class XPlayerListener implements Listener {
 	public void onSendMessage(AsyncPlayerChatEvent e) {
 		XPlayer xp = XelephiaPlugin.getXPlayer(e.getPlayer().getUniqueId());
 		String format = XelephiaPlugin.getMainConfig().get().getString("chatFormat");
+		String message = e.getMessage();
+		if(e.getPlayer().hasPermission("xelephia.chatcolor"))message = message.replaceAll("&", "§");
 		format = format.replace("{PREFIX}", xp.getGrade().getPrefix());
 		format = format.replace("{PLAYERNAME}", "%1$s");
 		format = format.replace("{MESSAGE}", "%2$s");
+		e.setMessage(message);
 		e.setFormat(format);
 	}
 	
@@ -144,7 +147,7 @@ public class XPlayerListener implements Listener {
 		if(e.getItem().getType().equals(Material.GOLDEN_APPLE)) {
 			XPlayer xP = XelephiaPlugin.getXPlayer(e.getPlayer().getUniqueId());
 			int sec = xP.getTimeUntilApple();
-			if(sec == 0) {
+			if(sec <= 0) {
 				xP.updateUntilAppleDate();
 				return;
 			}else {
@@ -153,6 +156,8 @@ public class XPlayerListener implements Listener {
 			}
 		}else return;
 	}
+	
+	
 	
 	/*
 	 * DropEvent

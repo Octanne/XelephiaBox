@@ -12,7 +12,7 @@ public class CoinsCommand implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (sender.hasPermission("coins.admin")) {
+		if (sender.hasPermission("xelephia.commands.coins")) {
 			if (args.length >= 3) {
 				XPlayer xP = XelephiaPlugin.getXPlayer(args[1]);
 				if (xP != null) {

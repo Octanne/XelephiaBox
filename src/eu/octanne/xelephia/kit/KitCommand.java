@@ -12,7 +12,7 @@ public class KitCommand implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (sender instanceof Player && sender.hasPermission("xelephia.commands.kit")) {
+		if (sender instanceof Player && sender.hasPermission("xelephia.commands.kitadmin")) {
 			if (args.length >= 1) {
 				if (args[0].equalsIgnoreCase("create")) {
 					if (args.length >= 3 && !((Player) sender).getItemInHand().getType().equals(Material.AIR)) {

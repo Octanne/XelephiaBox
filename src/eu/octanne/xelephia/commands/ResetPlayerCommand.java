@@ -13,7 +13,7 @@ public class ResetPlayerCommand implements CommandExecutor{
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if(sender.hasPermission("xelephia.resetplayer")) {
+		if(sender.hasPermission("xelephia.commands.resetplayer")) {
 			if(args.length > 0) {
 				XPlayer xP = XelephiaPlugin.getXPlayer(args[0]);
 				if(xP != null) {
