@@ -149,7 +149,7 @@ public class XPlayer {
 				PreparedStatement qCreate = XelephiaPlugin.getPlayersDB().getConnection()
 						.prepareStatement("INSERT INTO players (playerName, uuid, coins, killCount, deathCount, "
 								+ "actualKillStreak, highKillStreak, lastLootDate, totalLoot, hourLoot, unlockKits, kitEquiped, grade) "
-								+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+								+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
 				qCreate.setString(1, this.lastPlayerName);
 				qCreate.setString(2, this.playerUUID.toString());
 				qCreate.setDouble(3, this.coins);
