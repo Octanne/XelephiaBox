@@ -91,6 +91,11 @@ public class XPlayerListener implements Listener {
 			xP.saveIntoDB();
 			XelephiaPlugin.xplayersOnline.remove(xP);
 		}
+		// TABLIST
+		for(XPlayer xpF : XelephiaPlugin.xplayersOnline) {
+			xpF.setFooterAndHeader(XelephiaPlugin.getMainConfig().get().getString("tabList.header"), 
+					XelephiaPlugin.getMainConfig().get().getString("tabList.footer"));
+		}
 		// CUSTOM MESSAGE
 		e.setQuitMessage(XelephiaPlugin.getMessageConfig().get().getString("quitPlayer").replace("{PLAYER}", e.getPlayer().getName()));
 	}
