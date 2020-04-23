@@ -144,6 +144,7 @@ public class XPlayer {
 				this.hourLoot = 0;
 				this.unlockKits = new ArrayList<String>();
 				this.kitEquiped = false;
+				this.lastPlayerName = Bukkit.getPlayer(pUUID).getName();
 				this.grade = XelephiaPlugin.getGradeManager().getDefault();
 				
 				PreparedStatement qCreate = XelephiaPlugin.getPlayersDB().getConnection()
