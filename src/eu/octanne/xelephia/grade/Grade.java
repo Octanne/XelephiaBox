@@ -74,7 +74,11 @@ public class Grade {
 		p.perms = perm;
 		for(String gradeStr : inheritence) {
 			Grade g = parent.getGrade(gradeStr);
-			g.applyPermissions(p);
+			for(String permStr : g.permissions) {
+				boolean status = true;
+				if(permStr.startsWith("-"))status = false;
+				perm.setPermission(permStr.startsWith("-") ? permStr.substring(1) : permStr, status);
+			}
 		}
 		for(String permStr : permissions) {
 			boolean status = true;

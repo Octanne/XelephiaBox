@@ -191,9 +191,7 @@ public class XPlayerListener implements Listener {
 	public void onArrowHit(ProjectileHitEvent e) {
 		if(e.getEntity() instanceof Arrow) {
 			Arrow arrow = (Arrow) e.getEntity();
-			if(arrow.isOnGround()) {
-				arrow.remove();
-			}
+			arrow.remove();
 		}
 	}
 
