@@ -119,8 +119,6 @@ public class XPlayerListener implements Listener {
 			footer = footer.replace("{PLAYERNAME}", xpF.getName());
 			xpF.setFooterAndHeader(header, footer);
 		}
-		// QUIT MESSAGE
-		e.setLeaveMessage(null);
 	}
 	
 	/*
