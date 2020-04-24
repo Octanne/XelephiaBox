@@ -65,6 +65,7 @@ public class PScoreboard {
 	
 	private String replaceVar(String line) {
 		line = line.replace("{ONLINE}", Bukkit.getOnlinePlayers().size()+"");
+		line = line.replace("{GRADE}", parent.getGrade().getDisplayName());
 		line = line.replace("{MAX}", Bukkit.getMaxPlayers()+"");
 		line = line.replace("{PLAYERNAME}", parent.getName());
 		line = line.replace("{COINS}", parent.df.format(parent.getCoins()));
