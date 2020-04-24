@@ -2,7 +2,6 @@ package eu.octanne.xelephia.xplayer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -27,13 +26,15 @@ public class PScoreboard {
 	@SuppressWarnings("unchecked")
 	private List<String> lines = (List<String>) XelephiaPlugin.getMainConfig().get().getList("scoreboard.lines", new ArrayList<>());
 	
+	private List<String> oldScore = new ArrayList<>();
+	
 	private String scoreboardName = XelephiaPlugin.getMainConfig().get().getString("scoreboard.name", "Scoreboard");
 	
 	PScoreboard(XPlayer xp) {
 		this.parent = xp;
 		
 		scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-		objective = scoreboard.registerNewObjective(UUID.randomUUID().toString(), "dummy");
+		objective = scoreboard.registerNewObjective("scoreboard", "dummy");
 		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 		objective.setDisplayName(scoreboardName);
 		
@@ -41,23 +42,19 @@ public class PScoreboard {
 			String line = replaceVar(lines.get(i));
 			Score score = objective.getScore(line);
 			score.setScore(lines.size()-i);
+			oldScore.add(line);
 		}
 		parent.getBPlayer().setScoreboard(scoreboard);
 	}
 	
 	public void update(){
-		Objective objective = scoreboard.registerNewObjective(UUID.randomUUID().toString(), "dummy");
-		objective.setDisplayName(scoreboardName);
-		
 		for(int i = 0; i < lines.size(); i++) {
 			String line = replaceVar(lines.get(i));
+			scoreboard.resetScores(oldScore.get(i));
 			Score score = objective.getScore(line);
 			score.setScore(lines.size()-i);
+			oldScore.add(line);
 		}
-		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-		this.objective.unregister();
-		this.objective = null;
-		this.objective = objective;
 	}
 	
 	private String replaceVar(String line) {
@@ -70,7 +67,7 @@ public class PScoreboard {
 		line = line.replace("{KILLSTREAK}", parent.getKillStreak()+"");
 		line = line.replace("{HIGHKILLSTREAK}", parent.getHighKillStreak()+"");
 		line = line.replace("{DEATH}", parent.getDeathCount()+"");
-		line = line.replace("{RESETLOOT}", parent.getTimeBeforeResetLoot() == "§9Entièrement chargé" ? "§9Chargé" : parent.getTimeBeforeResetLoot());
+		line = line.replace("{RESETLOOT}", parent.getTimeBeforeResetLootSB());
 		line = line.replace("{RATIO}", parent.df.format(parent.getRatio()));
 		line = line.replace("{UNTILLOOT}", ""+(LootZoneManager.maxLootPerHour-parent.getHourLoot()));
 		line = line.replace("{COMBAT}", parent.getCombatStatut());

@@ -289,6 +289,20 @@ public class XPlayer {
 		}
 
 	}
+	
+	public String getTimeBeforeResetLootSB() {
+		Calendar now = Calendar.getInstance();
+		if(untilLootDate != null && now.before(untilLootDate)) {
+			long millis = untilLootDate.getTimeInMillis()-now.getTimeInMillis();
+			int sec = (int) (millis/1000);
+			int min = sec/60;
+			sec %= 60;
+			return "§c"+min+" §9min.§c "+sec+" §9sec.";
+		}else {
+			return "§9Chargé";
+		}
+
+	}
 	/*
 	 * getTimeUntilApple
 	 */
