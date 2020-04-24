@@ -74,6 +74,8 @@ public class XPlayerListener implements Listener {
 			xpF.setFooterAndHeader(XelephiaPlugin.getMainConfig().get().getString("tabList.header"), 
 					XelephiaPlugin.getMainConfig().get().getString("tabList.footer"));
 		}
+		// SCOREBOARD
+		xp.loadScoreboard();
 	}
 
 	/*

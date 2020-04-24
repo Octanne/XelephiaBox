@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
@@ -13,6 +15,8 @@ import eu.octanne.xelephia.XelephiaPlugin;
 import eu.octanne.xelephia.lootzone.LootZoneManager;
 
 public class PScoreboard {
+	
+	static private BukkitTask scoreBoarkTask;
 	
 	private XPlayer parent;
 	
@@ -39,10 +43,11 @@ public class PScoreboard {
 			score.setScore(i);
 			i++;
 		}
-		xp.getBPlayer().setScoreboard(scoreboard);
+		parent.getBPlayer().setScoreboard(scoreboard);
 	}
 	
 	public void update(){
+		scoreboard = null;
 		scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 		objective = scoreboard.registerNewObjective("Scoreboard", "dummy");
 		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -55,6 +60,7 @@ public class PScoreboard {
 			score.setScore(i);
 			i++;
 		}
+		parent.getBPlayer().setScoreboard(scoreboard);
 	}
 	
 	private String replaceVar(String line) {
@@ -71,5 +77,22 @@ public class PScoreboard {
 		line = line.replace("{UNTILLOOT}", ""+(LootZoneManager.maxLootPerHour-parent.getHourLoot()));
 		line = line.replace("{COMBAT}", parent.getCombatStatut());
 		return line;
+	}
+	
+	public static BukkitTask getTask() {
+		return scoreBoarkTask;
+	}
+	
+	public static void startTask() {
+		scoreBoarkTask = new BukkitRunnable() {
+
+			@Override
+			public void run() {
+				for(XPlayer xp : XelephiaPlugin.getXPlayersOnline()) {
+					xp.loadScoreboard();
+				}
+			}
+			
+		}.runTaskTimer(XelephiaPlugin.getInstance(), 0, 20);
 	}
 }
