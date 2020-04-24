@@ -10,6 +10,7 @@ import org.bukkit.WeatherType;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -40,6 +41,7 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import java.util.Random;
 import eu.octanne.xelephia.XelephiaPlugin;
 import eu.octanne.xelephia.kit.KitSystem;
+import eu.octanne.xelephia.util.Utils;
 import eu.octanne.xelephia.xplayer.XPlayer.MessageType;
 
 public class XPlayerListener implements Listener {
@@ -288,6 +290,13 @@ public class XPlayerListener implements Listener {
 				Projectile pro = (Projectile) enD;
 				if(pro.getShooter() instanceof Player) {
 					xPDamager = XelephiaPlugin.getXPlayer(((Player)pro.getShooter()).getUniqueId());
+					if(pro.getType().equals(EntityType.ARROW)) {
+						ArrayList<String> lore = new ArrayList<>();
+						lore.add(" ");
+						lore.add("§cItem de kit");
+						ItemStack arrowItem = Utils.createItemStack("", Material.ARROW, 1, lore, 0, false);
+						xPDamager.getBPlayer().getInventory().addItem(arrowItem);
+					}
 				}else return;
 			}else if(enD instanceof Player) {
 				xPDamager = XelephiaPlugin.getXPlayer(e.getDamager().getUniqueId());
