@@ -49,6 +49,7 @@ import eu.octanne.xelephia.warp.WarpManager;
 import eu.octanne.xelephia.world.VoidChunkGenerator;
 import eu.octanne.xelephia.world.WorldCommand;
 import eu.octanne.xelephia.world.WorldManager;
+import eu.octanne.xelephia.xplayer.PScoreboard;
 import eu.octanne.xelephia.xplayer.XPlayer;
 import eu.octanne.xelephia.xplayer.XPlayerListener;
 
@@ -112,6 +113,9 @@ public class XelephiaPlugin extends JavaPlugin {
 				XelephiaPlugin.getMainConfig().get().getString("tabList.footer"));
 		}
 
+		// ScoreBoard
+		PScoreboard.startTask();
+		
 		// Register Command
 		loadCommand();
 		

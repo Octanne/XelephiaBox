@@ -24,7 +24,7 @@ public class PScoreboard {
 	private Objective objective;
 	
 	@SuppressWarnings("unchecked")
-	private List<String> lines = (List<String>) XelephiaPlugin.getMainConfig().get().getList("scoreboard.line", new ArrayList<>());
+	private List<String> lines = (List<String>) XelephiaPlugin.getMainConfig().get().getList("scoreboard.lines", new ArrayList<>());
 	
 	private String scoreboardName = XelephiaPlugin.getMainConfig().get().getString("scoreboard.name", "Scoreboard");
 	
@@ -36,36 +36,32 @@ public class PScoreboard {
 		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 		objective.setDisplayName(scoreboardName);
 		
-		int i = 0;
-		for(String line : lines) {
-			line = replaceVar(line);
+		for(int i = 0; i < lines.size(); i++) {
+			String line = replaceVar(lines.get(i));
 			Score score = objective.getScore(line);
-			score.setScore(i);
-			i++;
+			score.setScore(lines.size()-i);
 		}
 		parent.getBPlayer().setScoreboard(scoreboard);
 	}
 	
 	public void update(){
-		scoreboard = null;
-		scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-		objective = scoreboard.registerNewObjective("Scoreboard", "dummy");
-		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+		Objective objective = scoreboard.registerNewObjective("Scoreboard2", "dummy");
 		objective.setDisplayName(scoreboardName);
 		
-		int i = 0;
-		for(String line : lines) {
-			line = replaceVar(line);
+		for(int i = 0; i < lines.size(); i++) {
+			String line = replaceVar(lines.get(i));
 			Score score = objective.getScore(line);
-			score.setScore(i);
-			i++;
+			score.setScore(lines.size()-i);
 		}
-		parent.getBPlayer().setScoreboard(scoreboard);
+		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+		this.objective.unregister();
+		this.objective = null;
+		this.objective = objective;
 	}
 	
 	private String replaceVar(String line) {
 		line = line.replace("{ONLINE}", Bukkit.getOnlinePlayers().size()+"");
-		line = line.replace("{GRADE}", parent.getGrade().getDisplayName());
+		line = line.replace("{GRADE}", parent.getGrade().getTabPrefix());
 		line = line.replace("{MAX}", Bukkit.getMaxPlayers()+"");
 		line = line.replace("{PLAYERNAME}", parent.getName());
 		line = line.replace("{COINS}", parent.df.format(parent.getCoins()));
@@ -73,7 +69,7 @@ public class PScoreboard {
 		line = line.replace("{KILLSTREAK}", parent.getKillStreak()+"");
 		line = line.replace("{HIGHKILLSTREAK}", parent.getHighKillStreak()+"");
 		line = line.replace("{DEATH}", parent.getDeathCount()+"");
-		line = line.replace("{RESETLOOT}", parent.getTimeBeforeResetLoot());
+		line = line.replace("{RESETLOOT}", parent.getTimeBeforeResetLoot() == "§9Entièrement chargé" ? "§9Chargé" : parent.getTimeBeforeResetLoot());
 		line = line.replace("{RATIO}", parent.df.format(parent.getRatio()));
 		line = line.replace("{UNTILLOOT}", ""+(LootZoneManager.maxLootPerHour-parent.getHourLoot()));
 		line = line.replace("{COMBAT}", parent.getCombatStatut());
