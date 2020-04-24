@@ -170,37 +170,37 @@ public class KitSystem implements Listener {
 							// Buy
 							if (e.getCurrentItem().getEnchantments().isEmpty()) {
 								if (xP.getCoins() >= kit.getCost()) {
-									xP.getBukkitPlayer().playSound(xP.getBukkitPlayer().getLocation(), Sound.ORB_PICKUP,
-											4.0F, xP.getBukkitPlayer().getLocation().getPitch());
+									xP.getBPlayer().playSound(xP.getBPlayer().getLocation(), Sound.ORB_PICKUP,
+											4.0F, xP.getBPlayer().getLocation().getPitch());
 									xP.getUnlockKit().add(kit.getUnName());
 									xP.takeCoins(kit.getCost());
-									openMenu(xP.getBukkitPlayer());
-									xP.getBukkitPlayer().sendMessage("§cKit §7| §aAchat du kit " + kit.getName()
+									openMenu(xP.getBPlayer());
+									xP.getBPlayer().sendMessage("§cKit §7| §aAchat du kit " + kit.getName()
 									+ "§a pour §6" + kit.getCost() + " §acoins.");
 									return;
 								} else {
-									xP.getBukkitPlayer().playSound(xP.getBukkitPlayer().getLocation(),
-											Sound.ENDERDRAGON_HIT, 4.0F, xP.getBukkitPlayer().getLocation().getPitch());
-									xP.getBukkitPlayer().sendMessage("§cKit §7| §cFond insuffisant vous n'avez que §6"
+									xP.getBPlayer().playSound(xP.getBPlayer().getLocation(),
+											Sound.ENDERDRAGON_HIT, 4.0F, xP.getBPlayer().getLocation().getPitch());
+									xP.getBPlayer().sendMessage("§cKit §7| §cFond insuffisant vous n'avez que §6"
 											+ xP.getCoins() + " §ccoins.");
 									return;
 								}
 							}
 							// Equip
 							else if(!xP.kitEquiped()){
-								kit.give(xP.getBukkitPlayer());
-								xP.getBukkitPlayer().closeInventory();
-								xP.getBukkitPlayer().playSound(xP.getBukkitPlayer().getLocation(), Sound.ORB_PICKUP, 3.0F,
-										xP.getBukkitPlayer().getLocation().getPitch());
+								kit.give(xP.getBPlayer());
+								xP.getBPlayer().closeInventory();
+								xP.getBPlayer().playSound(xP.getBPlayer().getLocation(), Sound.ORB_PICKUP, 3.0F,
+										xP.getBPlayer().getLocation().getPitch());
 								xP.setKitEquiped(true);
 								return;
 							}
 							// Already Equiped
 							else {
-								xP.getBukkitPlayer().closeInventory();
-								xP.getBukkitPlayer().playSound(xP.getBukkitPlayer().getLocation(),
-										Sound.ENDERDRAGON_HIT, 4.0F, xP.getBukkitPlayer().getLocation().getPitch());
-								xP.getBukkitPlayer().sendMessage("§cKit §7| §cVous avez déjà choisit votre kit.");
+								xP.getBPlayer().closeInventory();
+								xP.getBPlayer().playSound(xP.getBPlayer().getLocation(),
+										Sound.ENDERDRAGON_HIT, 4.0F, xP.getBPlayer().getLocation().getPitch());
+								xP.getBPlayer().sendMessage("§cKit §7| §cVous avez déjà choisit votre kit.");
 								return;
 							}
 						}

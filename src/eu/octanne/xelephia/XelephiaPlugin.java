@@ -128,6 +128,7 @@ public class XelephiaPlugin extends JavaPlugin {
 		
 		// Players DB
 		dbPlayers.disconnect();
+		worldManager.save();
 	}
 
 	@Override

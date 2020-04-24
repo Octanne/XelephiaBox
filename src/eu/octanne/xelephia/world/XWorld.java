@@ -35,7 +35,7 @@ public class XWorld implements ConfigurationSerializable{
 		this.type = XWorldType.getByWorldType(world.getWorldType());
 		this.env = world.getEnvironment();
 		this.hasStructure = world.canGenerateStructures();
-		this.defaultLoad = false; 
+		this.defaultLoad = true; 
 	}
 
 	/*

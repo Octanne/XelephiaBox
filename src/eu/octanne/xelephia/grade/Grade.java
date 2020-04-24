@@ -70,7 +70,7 @@ public class Grade {
 	
 	public void applyPermissions(XPlayer p) {
 		if(p.perms != null) p.perms.remove();
-		PermissionAttachment perm = p.getBukkitPlayer().addAttachment(XelephiaPlugin.getInstance());
+		PermissionAttachment perm = p.getBPlayer().addAttachment(XelephiaPlugin.getInstance());
 		p.perms = perm;
 		for(String gradeStr : inheritence) {
 			Grade g = parent.getGrade(gradeStr);
@@ -81,7 +81,7 @@ public class Grade {
 			if(permStr.startsWith("-"))status = false;
 			perm.setPermission(permStr.startsWith("-") ? permStr.substring(1) : permStr, status);
 		}
-		p.getBukkitPlayer().recalculatePermissions();
+		p.getBPlayer().recalculatePermissions();
 	}
 	
 	public void applyTag(XPlayer p) {
@@ -89,6 +89,6 @@ public class Grade {
 		for(int i = 0; tabName.length() < maxLengthTag && i < p.getName().length(); i++) {
 			tabName+= p.getName().charAt(i);
 		}
-		p.getBukkitPlayer().setPlayerListName(tabName);
+		p.getBPlayer().setPlayerListName(tabName);
 	}
 }

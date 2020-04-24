@@ -29,12 +29,11 @@ public class WorldManager implements Listener {
 		defaultWorld = new XWorld(Bukkit.getWorlds().get(0));
 		startLoad();
 	}
-
+	
 	private void startLoad() {
 		for(XWorld world : worldList) {
 			if(world.defaultLoad())world.load();
 		}
-		save();
 	}
 
 	public XWorld getWorld(String name) {

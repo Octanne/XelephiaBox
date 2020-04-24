@@ -43,9 +43,9 @@ public class MessageCommand implements CommandExecutor {
 				if (args.length > 0) {
 					if (XelephiaPlugin.getXPlayer(((Player) sender).getUniqueId()).getLastMessenger() != null
 							&& XelephiaPlugin.getXPlayer(((Player) sender).getUniqueId()).getLastMessenger()
-									.getBukkitPlayer() != null) {
+									.getBPlayer() != null) {
 						Player pt = XelephiaPlugin.getXPlayer(((Player) sender).getUniqueId()).getLastMessenger()
-								.getBukkitPlayer();
+								.getBPlayer();
 						String message = "";
 						for (int nbr = 0; nbr <= args.length - 1; nbr++) {
 							message += " " + args[nbr];

@@ -39,16 +39,17 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutTitle.EnumTitleAction;
 
 public class XPlayer {
 
-	static private int untilAppleTimeSec = XelephiaPlugin.getMainConfig().get().getInt("untilAppleTimeSec",6);
-	static private int untilLootTimeHour = XelephiaPlugin.getMainConfig().get().getInt("untilLootTimeHour",1);
+	// Until Time CONST
+	static private final int untilAppleTimeSec = XelephiaPlugin.getMainConfig().get().getInt("untilAppleTimeSec",6);
+	static private final int untilLootTimeHour = XelephiaPlugin.getMainConfig().get().getInt("untilLootTimeHour",1);
 
+	// Decimal Format
+	DecimalFormat df = new DecimalFormat("#.##");
+	
 	public enum MessageType {
 		ACTIONBAR,
 		SUBTITLE
 	}
-
-	// Decimal Format
-	DecimalFormat df = new DecimalFormat("#.##");
 
 	public PermissionAttachment perms = null;
 
@@ -74,18 +75,20 @@ public class XPlayer {
 
 	protected double coins;
 
-	protected int totalLoot;
-
 	protected boolean kitEquiped;
 
+	protected int totalLoot;
 	protected int hourLoot;
+
 	// Last Loot date is in reality the date when hourLoot will be reset
-	protected Calendar lastLootDate;
+	protected Calendar untilLootDate;
 
 	protected ArrayList<String> unlockKits;
 
+	// Damage System
 	protected HashMap<String, Double> damageTaken = new HashMap<String, Double>();
 	protected double totalDamage = 0;
+	
 	protected Calendar untilAppleDate;
 
 	protected XPlayer lastMessenger;
@@ -125,7 +128,7 @@ public class XPlayer {
 				this.highKillStreak = rs.getInt("highKillStreak");
 				this.hourLoot = rs.getInt("hourLoot");
 				this.totalLoot = rs.getInt("totalLoot");
-				this.lastLootDate = Utils.getGson().fromJson(rs.getString("lastLootDate"),
+				this.untilLootDate = Utils.getGson().fromJson(rs.getString("untilLootDate"),
 						new TypeToken<Calendar>() {
 				}.getType());
 				this.unlockKits = Utils.getGson().fromJson(rs.getString("unlockKits"),
@@ -151,7 +154,7 @@ public class XPlayer {
 
 				PreparedStatement qCreate = XelephiaPlugin.getPlayersDB().getConnection()
 						.prepareStatement("INSERT INTO players (playerName, uuid, coins, killCount, deathCount, "
-								+ "actualKillStreak, highKillStreak, lastLootDate, totalLoot, hourLoot, unlockKits, kitEquiped, grade) "
+								+ "actualKillStreak, highKillStreak, untilLootDate, totalLoot, hourLoot, unlockKits, kitEquiped, grade) "
 								+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
 				qCreate.setString(1, this.lastPlayerName);
 				qCreate.setString(2, this.playerUUID.toString());
@@ -160,7 +163,7 @@ public class XPlayer {
 				qCreate.setInt(5, this.deathCount);
 				qCreate.setInt(6, this.actualKillStreak);
 				qCreate.setInt(7, this.highKillStreak);
-				qCreate.setString(8, Utils.getGson().toJson(this.lastLootDate));
+				qCreate.setString(8, Utils.getGson().toJson(this.untilLootDate));
 				qCreate.setInt(9, this.totalLoot);
 				qCreate.setInt(10, this.hourLoot);
 				qCreate.setString(11, Utils.getGson().toJson(unlockKits));
@@ -179,12 +182,15 @@ public class XPlayer {
 
 		this.menuStats = Bukkit.createInventory(null, 27, "§8Statistiques de §b" + this.lastPlayerName);
 	}
-
+	
+	/*
+	 * saveIntoDB
+	 */
 	public boolean saveIntoDB() {
 		try {
 			PreparedStatement qCreate = XelephiaPlugin.getPlayersDB().getConnection()
 					.prepareStatement("UPDATE players SET playerName = ?, coins = ?, killCount = ?, "
-							+ "deathCount = ?, actualKillStreak = ?, highKillStreak = ?, lastLootDate = ?, "
+							+ "deathCount = ?, actualKillStreak = ?, highKillStreak = ?, untilLootDate = ?, "
 							+ "totalLoot = ?, hourLoot = ?, unlockKits = ?, kitEquiped = ?, grade = ? WHERE uuid = ?");
 			qCreate.setString(1, this.lastPlayerName);
 			qCreate.setDouble(2, this.coins);
@@ -192,7 +198,7 @@ public class XPlayer {
 			qCreate.setInt(4, this.deathCount);
 			qCreate.setInt(5, this.actualKillStreak);
 			qCreate.setInt(6, this.highKillStreak);
-			qCreate.setString(7, Utils.getGson().toJson(this.lastLootDate));
+			qCreate.setString(7, Utils.getGson().toJson(this.untilLootDate));
 			qCreate.setInt(8, this.totalLoot);
 			qCreate.setInt(9, this.hourLoot);
 			qCreate.setString(10, Utils.getGson().toJson(unlockKits));
@@ -231,9 +237,9 @@ public class XPlayer {
 	 * updateLoots & return true if update
 	 */
 	public boolean updateLoots() {
-		if(Calendar.getInstance().after(lastLootDate)) {
+		if(Calendar.getInstance().after(untilLootDate)) {
 			hourLoot = 0;
-			lastLootDate = null;
+			untilLootDate = null;
 			return true;
 		}else return false;
 	}
@@ -243,15 +249,18 @@ public class XPlayer {
 		this.untilAppleDate.add(Calendar.SECOND, untilAppleTimeSec);
 	}
 
-	public void updateLastLootDate() {
-		this.lastLootDate = Calendar.getInstance();
-		this.lastLootDate.add(Calendar.HOUR_OF_DAY, untilLootTimeHour);
+	public void updateUntilLootDate() {
+		this.untilLootDate = Calendar.getInstance();
+		this.untilLootDate.add(Calendar.HOUR_OF_DAY, untilLootTimeHour);
 	}
 
+	/*
+	 * getTimeBeforeResetLoot
+	 */
 	public String getTimeBeforeResetLoot() {
 		Calendar now = Calendar.getInstance();
-		if(lastLootDate != null && now.before(lastLootDate)) {
-			long millis = lastLootDate.getTimeInMillis()-now.getTimeInMillis();
+		if(untilLootDate != null && now.before(untilLootDate)) {
+			long millis = untilLootDate.getTimeInMillis()-now.getTimeInMillis();
 			int sec = (int) (millis/1000);
 			int min = sec/60;
 			sec %= 60;
@@ -261,13 +270,8 @@ public class XPlayer {
 		}
 
 	}
-
-	public Grade getGrade() {
-		return grade;
-	}
-
 	/*
-	 * @return time in sec
+	 * getTimeUntilApple
 	 */
 	public int getTimeUntilApple() {
 		Calendar now = Calendar.getInstance();
@@ -281,15 +285,14 @@ public class XPlayer {
 	}
 
 	/*
-	 * getPlayer
+	 * getBPlayer
 	 */
-	public Player getBukkitPlayer() {
+	public Player getBPlayer() {
 		if (this.isOnline())
 			return Bukkit.getPlayer(playerUUID);
 		else
 			return null;
 	}
-
 	/*
 	 * getOfflinePlayer
 	 */
@@ -319,7 +322,14 @@ public class XPlayer {
 
 		return Double.parseDouble(coinsStr);
 	}
-
+	
+	/*
+	 * getGrade 
+	 */
+	public Grade getGrade() {
+		return grade;
+	}
+	
 	public boolean kitEquiped() {
 		return kitEquiped;
 	}
@@ -382,21 +392,18 @@ public class XPlayer {
 	public int getKillCount() {
 		return killCount;
 	}
-
 	/*
 	 * getDeathCount
 	 */
 	public int getDeathCount() {
 		return deathCount;
 	}
-
 	/*
 	 * getKillStreak
 	 */
 	public int getKillStreak() {
 		return actualKillStreak;
 	}
-
 	/*
 	 * getHighKillStreak
 	 */
@@ -417,21 +424,18 @@ public class XPlayer {
 	public int getTotalLoot() {
 		return totalLoot;
 	}
-
 	/*
 	 * getHourLoot
 	 */
 	public int getHourLoot() {
 		return hourLoot;
 	}
-
 	/*
 	 * incrementHourLoot
 	 */
 	public void incrementHourLoot() {
 		hourLoot+=1;
 	}
-
 	/*
 	 * incrementTotalLoot
 	 */
@@ -440,12 +444,12 @@ public class XPlayer {
 	}
 
 	/*
-	 * getLastLootDate
+	 * getUntilLootDate
 	 */
-	public Calendar getLastLootDate() {
-		return lastLootDate;
+	public Calendar getUntilLootDate() {
+		return untilLootDate;
 	}
-
+	
 	/*
 	 * getRatio
 	 */
@@ -456,21 +460,23 @@ public class XPlayer {
 			return Double.parseDouble(df.format((double) killCount / deathCount));
 		}
 	}
-
+	
+	/*
+	 * NMS Methods
+	 */
 	public void sendMessage(MessageType type, String message) {
-
+		// NMS
 		if(type.equals(MessageType.SUBTITLE)) {
 			PacketPlayOutTitle subTitle = new PacketPlayOutTitle(EnumTitleAction.SUBTITLE, ChatSerializer.a("{\"text\":\"" + message.replace("&", "§") + "\"}"),10,15,10);
 			PacketPlayOutTitle title = new PacketPlayOutTitle(EnumTitleAction.TITLE, ChatSerializer.a("{\"text\":\" \"}"),10,15,10);
-			((CraftPlayer) getBukkitPlayer()).getHandle().playerConnection.sendPacket(title);
-			((CraftPlayer) getBukkitPlayer()).getHandle().playerConnection.sendPacket(subTitle);
+			((CraftPlayer) getBPlayer()).getHandle().playerConnection.sendPacket(title);
+			((CraftPlayer) getBPlayer()).getHandle().playerConnection.sendPacket(subTitle);
 		}else if(type.equals(MessageType.ACTIONBAR)) {
 			PacketPlayOutChat packet = new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"" + message.replace("&", "§") + "\"}"), (byte) 2);
-			((CraftPlayer) getBukkitPlayer()).getHandle().playerConnection.sendPacket(packet);
+			((CraftPlayer) getBPlayer()).getHandle().playerConnection.sendPacket(packet);
 		}
 
 	}
-
 	public void setFooterAndHeader(String header, String footer) {
 		header = header.replace("{MAX}", Bukkit.getMaxPlayers()+"");
 		header = header.replace("{ONLINE}", Bukkit.getOnlinePlayers().size()+"");
@@ -478,20 +484,20 @@ public class XPlayer {
 		footer = footer.replace("{MAX}", Bukkit.getMaxPlayers()+"");
 		footer = footer.replace("{ONLINE}", Bukkit.getOnlinePlayers().size()+"");
 		footer = footer.replace("{PLAYERNAME}", getName());
+		// NMS
 		PacketPlayOutPlayerListHeaderFooter headerAndFooter = new PacketPlayOutPlayerListHeaderFooter(ChatSerializer.a("{\"text\":\"" + header.replace("&", "§") + "\"}"));
 		try {
 			Field footerField = headerAndFooter.getClass().getDeclaredField("b");
 			footerField.setAccessible(true);
 			footerField.set(headerAndFooter, ChatSerializer.a("{\"text\":\"" + footer.replace("&", "§") + "\"}"));
 		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		((CraftPlayer) getBukkitPlayer()).getHandle().playerConnection.sendPacket(headerAndFooter);
+		((CraftPlayer) getBPlayer()).getHandle().playerConnection.sendPacket(headerAndFooter);
 	}
 
 	/*
-	 * Reset The entire Player
+	 * Reset the Player
 	 */
 	public void resetPlayer() {
 		this.actualKillStreak = 0;
@@ -500,14 +506,14 @@ public class XPlayer {
 		this.highKillStreak = 0;
 		this.hourLoot = 0;
 		this.killCount = 0;
-		this.lastLootDate = null;
+		this.untilLootDate = null;
 		this.totalLoot = 0;
 		this.unlockKits = new ArrayList<>();
 		saveIntoDB();
 	}
 
 	/*
-	 * open Stats Menu
+	 * Stats Menu
 	 */
 	public void openStats(Player p) {
 		this.updateLoots();
@@ -563,7 +569,6 @@ public class XPlayer {
 	public XPlayer getLastMessenger() {
 		return lastMessenger;
 	}
-
 	/*
 	 * setLastMessenger
 	 */

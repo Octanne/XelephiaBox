@@ -147,8 +147,8 @@ public class LootZone {
 				int rdmQuantity = r.nextInt((loot.max - minAmount) + 1) + minAmount;
 				ItemStack item = loot.item.clone();
 				item.setAmount(rdmQuantity);
-				if (p.getBukkitPlayer().getInventory().firstEmpty() != -1) p.getBukkitPlayer().getInventory().addItem(item);
-				else p.getBukkitPlayer().getWorld().dropItem(p.getBukkitPlayer().getLocation(), item);
+				if (p.getBPlayer().getInventory().firstEmpty() != -1) p.getBPlayer().getInventory().addItem(item);
+				else p.getBPlayer().getWorld().dropItem(p.getBPlayer().getLocation(), item);
 			}
 		}
 	}
@@ -157,8 +157,8 @@ public class LootZone {
 		// BroadCast
 		Bukkit.broadcastMessage("§eLoot §8| §aCapture de la zone §9" + name + "§a par §9" + p.getName() + "§a.");
 		p.sendMessage(MessageType.SUBTITLE, "§eLoot §8| §aCapture de la zone §9" + name + "§a.");
-		p.getBukkitPlayer().playSound(p.getBukkitPlayer().getLocation(),
-				Sound.LEVEL_UP, 4.0F, p.getBukkitPlayer().getLocation().getPitch());
+		p.getBPlayer().playSound(p.getBPlayer().getLocation(),
+				Sound.LEVEL_UP, 4.0F, p.getBPlayer().getLocation().getPitch());
 		// Scheduler
 		Bukkit.getScheduler().cancelTask(playerInCapture.get(p.getName()).getTaskId());
 		playerInCapture.remove(p.getName());

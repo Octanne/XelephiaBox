@@ -8,13 +8,16 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.WeatherType;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -26,6 +29,12 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
+import com.sk89q.worldguard.bukkit.RegionContainer;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.flags.DefaultFlag;
+import com.sk89q.worldguard.protection.managers.RegionManager;
+
 import java.util.Random;
 import eu.octanne.xelephia.XelephiaPlugin;
 import eu.octanne.xelephia.kit.KitSystem;
@@ -34,9 +43,9 @@ import eu.octanne.xelephia.xplayer.XPlayer.MessageType;
 public class XPlayerListener implements Listener {
 
 	DecimalFormat df = new DecimalFormat("#.##");
-	
+
 	static private int coucheDelSelector = XelephiaPlugin.getMainConfig().get().getInt("coucheDelSelector",150);
-	
+
 	/*
 	 * PlayerJoinEvent
 	 */
@@ -58,7 +67,7 @@ public class XPlayerListener implements Listener {
 		// LOAD PERMISSION
 		xp.getGrade().applyPermissions(xp);
 		xp.getGrade().applyTag(xp);
-		// CUSTOM MESSAGE
+		// JOIN MESSAGE
 		e.setJoinMessage(XelephiaPlugin.getMessageConfig().get().getString("joinPlayer").replace("{PLAYER}", xp.getName()));
 		// TABLIST
 		for(XPlayer xpF : XelephiaPlugin.xplayersOnline) {
@@ -75,7 +84,7 @@ public class XPlayerListener implements Listener {
 		XPlayer xP = XelephiaPlugin.getXPlayer(e.getPlayer().getUniqueId());
 		if (XelephiaPlugin.getXPlayersOnline().contains(xP)) {
 			// DECO COMBAT
-			if(xP.inCombat() && !xP.getBukkitPlayer().isDead()) {
+			if(xP.inCombat() && !xP.getBPlayer().isDead()) {
 				xP.combatTask.cancel();
 				xP.inCombat = false;
 				xP.decoInCombat = true;
@@ -84,7 +93,7 @@ public class XPlayerListener implements Listener {
 				if(killer != null) {
 					e.getPlayer().setHealth(0.0);
 				}else {
-					xP.getBukkitPlayer().setHealth(0.0);
+					xP.getBPlayer().setHealth(0.0);
 				}
 			}
 			// SAVE XPLAYER
@@ -95,20 +104,20 @@ public class XPlayerListener implements Listener {
 		for(XPlayer xpF : XelephiaPlugin.xplayersOnline) {
 			String header = XelephiaPlugin.getMainConfig().get().getString("tabList.header");
 			header = header.replace("{MAX}", Bukkit.getMaxPlayers()+"");
-			header = header.replace("{ONLINE}", Bukkit.getOnlinePlayers().size()+"");
+			header = header.replace("{ONLINE}", (Bukkit.getOnlinePlayers().size()-1)+"");
 			header = header.replace("{PLAYERNAME}", xpF.getName());
 			String footer = XelephiaPlugin.getMainConfig().get().getString("tabList.footer");
 			footer = footer.replace("{MAX}", Bukkit.getMaxPlayers()+"");
-			footer = footer.replace("{ONLINE}", Bukkit.getOnlinePlayers().size()+"");
+			footer = footer.replace("{ONLINE}", (Bukkit.getOnlinePlayers().size()-1)+"");
 			footer = footer.replace("{PLAYERNAME}", xpF.getName());
 			xpF.setFooterAndHeader(header, footer);
 		}
-		// CUSTOM MESSAGE
+		// QUIT MESSAGE
 		e.setQuitMessage(XelephiaPlugin.getMessageConfig().get().getString("quitPlayer").replace("{PLAYER}", e.getPlayer().getName()));
 	}
 
 	/*
-	 * PlayerSendMessageEvent
+	 * Custom Chat
 	 */
 	@EventHandler
 	public void onSendMessage(AsyncPlayerChatEvent e) {
@@ -122,28 +131,76 @@ public class XPlayerListener implements Listener {
 		e.setMessage(message);
 		e.setFormat(format);
 	}
-	
+
 	/*
-	 * MoveEvent
+	 * WorldGuard Fix Food
+	 */
+	@EventHandler
+	public void onPlayerLooseFood(FoodLevelChangeEvent e) {
+		Player p = (Player)e.getEntity();
+		if(Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) {
+			try {
+				Location loc = p.getLocation();
+				RegionContainer container = WorldGuardPlugin.inst().getRegionContainer();
+				RegionManager regions = container.get(loc.getWorld());
+				ApplicableRegionSet set = regions.getApplicableRegions(loc);
+				if(set != null) {
+					Integer min_food = set.queryValue(null, DefaultFlag.MIN_FOOD);
+					if(min_food != null && e.getFoodLevel() < min_food) {
+						p.setFoodLevel(min_food);
+						e.setCancelled(true);
+					}
+					Integer max_food = set.queryValue(null, DefaultFlag.MAX_FOOD);
+					if(max_food != null && e.getFoodLevel() > max_food) {
+						p.setFoodLevel(max_food);
+						e.setCancelled(true);
+					}
+					Integer feed_amount = set.queryValue(null, DefaultFlag.FEED_AMOUNT);
+					if(feed_amount != null) {
+						p.setFoodLevel(feed_amount);
+						e.setCancelled(true);
+					}
+				}
+			} catch (IllegalArgumentException | SecurityException e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
+
+	/*
+	 * PlayerMoveEvent
 	 */
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e) {
 		Player p = e.getPlayer();
+		// KitSelector Remover
 		if(e.getTo().getY() < coucheDelSelector && p.getInventory().first(KitSystem.selectorItem) != -1) {
 			p.getInventory().clear(p.getInventory().first(KitSystem.selectorItem));
 		}
 	}
-	
+
+
+	/*
+	 * Arrow Remover
+	 */
+	@EventHandler
+	public void onArrowHit(ProjectileHitEvent e) {
+		if(e.getEntity() instanceof Arrow) {
+			Arrow arrow = (Arrow) e.getEntity();
+			if(arrow.isOnGround()) {
+				arrow.remove();
+			}
+		}
+	}
+
 	/*
 	 * InventoryClickEvent
 	 */
 	@EventHandler
-	public void onInStatsMenu(InventoryClickEvent e) {
+	public void onInvClick(InventoryClickEvent e) {
 		if(e.getWhoClicked() instanceof Player) {
-			if (e.getClickedInventory() != null
-					&& e.getClickedInventory().getName().contains("§8Statistiques de §b")) {
-				e.setCancelled(true);
-			}
+			// Fix Items in stats menu
+			if (e.getClickedInventory() != null && e.getClickedInventory().getName().contains("§8Statistiques de §b")) e.setCancelled(true);
 		}
 	}
 
@@ -152,15 +209,16 @@ public class XPlayerListener implements Listener {
 	 */
 	@EventHandler
 	public void onInteract(PlayerInteractEvent e) {
+		// Open Kit Menu
 		if(e.getItem() != null && e.getItem().equals(KitSystem.selectorItem)) XelephiaPlugin.getKitSystem().openMenu(e.getPlayer());
-		
 	}
-	
+
 	/*
 	 * ItemConsumeEvent
 	 */
 	@EventHandler
 	public void onConsume(PlayerItemConsumeEvent e) {
+		// G-Apple Cooldown
 		if(e.getItem().getType().equals(Material.GOLDEN_APPLE)) {
 			XPlayer xP = XelephiaPlugin.getXPlayer(e.getPlayer().getUniqueId());
 			int sec = xP.getTimeUntilApple();
@@ -173,14 +231,13 @@ public class XPlayerListener implements Listener {
 			}
 		}else return;
 	}
-	
-	
-	
+
 	/*
 	 * DropEvent
 	 */
 	@EventHandler
 	public void onDropItem(PlayerDropItemEvent e) {
+		// Anti Drop KitSelector
 		if(e.getItemDrop().getItemStack().isSimilar(KitSystem.selectorItem)) {
 			e.setCancelled(true);
 		}
@@ -192,8 +249,9 @@ public class XPlayerListener implements Listener {
 	@EventHandler
 	public void onRespawn(PlayerRespawnEvent e) {
 		XPlayer xP = XelephiaPlugin.getXPlayer(e.getPlayer().getUniqueId());
+		// NMS
 		((CraftPlayer) e.getPlayer()).getHandle().getDataWatcher().watch(9, (byte) 0);
-		
+
 		// REMOVE COMBAT MODE
 		if(xP.inCombat) {
 			xP.combatTask.cancel();
@@ -207,7 +265,7 @@ public class XPlayerListener implements Listener {
 		e.setRespawnLocation((Location) XelephiaPlugin.getMainConfig().get().get("spawn", e.getPlayer().getWorld()
 				.getSpawnLocation()));
 	}
-	
+
 	/*
 	 * DamageTakenEvent
 	 */
@@ -228,14 +286,16 @@ public class XPlayerListener implements Listener {
 				xPDamager = XelephiaPlugin.getXPlayer(e.getDamager().getUniqueId());
 			}else return;
 
+			// Anti Auto Attack
 			if(xPVictim.equals(xPDamager)) return;
 
+			// Combat MOD
 			xPVictim.combat();
 			xPDamager.combat();
+
+			// Damage System
 			xPVictim.lastDamagerName = xPDamager.getName();
-
 			xPVictim.totalDamage+=e.getDamage();
-
 			if(xPVictim.damageTaken.containsKey(xPDamager.getName())) {
 				xPVictim.damageTaken.replace(xPDamager.getName(), 
 						xPVictim.damageTaken.get(xPDamager.getName())+e.getDamage());
@@ -260,7 +320,6 @@ public class XPlayerListener implements Listener {
 		}
 
 		xP.setKitEquiped(false);
-
 		xP.actualKillStreak = 0;
 		xP.deathCount++;
 
@@ -285,12 +344,14 @@ public class XPlayerListener implements Listener {
 		// Killer
 		if(e.getEntity().getKiller() != null) {
 			XPlayer xPKiller = XelephiaPlugin.getXPlayer(e.getEntity().getKiller().getUniqueId());
-			xPKiller.getBukkitPlayer().setHealth(xPKiller.getBukkitPlayer().getHealth()+6 < 20 ? xPKiller.getBukkitPlayer().getHealth()+6 : 20);
+			xPKiller.getBPlayer().setHealth(xPKiller.getBPlayer().getHealth()+6 < 20 ? xPKiller.getBPlayer().getHealth()+6 : 20);
 			xPKiller.actualKillStreak++;
 			xPKiller.killCount++;
-			if(xPKiller.getBukkitPlayer().getInventory().firstEmpty() == -1) xPKiller.getBukkitPlayer().getWorld()
+			// Give Bottle
+			if(xPKiller.getBPlayer().getInventory().firstEmpty() == -1) xPKiller.getBPlayer().getWorld()
 			.dropItem(e.getEntity().getKiller().getLocation(), new ItemStack(Material.EXP_BOTTLE, 1));
-			else xPKiller.getBukkitPlayer().getInventory().addItem(new ItemStack(Material.EXP_BOTTLE, 1));
+			else xPKiller.getBPlayer().getInventory().addItem(new ItemStack(Material.EXP_BOTTLE, 1));
+			// Update KillStreak
 			if (xPKiller.highKillStreak < xPKiller.actualKillStreak)
 				xPKiller.highKillStreak = xPKiller.actualKillStreak;
 		}
@@ -324,7 +385,7 @@ public class XPlayerListener implements Listener {
 		// XP 
 		e.setNewExp((int) (e.getEntity().getTotalExperience()*0.85));
 		e.setDroppedExp((int) (e.getEntity().getTotalExperience()*0.15));
-		
+
 		/*
 		 * Custom Death Message
 		 */
