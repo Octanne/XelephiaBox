@@ -165,8 +165,8 @@ public class LootZone {
 		// Limit Loot
 		p.incrementHourLoot();
 		p.incrementTotalLoot();
-		if(p.getLastLootDate() == null) {
-			p.updateLastLootDate();
+		if(p.getUntilLootDate() == null) {
+			p.updateUntilLootDate();
 		}
 		// Give Loot
 		giveLoot(p);

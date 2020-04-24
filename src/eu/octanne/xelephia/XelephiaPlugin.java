@@ -129,6 +129,7 @@ public class XelephiaPlugin extends JavaPlugin {
 		// Players DB
 		dbPlayers.disconnect();
 		worldManager.save();
+		
 	}
 
 	@Override
@@ -214,7 +215,7 @@ public class XelephiaPlugin extends JavaPlugin {
 				+ "    deathCount integer NOT NULL,\n"
 				+ "    actualKillStreak integer NOT NULL,\n" 
 				+ "    highKillStreak integer NOT NULL\n,"
-				+ "    lastLootDate txt,\n" 
+				+ "    untilLootDate txt,\n" 
 				+ "    totalLoot integer NOT NULL,\n" 
 				+ "    hourLoot integer NOT NULL,\n"
 				+ "    unlockKits txt NOT NULL,\n" 
@@ -240,7 +241,7 @@ public class XelephiaPlugin extends JavaPlugin {
 	static public GradeManager getGradeManager() {
 		return gradeManager;
 	}
-
+	
 	public void loadCommand() {
 		getCommand("fly").setExecutor(new FlyCommand());
 		getCommand("speed").setExecutor(new SpeedCommand());

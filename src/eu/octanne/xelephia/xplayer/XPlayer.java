@@ -52,7 +52,9 @@ public class XPlayer {
 	}
 
 	public PermissionAttachment perms = null;
-
+	
+	protected PScoreboard scoreboard = null;
+	
 	protected BukkitTask combatTask;
 	protected boolean inCombat = false, decoInCombat = false;
 	private boolean combatRelaunch = false;
@@ -94,8 +96,13 @@ public class XPlayer {
 	protected XPlayer lastMessenger;
 
 	public void finalize() throws Throwable {
-		Bukkit.getLogger().info("Libération mémoire XPlayer : "+lastPlayerName);
 		saveIntoDB();
+		Bukkit.getLogger().info("Libération mémoire XPlayer : "+lastPlayerName);
+		untilAppleDate = null;
+		damageTaken = null;
+		menuStats = null;
+		combatTask = null;
+		scoreboard = null;
 	}
 
 	public XPlayer(UUID pUUID) {
@@ -227,6 +234,18 @@ public class XPlayer {
 			return false;
 	}
 
+	/**
+	 * Load or Update
+	 * the player's scoreboard
+	 */
+	public void loadScoreboard() {
+		if(isOnline() && scoreboard != null) {
+			scoreboard.update();
+		}else if(isOnline()){
+			scoreboard = new PScoreboard(this);
+		}
+	}
+	
 	public void setGrade(Grade grade) {
 		this.grade = grade;
 		if(isOnline())this.grade.applyPermissions(this);
@@ -574,6 +593,10 @@ public class XPlayer {
 	 */
 	public void setLastMessenger(XPlayer lastMessenger) {
 		this.lastMessenger = lastMessenger;
+	}
+
+	public String getCombatStatut() {
+		return inCombat == true ? "§cActif" : "§cInactif";
 	}
 
 }
