@@ -121,7 +121,7 @@ public class XPlayer {
 		try {
 			PreparedStatement q = XelephiaPlugin.getPlayersDB().getConnection()
 					.prepareStatement("SELECT playerName, uuid, coins, killCount, deathCount, actualKillStreak, "
-							+ "highKillStreak, lastLootDate, totalLoot, hourLoot, unlockKits, kitEquiped, grade FROM players WHERE uuid=?");
+							+ "highKillStreak, untilLootDate, totalLoot, hourLoot, unlockKits, kitEquiped, grade FROM players WHERE uuid=?");
 			q.setString(1, pUUID.toString());
 			ResultSet rs = q.executeQuery();
 			boolean isExist = rs.next();
@@ -200,7 +200,7 @@ public class XPlayer {
 							+ "deathCount = ?, actualKillStreak = ?, highKillStreak = ?, untilLootDate = ?, "
 							+ "totalLoot = ?, hourLoot = ?, unlockKits = ?, kitEquiped = ?, grade = ? WHERE uuid = ?");
 			qCreate.setString(1, this.lastPlayerName);
-			qCreate.setDouble(2, this.coins);
+			qCreate.setDouble(2, getCoins());
 			qCreate.setInt(3, this.killCount);
 			qCreate.setInt(4, this.deathCount);
 			qCreate.setInt(5, this.actualKillStreak);
