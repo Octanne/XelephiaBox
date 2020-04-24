@@ -401,16 +401,25 @@ public class XPlayerListener implements Listener {
 		DamageCause cause = e.getEntity().getLastDamageCause().getCause();
 		if(xP.decoInCombat == true) {
 			e.setDeathMessage("§cMort §8| §9"+xP.getBPlayer().getDisplayName()+" §ba déconnecté en plein combat.");
-		}else if(cause.equals(DamageCause.ENTITY_ATTACK) && e.getEntity().getKiller() != null){
-			e.setDeathMessage("§cMort §8|§3 "+xP.getBPlayer().getDisplayName()+" §eest mort tué(e) par §c"+e.getEntity().getKiller().getDisplayName()+" §e!");
-		}else if((cause.equals(DamageCause.FIRE) || cause.equals(DamageCause.FIRE_TICK)) && e.getEntity().getKiller() != null){
-			e.setDeathMessage("§cMort §8|§3 "+xP.getBPlayer()+"§c est mort dans les flammes de §4"+e.getEntity().getKiller().getDisplayName()+" §c!");
-		}else if(cause.equals(DamageCause.FIRE)){
-			e.setDeathMessage("§cMort §8|§3 "+xP.getBPlayer().getDisplayName()+" §cest mort dans les flammes de l'§4enfer §c!");
-		}else if(e.getEntity().getKiller() != null){
-			e.setDeathMessage("§cMort §8|§3 "+xP.getBPlayer().getDisplayName()+" §eest mort tué(e) par §c"+e.getEntity().getKiller().getDisplayName()+" §e!");
+		}else if(xP.lastDamagerName != null && XelephiaPlugin.getXPlayer(xP.lastDamagerName) != null){
+			XPlayer xPKiller = XelephiaPlugin.getXPlayer(xP.lastDamagerName);
+			if(cause.equals(DamageCause.ENTITY_ATTACK)) {
+				e.setDeathMessage("§cMort §8|§3 "+xP.getBPlayer().getDisplayName()+" §eest mort tué(e) par §c"+xPKiller.getBPlayer().getDisplayName()+" §e!");
+			}else if((cause.equals(DamageCause.FIRE) || cause.equals(DamageCause.FIRE_TICK))) {
+				e.setDeathMessage("§cMort §8|§3 "+xP.getBPlayer().getDisplayName()+" §cest mort dans les flammes de §4"+xPKiller.getBPlayer().getDisplayName()+" §c!");
+			}else if(cause.equals(DamageCause.MAGIC)) {
+				e.setDeathMessage("§cMort §8|§3 "+xP.getBPlayer().getDisplayName()+" §dc'est fais tué par le §5sorcier §c"+xPKiller.getBPlayer().getDisplayName()+" §d!");
+			}else {
+				e.setDeathMessage("§cMort §8|§3 "+xP.getBPlayer().getDisplayName()+" §eest mort tué(e) par §c"+xPKiller.getBPlayer().getDisplayName()+" §e!");
+			}
 		}else {
-			e.setDeathMessage("§cMort §8|§3 "+xP.getBPlayer().getDisplayName()+" §cest mort de façon incongrue...");
+			if(cause.equals(DamageCause.FIRE)) {
+				e.setDeathMessage("§cMort §8|§3 "+xP.getBPlayer().getDisplayName()+" §cest mort dans les flammes de l'§4enfer §c!");
+			}else if(cause.equals(DamageCause.MAGIC)) {
+				e.setDeathMessage("§cMort §8|§3 "+xP.getBPlayer().getDisplayName()+" §cest mort d'un sortilège §4maléfique §c!");
+			}else {
+				e.setDeathMessage("§cMort §8|§3 "+xP.getBPlayer().getDisplayName()+" §cest mort de façon incongrue...");
+			}	
 		}
 	}
 }
