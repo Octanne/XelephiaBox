@@ -50,7 +50,7 @@ public class WorldManager implements Listener {
 	}
 
 	public boolean importWorld(String name) {
-		File file = new File(Bukkit.getWorldContainer().getPath()+name+"/level.dat");
+		File file = new File(Bukkit.getWorldContainer().getName()+"/"+name+"/level.dat");
 		if(file.exists() && !defaultWorld.getName().equalsIgnoreCase(name)) {
 			XWorld world = new XWorld(Bukkit.createWorld(new WorldCreator(name)));
 			worldList.add(world);
