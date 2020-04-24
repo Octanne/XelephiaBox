@@ -352,7 +352,7 @@ public class XPlayerListener implements Listener {
 
 		// Killer
 		if(e.getEntity().getKiller() != null) {
-			XPlayer xPKiller = XelephiaPlugin.getXPlayer(e.getEntity().getKiller().getUniqueId());
+			XPlayer xPKiller = XelephiaPlugin.getXPlayer(xP.lastDamagerName);
 			xPKiller.getBPlayer().setHealth(xPKiller.getBPlayer().getHealth()+6 < 20 ? xPKiller.getBPlayer().getHealth()+6 : 20);
 			xPKiller.actualKillStreak++;
 			xPKiller.killCount++;
@@ -419,7 +419,7 @@ public class XPlayerListener implements Listener {
 				e.setDeathMessage("§cMort §8|§3 "+xP.getBPlayer().getDisplayName()+" §cest mort d'un sortilège §4maléfique §c!");
 			}else {
 				e.setDeathMessage("§cMort §8|§3 "+xP.getBPlayer().getDisplayName()+" §cest mort de façon incongrue...");
-			}	
+			}
 		}
 	}
 }
