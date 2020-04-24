@@ -27,6 +27,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -82,6 +83,46 @@ public class XPlayerListener implements Listener {
 		xp.loadScoreboard();
 	}
 
+	/*
+	 * PlayerKickEvent
+	 */
+	@EventHandler
+	public void onPlayerKick(PlayerKickEvent e) {
+		XPlayer xP = XelephiaPlugin.getXPlayer(e.getPlayer().getUniqueId());
+		if (XelephiaPlugin.getXPlayersOnline().contains(xP)) {
+			// DECO COMBAT
+			if(xP.inCombat() && !xP.getBPlayer().isDead()) {
+				xP.combatTask.cancel();
+				xP.inCombat = false;
+				xP.decoInCombat = true;
+				Player killer = null;
+				if(xP.lastDamagerName != null) killer = Bukkit.getPlayer(xP.lastDamagerName);
+				if(killer != null) {
+					e.getPlayer().setHealth(0.0);
+				}else {
+					xP.getBPlayer().setHealth(0.0);
+				}
+			}
+			// SAVE XPLAYER
+			xP.saveIntoDB();
+			XelephiaPlugin.xplayersOnline.remove(xP);
+		}
+		// TABLIST
+		for(XPlayer xpF : XelephiaPlugin.xplayersOnline) {
+			String header = XelephiaPlugin.getMainConfig().get().getString("tabList.header");
+			header = header.replace("{MAX}", Bukkit.getMaxPlayers()+"");
+			header = header.replace("{ONLINE}", (Bukkit.getOnlinePlayers().size()-1)+"");
+			header = header.replace("{PLAYERNAME}", xpF.getName());
+			String footer = XelephiaPlugin.getMainConfig().get().getString("tabList.footer");
+			footer = footer.replace("{MAX}", Bukkit.getMaxPlayers()+"");
+			footer = footer.replace("{ONLINE}", (Bukkit.getOnlinePlayers().size()-1)+"");
+			footer = footer.replace("{PLAYERNAME}", xpF.getName());
+			xpF.setFooterAndHeader(header, footer);
+		}
+		// QUIT MESSAGE
+		e.setLeaveMessage(null);
+	}
+	
 	/*
 	 * PlayerQuitEvent
 	 */
@@ -291,11 +332,17 @@ public class XPlayerListener implements Listener {
 				if(pro.getShooter() instanceof Player) {
 					xPDamager = XelephiaPlugin.getXPlayer(((Player)pro.getShooter()).getUniqueId());
 					if(pro.getType().equals(EntityType.ARROW)) {
-						ArrayList<String> lore = new ArrayList<>();
-						lore.add(" ");
-						lore.add("§cItem de kit");
-						ItemStack arrowItem = Utils.createItemStack("", Material.ARROW, 1, lore, 0, false);
-						xPDamager.getBPlayer().getInventory().addItem(arrowItem);
+						int arrowSlot = xPDamager.getBPlayer().getInventory().first(Material.ARROW);
+						if(arrowSlot != -1) {
+							xPDamager.getBPlayer().getInventory().getItem(arrowSlot).setAmount(
+									xPDamager.getBPlayer().getInventory().getItem(arrowSlot).getAmount()+1);
+						}else {
+							ArrayList<String> lore = new ArrayList<>();
+							lore.add(" ");
+							lore.add("§cItem de kit");
+							ItemStack arrowItem = Utils.createItemStack("", Material.ARROW, 1, lore, 0, false);
+							xPDamager.getBPlayer().getInventory().addItem(arrowItem);
+						}
 					}
 				}else return;
 			}else if(enD instanceof Player) {
@@ -398,17 +445,19 @@ public class XPlayerListener implements Listener {
 		for(ItemStack item : removeItems) {
 			e.getDrops().remove(item);
 		}
-		// XP 
+		// XP
 		e.setNewExp((int) (e.getEntity().getTotalExperience()*0.85));
 		e.setDroppedExp((int) (e.getEntity().getTotalExperience()*0.15));
 
 		/*
 		 * Custom Death Message
 		 */
-		DamageCause cause = e.getEntity().getLastDamageCause().getCause();
+		
 		if(xP.decoInCombat == true) {
 			e.setDeathMessage("§cMort §8| §9"+xP.getBPlayer().getDisplayName()+" §ba déconnecté en plein combat.");
+			return;
 		}else if(xP.lastDamagerName != null && XelephiaPlugin.getXPlayer(xP.lastDamagerName) != null){
+			DamageCause cause = e.getEntity().getLastDamageCause().getCause();
 			XPlayer xPKiller = XelephiaPlugin.getXPlayer(xP.lastDamagerName);
 			if(cause.equals(DamageCause.ENTITY_ATTACK)) {
 				e.setDeathMessage("§cMort §8|§3 "+xP.getBPlayer().getDisplayName()+" §eest mort tué(e) par §c"+xPKiller.getBPlayer().getDisplayName()+" §e!");
@@ -420,6 +469,7 @@ public class XPlayerListener implements Listener {
 				e.setDeathMessage("§cMort §8|§3 "+xP.getBPlayer().getDisplayName()+" §eest mort tué(e) par §c"+xPKiller.getBPlayer().getDisplayName()+" §e!");
 			}
 		}else {
+			DamageCause cause = e.getEntity().getLastDamageCause().getCause();
 			if(cause.equals(DamageCause.FIRE)) {
 				e.setDeathMessage("§cMort §8|§3 "+xP.getBPlayer().getDisplayName()+" §cest mort dans les flammes de l'§4enfer §c!");
 			}else if(cause.equals(DamageCause.MAGIC)) {
