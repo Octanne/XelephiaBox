@@ -11,7 +11,7 @@ import eu.octanne.xelephia.XelephiaPlugin;
 
 public class SpawnCommand implements CommandExecutor {
 	int task;
-	int sec = 5;
+	int sec = 10;
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -50,12 +50,12 @@ public class SpawnCommand implements CommandExecutor {
 							sender.sendMessage(
 									XelephiaPlugin.getMessageConfig().get().getString("spawnTeleport"));
 							p.teleport(spawn);
-							sec = 5;
+							sec = 10;
 							Bukkit.getScheduler().cancelTask(task);
 						} else {
 							if (x != p.getLocation().getBlockX() || y != p.getLocation().getBlockY()
 									|| z != p.getLocation().getBlockZ()) {
-								sec = 5;
+								sec = 10;
 								sender.sendMessage(
 										XelephiaPlugin.getMessageConfig().get().getString("CancelTeleport"));
 								Bukkit.getScheduler().cancelTask(task);

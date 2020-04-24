@@ -10,7 +10,7 @@ import eu.octanne.xelephia.XelephiaPlugin;
 
 public class TPACommand implements CommandExecutor {
 
-	int task, sec = 5;
+	int task, sec = 10;
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -71,13 +71,13 @@ public class TPACommand implements CommandExecutor {
 										pTarget.sendMessage(XelephiaPlugin.getMessageConfig().get()
 												.getString("tpaTeleport").replace("{PLAYER}", p.getName()));
 										pTarget.teleport(p.getLocation());
-										sec = 5;
+										sec = 10;
 										Bukkit.getScheduler().cancelTask(task);
 									} else {
 										if (x != pTarget.getLocation().getBlockX()
 												|| y != pTarget.getLocation().getBlockY()
 												|| z != pTarget.getLocation().getBlockZ()) {
-											sec = 5;
+											sec = 10;
 											pTarget.sendMessage(XelephiaPlugin.getMessageConfig().get()
 													.getString("CancelTeleport"));
 											Bukkit.getScheduler().cancelTask(task);

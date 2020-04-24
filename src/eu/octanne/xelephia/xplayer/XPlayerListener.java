@@ -15,6 +15,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -397,8 +398,19 @@ public class XPlayerListener implements Listener {
 		/*
 		 * Custom Death Message
 		 */
+		DamageCause cause = e.getEntity().getLastDamageCause().getCause();
 		if(xP.decoInCombat == true) {
-			e.setDeathMessage("§cMort §8|§b §9"+xP.getName()+" §ba déconnecté en plein combat.");
+			e.setDeathMessage("§cMort §8| §9"+xP.getBPlayer().getDisplayName()+" §ba déconnecté en plein combat.");
+		}else if(cause.equals(DamageCause.ENTITY_ATTACK) && e.getEntity().getKiller() != null){
+			e.setDeathMessage("§cMort §8|§3 "+xP.getBPlayer().getDisplayName()+" §eest mort tué(e) par §c"+e.getEntity().getKiller().getDisplayName()+" §e!");
+		}else if((cause.equals(DamageCause.FIRE) || cause.equals(DamageCause.FIRE_TICK)) && e.getEntity().getKiller() != null){
+			e.setDeathMessage("§cMort §8|§3 "+xP.getBPlayer()+"§c est mort dans les flammes de §4"+e.getEntity().getKiller().getDisplayName()+" §c!");
+		}else if(cause.equals(DamageCause.FIRE)){
+			e.setDeathMessage("§cMort §8|§3 "+xP.getBPlayer().getDisplayName()+" §cest mort dans les flammes de l'§4enfer §c!");
+		}else if(e.getEntity().getKiller() != null){
+			e.setDeathMessage("§cMort §8|§3 "+xP.getBPlayer().getDisplayName()+" §eest mort tué(e) par §c"+e.getEntity().getKiller().getDisplayName()+" §e!");
+		}else {
+			e.setDeathMessage("§cMort §8|§3 "+xP.getBPlayer().getDisplayName()+" §cest mort de façon incongrue...");
 		}
 	}
 }
