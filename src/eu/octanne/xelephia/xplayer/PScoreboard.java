@@ -2,6 +2,7 @@ package eu.octanne.xelephia.xplayer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -32,7 +33,7 @@ public class PScoreboard {
 		this.parent = xp;
 		
 		scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-		objective = scoreboard.registerNewObjective("Scoreboard", "dummy");
+		objective = scoreboard.registerNewObjective(UUID.randomUUID().toString(), "dummy");
 		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 		objective.setDisplayName(scoreboardName);
 		
@@ -45,7 +46,7 @@ public class PScoreboard {
 	}
 	
 	public void update(){
-		Objective objective = scoreboard.registerNewObjective("Scoreboard2", "dummy");
+		Objective objective = scoreboard.registerNewObjective(UUID.randomUUID().toString(), "dummy");
 		objective.setDisplayName(scoreboardName);
 		
 		for(int i = 0; i < lines.size(); i++) {
