@@ -19,6 +19,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -203,6 +204,11 @@ public class XPlayerListener implements Listener {
 		if(e.getWhoClicked() instanceof Player) {
 			// Fix Items in stats menu
 			if (e.getClickedInventory() != null && e.getClickedInventory().getName().contains("§8Statistiques de §b")) e.setCancelled(true);
+			if(e.getView().getTopInventory().getType().equals(InventoryType.ENDER_CHEST)) {
+				if(e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().getLore().contains("§cItem de kit")) {
+					e.setCancelled(true);
+				}
+			}
 		}
 	}
 

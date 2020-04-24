@@ -610,7 +610,7 @@ public class XPlayer {
 	}
 
 	public String getCombatStatut() {
-		return inCombat == true ? "§cActif" : "§cInactif";
+		return inCombat == true ? "§cActif" : "§aInactif";
 	}
 
 }

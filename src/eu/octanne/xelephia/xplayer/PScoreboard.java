@@ -40,20 +40,21 @@ public class PScoreboard {
 		
 		for(int i = 0; i < lines.size(); i++) {
 			String line = replaceVar(lines.get(i));
+			oldScore.add(line);
 			Score score = objective.getScore(line);
 			score.setScore(lines.size()-i);
-			oldScore.add(line);
 		}
 		parent.getBPlayer().setScoreboard(scoreboard);
 	}
 	
 	public void update(){
+		//ArrayList<String> newScore = new ArrayList<>();
 		for(int i = 0; i < lines.size(); i++) {
 			String line = replaceVar(lines.get(i));
 			scoreboard.resetScores(oldScore.get(i));
 			Score score = objective.getScore(line);
 			score.setScore(lines.size()-i);
-			oldScore.add(line);
+			oldScore.set(i, line);
 		}
 	}
 	

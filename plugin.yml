@@ -1,6 +1,6 @@
 name: Xelephia
 main: eu.octanne.xelephia.XelephiaPlugin
-version: 1.5dev
+version: 0.9
 author: Octanne
 description: Core plugin of Xelephia.
 softdepend: [WorldGuard]
