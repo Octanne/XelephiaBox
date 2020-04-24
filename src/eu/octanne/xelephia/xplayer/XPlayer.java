@@ -283,7 +283,7 @@ public class XPlayer {
 			int sec = (int) (millis/1000);
 			int min = sec/60;
 			sec %= 60;
-			return "§9Rechargé dans §c"+min+" §9min.§c "+sec+" §9sec.";
+			return "§9Rechargé dans §c"+min+" §9min.§c "+(sec < 10 ? "0"+sec : ""+sec )+" §9sec.";
 		}else {
 			return "§9Entièrement chargé";
 		}
@@ -297,7 +297,7 @@ public class XPlayer {
 			int sec = (int) (millis/1000);
 			int min = sec/60;
 			sec %= 60;
-			return "§c"+min+" §9min.§c "+sec+" §9sec.";
+			return "§c"+min+" §9min.§c "+(sec < 10 ? "0"+sec : ""+sec )+" §9sec.";
 		}else {
 			return "§9Chargé";
 		}
