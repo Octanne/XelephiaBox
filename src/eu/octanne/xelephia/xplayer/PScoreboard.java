@@ -86,6 +86,7 @@ public class PScoreboard {
 			public void run() {
 				for(XPlayer xp : XelephiaPlugin.getXPlayersOnline()) {
 					xp.loadScoreboard();
+					xp.updateLoots();
 				}
 			}
 			

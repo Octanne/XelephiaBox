@@ -342,8 +342,6 @@ public class XelephiaPlugin extends JavaPlugin {
 			messageConfig.set("denyYouTeleportRequest", "§4{PLAYER} a refusé votre demande de téléportation.");
 			messageConfig.set("denyTeleportRequest",
 					"§4Vous venez de refuser la demande de téléportation de {PLAYER}.");
-			messageConfig.set("Chat.FORMAT_STAFF", "{GRADE} §e|§r {RANK} {PLAYER} §c>> {MESSAGE}");
-			messageConfig.set("Chat.FORMAT_PLAYER", "{GRADE} §e|§r {RANK} {PLAYER} §8>> {MESSAGE}");
 			messageConfig.set("staffCriticErrorNotice",
 					"§cUne erreur s'est produite, le staff a été prévenu. Merci de patienter.");
 			messageConfig.set("noPermission", "§cErreur §8| §cCommande reservée à l'administration.");
