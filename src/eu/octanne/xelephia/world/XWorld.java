@@ -44,14 +44,16 @@ public class XWorld {
 		load();
 	}
 
-	protected XWorld(World world){
+	protected XWorld(World world, boolean isImport, WorldManager parent){
 		this.isLoad = true;
-		
+			
+		this.parent = parent;
 		this.worldName = world.getName();
 		this.type = XWorldType.getByWorldType(world.getWorldType());
 		this.env = world.getEnvironment();
 		this.hasStructure = world.canGenerateStructures();
-		this.defaultLoad = true; 
+		this.defaultLoad = true;
+		if(isImport == true) save(world.getName());
 	}
 
 	private void save(String path) {

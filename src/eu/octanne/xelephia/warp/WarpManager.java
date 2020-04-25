@@ -1,5 +1,6 @@
 package eu.octanne.xelephia.warp;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -24,7 +25,12 @@ public class WarpManager implements Listener {
 
 	public WarpManager() {
 		warpConfig = new ConfigYaml("warps.yml");
-
+		if(!warpConfig.getFile().exists())
+			try {
+				warpConfig.getFile().createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
 		loadWarps(warpConfig.get().getKeys(false));
 
