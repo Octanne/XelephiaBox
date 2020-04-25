@@ -59,7 +59,7 @@ public class SpawnCommand implements CommandExecutor {
 							this.cancel();
 						} else {
 							if (x != p.getLocation().getBlockX() || y != p.getLocation().getBlockY()
-									|| z != p.getLocation().getBlockZ() || Bukkit.getPlayer(name) != null) {
+									|| z != p.getLocation().getBlockZ() || Bukkit.getPlayer(name) == null) {
 								sec = 10;
 								sender.sendMessage(
 										XelephiaPlugin.getMessageConfig().get().getString("CancelTeleport"));
