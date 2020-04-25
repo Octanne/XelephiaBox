@@ -47,7 +47,7 @@ public class GameModeCommand implements CommandExecutor {
 							.getString("changeMeGameMode").replace("{GAMEMODE}", "Créatif"));
 					else {
 						sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("changeOtherPlayerGameMode")
-								.replace("{GAMEMODE}", "Survie").replace("{PLAYER}", p.getName()));
+								.replace("{GAMEMODE}", "Créatif").replace("{PLAYER}", p.getName()));
 						p.sendMessage(XelephiaPlugin.getMessageConfig().get()
 								.getString("changeMeGameMode").replace("{GAMEMODE}", "Créatif"));
 					}
@@ -58,7 +58,7 @@ public class GameModeCommand implements CommandExecutor {
 							.getString("changeMeGameMode").replace("{GAMEMODE}", "Aventure"));
 					else {
 						sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("changeOtherPlayerGameMode")
-								.replace("{GAMEMODE}", "Survie").replace("{PLAYER}", p.getName()));
+								.replace("{GAMEMODE}", "Aventure").replace("{PLAYER}", p.getName()));
 						p.sendMessage(XelephiaPlugin.getMessageConfig().get()
 								.getString("changeMeGameMode").replace("{GAMEMODE}", "Aventure"));
 					}
@@ -69,7 +69,7 @@ public class GameModeCommand implements CommandExecutor {
 							.getString("changeMeGameMode").replace("{GAMEMODE}", "Spectateur"));
 					else {
 						sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("changeOtherPlayerGameMode")
-								.replace("{GAMEMODE}", "Survie").replace("{PLAYER}", p.getName()));
+								.replace("{GAMEMODE}", "Spectateur").replace("{PLAYER}", p.getName()));
 						p.sendMessage(XelephiaPlugin.getMessageConfig().get()
 								.getString("changeMeGameMode").replace("{GAMEMODE}", "Spectateur"));
 					}
