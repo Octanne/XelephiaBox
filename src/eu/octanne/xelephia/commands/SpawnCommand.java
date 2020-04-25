@@ -6,12 +6,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import eu.octanne.xelephia.XelephiaPlugin;
 
 public class SpawnCommand implements CommandExecutor {
-	int task;
-	int sec = 10;
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -39,32 +38,39 @@ public class SpawnCommand implements CommandExecutor {
 					}
 				}
 			} else {
-				int x = p.getLocation().getBlockX(), y = p.getLocation().getBlockY(), z = p.getLocation().getBlockZ();
-
 				sender.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("spawnPreTeleport"));
-				task = Bukkit.getScheduler().scheduleSyncRepeatingTask(XelephiaPlugin.getInstance(), new Runnable() {
+				new BukkitRunnable(){
 
+					String name = p.getName();
+					
+					int x = p.getLocation().getBlockX(), 
+						y = p.getLocation().getBlockY(), 
+						z = p.getLocation().getBlockZ();
+					
+					int sec = 10;
+					
 					@Override
 					public void run() {
-						if (sec == 0) {
+						if (sec <= 0) {
 							sender.sendMessage(
 									XelephiaPlugin.getMessageConfig().get().getString("spawnTeleport"));
 							p.teleport(spawn);
 							sec = 10;
-							Bukkit.getScheduler().cancelTask(task);
+							this.cancel();
 						} else {
 							if (x != p.getLocation().getBlockX() || y != p.getLocation().getBlockY()
-									|| z != p.getLocation().getBlockZ()) {
+									|| z != p.getLocation().getBlockZ() || Bukkit.getPlayer(name) != null) {
 								sec = 10;
 								sender.sendMessage(
 										XelephiaPlugin.getMessageConfig().get().getString("CancelTeleport"));
-								Bukkit.getScheduler().cancelTask(task);
+								this.cancel();
 							} else {
 								sec--;
 							}
 						}
 					}
-				}, 0, 20);
+					
+				}.runTaskTimer(XelephiaPlugin.getInstance(), 0, 20);
 				return true;
 			}
 		} else {

@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import eu.octanne.xelephia.XelephiaPlugin;
 import eu.octanne.xelephia.util.Utils;
@@ -18,8 +19,6 @@ public class Warp {
 	protected ItemStack itemIcon;
 
 	private WarpManager parent;
-	
-	private int task;
 
 	protected Warp(String name, Location loc, ItemStack itemIcon, WarpManager parent) {
 		this.parent = parent;
@@ -66,33 +65,36 @@ public class Warp {
 	 */
 	public void teleport(Player p) {
 		if (p.hasPermission("xelephia.warp." + name)) {
-			int x = p.getLocation().getBlockX(), y = p.getLocation().getBlockY(), z = p.getLocation().getBlockZ();
-			p.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("warpPreTeleport").replace("{WARP}",
-					name));
-			task = Bukkit.getScheduler().scheduleSyncRepeatingTask(XelephiaPlugin.getInstance(), new Runnable() {
+			p.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("warpPreTeleport").replace("{WARP}",name));
+			new BukkitRunnable(){
 
-				int sec = 5;
-
+				String name = p.getName();
+				
+				int x = p.getLocation().getBlockX(), 
+					y = p.getLocation().getBlockY(), 
+					z = p.getLocation().getBlockZ();
+				
+				int sec = 10;
+				
 				@Override
 				public void run() {
-					if (sec == 0) {
-						p.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("warpTeleport")
-								.replace("{WARP}", name));
-						p.teleport(location);
-						sec = 5;
-						Bukkit.getScheduler().cancelTask(task);
+					if (sec <= 0) {
+						p.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("warpTeleport").replace("{WARP}", name));
+						sec = 10;
+						this.cancel();
 					} else {
 						if (x != p.getLocation().getBlockX() || y != p.getLocation().getBlockY()
-								|| z != p.getLocation().getBlockZ()) {
-							sec = 5;
+								|| z != p.getLocation().getBlockZ() || Bukkit.getPlayer(name) != null) {
+							sec = 10;
 							p.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("CancelTeleport"));
-							Bukkit.getScheduler().cancelTask(task);
+							this.cancel();
 						} else {
 							sec--;
 						}
 					}
 				}
-			}, 0, 20);
+				
+			}.runTaskTimer(XelephiaPlugin.getInstance(), 0, 20);
 		} else {
 			p.sendMessage(XelephiaPlugin.getMessageConfig().get().getString("noPermission"));
 		}
