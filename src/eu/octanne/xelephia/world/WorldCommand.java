@@ -19,7 +19,9 @@ public class WorldCommand implements CommandExecutor {
 			if(args.length > 0) {
 				if(args[0].equalsIgnoreCase("list")) {
 					sender.sendMessage(COMMAND_TAG+"§aListe des mondes :");
-					sender.sendMessage("      §e=> "+(XelephiaPlugin.getWorldManager().defaultWorld.isLoad() ? "§a": "§c")+XelephiaPlugin.getWorldManager().defaultWorld.getName());
+					for(XWorld world : XelephiaPlugin.getWorldManager().getDefaultWorlds()) {
+						sender.sendMessage("      §e=> "+(world.isLoad() ? "§a": "§c")+world.getName());
+					}
 					for(XWorld world : XelephiaPlugin.getWorldManager().getWorlds()) {
 						sender.sendMessage("      §e=> "+(world.isLoad() ? "§a": "§c")+world.getName());
 					}

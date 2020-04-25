@@ -1,10 +1,10 @@
 package eu.octanne.xelephia.warp;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,31 +19,29 @@ import eu.octanne.xelephia.util.ConfigYaml;
 public class WarpManager implements Listener {
 
 	private ArrayList<Warp> warpList = new ArrayList<>();
-	
-	private ConfigYaml warpConfig;
-	
-	@SuppressWarnings("unchecked")
+
+	protected ConfigYaml warpConfig;
+
 	public WarpManager() {
-		// Serialization
-		ConfigurationSerialization.registerClass(Warp.class, "Warp");
-		
 		warpConfig = new ConfigYaml("warps.yml");
-		warpList = (ArrayList<Warp>) warpConfig.get().get("warps", new ArrayList<>());
-		save();
+
+
+		loadWarps(warpConfig.get().getKeys(false));
+
 		Bukkit.getPluginManager().registerEvents(this, XelephiaPlugin.getInstance());
 	}
 
-	public void save() {
-		warpConfig.get().set("warps", warpList);
-		warpConfig.save();
+	public void loadWarps(Set<String> set) {
+		for(String wName : set) {
+			warpList.add(new Warp(wName, this));
+		}
 	}
-	
+
 	/*
 	 * CREATE NEW WARP
 	 */
 	public void createWarp(String name, Location loc, ItemStack itemIcon) {
-		warpList.add(new Warp(name, loc, itemIcon));
-		save();
+		warpList.add(new Warp(name, loc, itemIcon, this));
 	}
 
 	public Warp getWarp(String name) {
@@ -52,7 +50,7 @@ public class WarpManager implements Listener {
 		}
 		return null;
 	}
-	
+
 	/*
 	 * CONDITIONS
 	 */
@@ -66,7 +64,7 @@ public class WarpManager implements Listener {
 	public ArrayList<Warp> getWarps(){
 		return warpList;
 	}
-	
+
 	/*
 	 * BUKKIT EVENTS
 	 */

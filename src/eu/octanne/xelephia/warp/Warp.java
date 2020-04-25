@@ -1,47 +1,49 @@
 package eu.octanne.xelephia.warp;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import eu.octanne.xelephia.XelephiaPlugin;
 import eu.octanne.xelephia.util.Utils;
 
-public class Warp implements ConfigurationSerializable {
-
+public class Warp {
+	
 	protected String name;
 	protected Location location;
 	protected ItemStack itemIcon;
 
+	private WarpManager parent;
+	
 	private int task;
 
-	public Warp(String name, Location loc, ItemStack itemIcon) {
+	protected Warp(String name, Location loc, ItemStack itemIcon, WarpManager parent) {
+		this.parent = parent;
 		this.name = name;
 		location = loc;
 		this.itemIcon = Utils.createItemStack(name, itemIcon.getType(), 1, new ArrayList<>(), itemIcon.getDurability(), false);
+		save(name);
+	}
+	
+	protected Warp(String path, WarpManager parent) {
+		this.parent = parent;
+		name = parent.warpConfig.get().getString(path+".name", "default");
+		location = (Location) parent.warpConfig.get().get(path+".loc", Bukkit.getWorlds().get(0).getSpawnLocation());
+		itemIcon = parent.warpConfig.get().getItemStack(path+".icon", new ItemStack(Material.DIRT));
 	}
 	
 	/*
-	 * SERIALIZE
+	 * SAVE
 	 */
-	@Override
-	public Map<String, Object> serialize() {
-		Map<String, Object> map = new HashMap<>();
-		map.put("name", name);
-		map.put("loc", location);
-		map.put("itemIcon", itemIcon);
-		
-		return map;
-	}
-	
-	public static Warp deserialize(Map<String, Object> map) {
-		return new Warp((String)map.get("name"),(Location)map.get("loc"), (ItemStack)map.get("itemIcon"));
+	private void save(String path) {
+		parent.warpConfig.set(path+".name", name);
+		parent.warpConfig.set(path+".loc", location);
+		parent.warpConfig.set(path+".icon", itemIcon);
+		parent.warpConfig.save();
 	}
 	
 	/*

@@ -1,15 +1,11 @@
 package eu.octanne.xelephia.world;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.World.Environment;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
-public class XWorld implements ConfigurationSerializable{
+public class XWorld {
 
 	private XWorldType type;
 	private Environment env;
@@ -20,24 +16,53 @@ public class XWorld implements ConfigurationSerializable{
 	private boolean isLoad = false;
 
 	private boolean hasStructure;
+	
+	private WorldManager parent;
 
-	XWorld(String name, Environment env, XWorldType type, boolean hasStructure, boolean defaultLoad){
+	protected XWorld(String name, Environment env, XWorldType type, boolean hasStructure, boolean defaultLoad, WorldManager parent){
+		this.parent = parent;
+		
 		this.worldName = name;
 		this.type = type;
 		this.env = env;
 		this.hasStructure = hasStructure;
 		this.defaultLoad = defaultLoad;
+		
+		save(name);
+	}
+	
+	protected XWorld(String path, WorldManager parent) {
+		this.parent = parent;
+		
+		// LOAD
+		this.worldName = parent.worldConfig.get().getString(path+".name"); 
+		this.env = XWorldType.getEnvByName(parent.worldConfig.get().getString(path+".environment"));
+		this.type = XWorldType.getByName(parent.worldConfig.get().getString(path+".type"));
+		this.hasStructure = parent.worldConfig.get().getBoolean(path+".structure");
+		this.defaultLoad = parent.worldConfig.get().getBoolean(path+".load");
+		
+		load();
 	}
 
-	XWorld(World world){
-		this.worldName = world.getName();
+	protected XWorld(World world){
 		this.isLoad = true;
+		
+		this.worldName = world.getName();
 		this.type = XWorldType.getByWorldType(world.getWorldType());
 		this.env = world.getEnvironment();
 		this.hasStructure = world.canGenerateStructures();
 		this.defaultLoad = true; 
 	}
 
+	private void save(String path) {
+		parent.worldConfig.set(path+".name", worldName);
+		parent.worldConfig.set(path+".type", type.getName());
+		parent.worldConfig.set(path+".environment", env.name());
+		parent.worldConfig.set(path+".structure", hasStructure);
+		parent.worldConfig.set(path+".load", defaultLoad);
+		parent.worldConfig.save();
+	}
+	
 	/*
 	 * Methods
 	 */
@@ -91,23 +116,5 @@ public class XWorld implements ConfigurationSerializable{
 
 	public World getWorld() {
 		return Bukkit.getWorld(worldName);
-	}
-
-	/*
-	 * Serialize
-	 */
-	@Override
-	public Map<String, Object> serialize() {
-		Map<String, Object> map = new HashMap<>();
-		map.put("name", worldName);
-		map.put("type", type.getName());
-		map.put("environment", env.name());
-		map.put("structure", hasStructure);
-		map.put("load", defaultLoad);
-		return map;
-	}
-
-	public static XWorld deserialize(Map<String, Object> map) {
-		return new XWorld((String)map.get("name"), XWorldType.getEnvByName((String)map.get("environment")), XWorldType.getByName((String)map.get("type")), (boolean)map.get("structure"), (boolean)map.get("load"));
 	}
 }
