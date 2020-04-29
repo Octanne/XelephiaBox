@@ -52,6 +52,8 @@ import eu.octanne.xelephia.world.WorldManager;
 import eu.octanne.xelephia.xplayer.PScoreboard;
 import eu.octanne.xelephia.xplayer.XPlayer;
 import eu.octanne.xelephia.xplayer.XPlayerListener;
+import eu.octanne.xelephia.xplayer.top.TopCommand;
+import eu.octanne.xelephia.xplayer.top.TopManager;
 
 public class XelephiaPlugin extends JavaPlugin {
 	
@@ -72,6 +74,7 @@ public class XelephiaPlugin extends JavaPlugin {
 	private static KitSystem kitSystem;
 	private static LootZoneManager lootZoneManager;
 	private static GradeManager gradeManager;
+	private static TopManager topManager;
 
 	@Override
 	public void onLoad() {
@@ -101,7 +104,8 @@ public class XelephiaPlugin extends JavaPlugin {
 		kitSystem = new KitSystem();
 		lootZoneManager = new LootZoneManager();
 		gradeManager = new GradeManager();
-
+		topManager = new TopManager();
+		
 		// Load Online Players
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			XPlayer xp = XelephiaPlugin.getXPlayer(p.getUniqueId());
@@ -244,6 +248,9 @@ public class XelephiaPlugin extends JavaPlugin {
 	static public GradeManager getGradeManager() {
 		return gradeManager;
 	}
+	static public TopManager getTopManager() {
+		return topManager;
+	}
 	
 	public void loadCommand() {
 		getCommand("fly").setExecutor(new FlyCommand());
@@ -275,6 +282,7 @@ public class XelephiaPlugin extends JavaPlugin {
 		getCommand("loot").setExecutor(new LootCommand());
 		getCommand("resetplayer").setExecutor(new ResetPlayerCommand());
 		getCommand("setgrade").setExecutor(new GradeCommand());
+		getCommand("createtop").setExecutor(new TopCommand());
 	}
 
 	/*

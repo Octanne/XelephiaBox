@@ -25,7 +25,7 @@ public class Top {
 	private List<ArmorStand> armorStandList = new ArrayList<>();
 	
 	
-	public Top(TopType type, Location loc, int nbPlayer) {
+	protected Top(TopType type, Location loc, int nbPlayer) {
 		this.type = type;
 		this.topLocation = loc;
 		this.nbPlayer = nbPlayer;

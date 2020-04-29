@@ -26,6 +26,12 @@ public class TopManager {
 		loadTops();
 	}
 	
+	public void createTop(TopType type, Location loc, int nbEntry) {
+		Top top = new Top(type, loc, nbEntry);
+		topList.add(top);
+		
+	}
+	
 	private void loadTops() {
 		ConfigYaml config = new ConfigYaml("top.yml");
 		for(String path : config.get().getKeys(false)) {
@@ -35,7 +41,7 @@ public class TopManager {
 		}
 	}
 	
-	static protected enum TopType {
+	public enum TopType {
 		KILL("killCount", "getKillCount", "holoTop.kill.title", "holoTop.kill.unit"),
 		HIGHSTREAK("highKillStreak", "getHighKillStreak", "holoTop.killstreak.title", "holoTop.killstreak.unit"),
 		COINS("coins", "getCoins", "holoTop.coins.title", "holoTop.coins.unit"),
