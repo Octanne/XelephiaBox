@@ -18,6 +18,8 @@ import eu.octanne.xelephia.xplayer.top.TopManager.TopType;
 
 public class Top {
 	
+	private String name;
+	
 	private TopType type;
 	private int nbPlayer;
 	private Location topLocation;
@@ -25,10 +27,11 @@ public class Top {
 	private List<ArmorStand> armorStandList = new ArrayList<>();
 	
 	
-	protected Top(TopType type, Location loc, int nbPlayer) {
+	protected Top(TopType type, Location loc, int nbPlayer, String name) {
 		this.type = type;
 		this.topLocation = loc;
 		this.nbPlayer = nbPlayer;
+		this.name = name;
 		loadTop();
 	}
 	
@@ -83,6 +86,10 @@ public class Top {
 			stand.remove();
 			stand.setHealth(0);
 		}
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 	protected List<XPlayer> getTopPlayer(TopType type, int nbPlayer) {

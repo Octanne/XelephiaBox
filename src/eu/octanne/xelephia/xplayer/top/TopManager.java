@@ -10,6 +10,8 @@ import eu.octanne.xelephia.util.ConfigYaml;
 
 public class TopManager {
 	
+	ConfigYaml config = new ConfigYaml("top.yml");
+	
 	public List<Top> topList = new ArrayList<>();
 	
 	public TopManager() {
@@ -26,18 +28,28 @@ public class TopManager {
 		loadTops();
 	}
 	
-	public void createTop(TopType type, Location loc, int nbEntry) {
-		Top top = new Top(type, loc, nbEntry);
-		topList.add(top);
+	public void createTop(TopType type, Location loc, int nbEntry, String name) {
 		
+		Top top = new Top(type, loc, nbEntry, name);
+		for(Top t : topList) {
+			if(t.getName().equals(top.getName())) {
+				t.unloadTop();
+				topList.remove(t);
+				break;
+			}
+		}
+		topList.add(top);
+		config.set(name+".type", type);
+		config.set(name+".loc", loc);
+		config.set(name+".nbEntry", nbEntry);
+		config.save();
 	}
 	
 	private void loadTops() {
-		ConfigYaml config = new ConfigYaml("top.yml");
 		for(String path : config.get().getKeys(false)) {
 			topList.add(new Top(TopType.valueOf(config.get().getString(path+".type")), 
 					(Location) config.get().get(path+".loc"), 
-					config.get().getInt(path+".nbEntry")));
+					config.get().getInt(path+".nbEntry"), path));
 		}
 	}
 	

@@ -16,25 +16,25 @@ public class TopCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(sender instanceof Player) {
 			if(sender.hasPermission("xelephia.commands.createtop")) {
-				if(args.length >= 2) {
-					if(args[0].equals("DEATH") || args[0].equals("KILL") || args[0].equals("KILLSTREAK") ||
-							args[0].equals("COINS") ) {
+				if(args.length >= 3) {
+					if(args[1].equals("DEATH") || args[1].equals("KILL") || args[1].equals("KILLSTREAK") ||
+							args[1].equals("COINS") ) {
 						int nbEntry;
 						try{
-							nbEntry = Integer.parseInt(args[1]);
+							nbEntry = Integer.parseInt(args[2]);
 						}catch(NumberFormatException e) {
-							sender.sendMessage(COMMAND_TAG+"§cErreur : §9"+args[1]+" §cn'est pas un nombre.");
+							sender.sendMessage(COMMAND_TAG+"§cErreur : §9"+args[2]+" §cn'est pas un nombre.");
 							return false;
 						}
-						XelephiaPlugin.getTopManager().createTop(TopType.valueOf(args[0]), ((Player) sender).getLocation(), nbEntry);
-						sender.sendMessage(COMMAND_TAG+"§aCréation d'un top §9"+args[0]+" §aavec succès.");
+						XelephiaPlugin.getTopManager().createTop(TopType.valueOf(args[1]), ((Player) sender).getLocation(), nbEntry, args[0]);
+						sender.sendMessage(COMMAND_TAG+"§aCréation d'un top §9"+args[2]+" §aavec succès.");
 						return true;
 					}else {
-						sender.sendMessage(COMMAND_TAG+"§cErreur : §9"+args[0]+" §cn'est pas un type correct (DEATH, KILL, KILLSTREAK, COINS)");
+						sender.sendMessage(COMMAND_TAG+"§cErreur : §9"+args[1]+" §cn'est pas un type correct (DEATH, KILL, KILLSTREAK, COINS)");
 						return false;
 					}
 				}else {
-					sender.sendMessage(COMMAND_TAG+"§cUsage : /createtop <type> <nbEntry>");
+					sender.sendMessage(COMMAND_TAG+"§cUsage : /createtop <name> <type> <nbEntry>");
 					return false;
 				}
 			}else {
