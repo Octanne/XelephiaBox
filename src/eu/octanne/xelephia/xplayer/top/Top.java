@@ -46,7 +46,7 @@ public class Top {
 		
 		for(int i = 1; armorStandList.size()-1 < nbPlayer; i++) {
 			Location standLoc = topLocation.clone();
-			standLoc.setY(i*0.25+topLocation.getY());
+			standLoc.setY(i*0.25-topLocation.getY());
 			ArmorStand stand = (ArmorStand) standLoc.getWorld().spawnEntity(standLoc, EntityType.ARMOR_STAND);
 			stand.setGravity(false);
 			stand.setVisible(false);
