@@ -70,7 +70,7 @@ public class Top {
 				e.printStackTrace();
 			}
 			ArmorStand stand = armorStandList.get(i);
-			stand.setCustomName(xP.getGrade().getDisplayName()+" "+xP.getName()+" §8: §9"+data+" "+type.getUnit());
+			stand.setCustomName(xP.getGrade().getDisplayName()+" "+xP.getName()+" §8: §7"+data+" "+type.getUnit());
 			i++;
 		}
 	}
