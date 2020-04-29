@@ -59,7 +59,7 @@ public class TopManager {
 			}
 		}
 		topList.add(top);
-		config.set(name+".type", type);
+		config.set(name+".type", type.name());
 		config.set(name+".loc", loc);
 		config.set(name+".nbEntry", nbEntry);
 		config.save();
