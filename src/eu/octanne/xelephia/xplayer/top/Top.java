@@ -17,16 +17,16 @@ import eu.octanne.xelephia.xplayer.XPlayer;
 import eu.octanne.xelephia.xplayer.top.TopManager.TopType;
 
 public class Top {
-	
+
 	private String name;
-	
+
 	private TopType type;
 	private int nbPlayer;
 	private Location topLocation;
-	
+
 	private List<ArmorStand> armorStandList = new ArrayList<>();
-	
-	
+
+
 	protected Top(TopType type, Location loc, int nbPlayer, String name) {
 		this.type = type;
 		this.topLocation = loc;
@@ -34,7 +34,7 @@ public class Top {
 		this.name = name;
 		loadTop();
 	}
-	
+
 	public void loadTop() {
 		// Top Title
 		ArmorStand standTitle = (ArmorStand) topLocation.getWorld().spawnEntity(topLocation, EntityType.ARMOR_STAND);
@@ -43,7 +43,7 @@ public class Top {
 		standTitle.setCustomNameVisible(true);
 		standTitle.setCustomName(type.getTitle());
 		armorStandList.add(standTitle);
-		
+
 		for(int i = 1; armorStandList.size()-1 < nbPlayer; i++) {
 			Location standLoc = topLocation.clone();
 			standLoc.setY(topLocation.getY()-i*0.30-0.20);
@@ -56,7 +56,7 @@ public class Top {
 		}
 		updateTop();
 	}
-	
+
 	public void updateTop() {
 		List<XPlayer> xPlayers = getTopPlayer(type, nbPlayer);
 		int i = 1;
@@ -74,39 +74,35 @@ public class Top {
 			i++;
 		}
 	}
-	
+
 	public void unloadTop() {
 		for(ArmorStand stand : armorStandList) {
 			stand.remove();
 			stand.setHealth(0);
 		}
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	protected List<XPlayer> getTopPlayer(TopType type, int nbPlayer) {
 		List<XPlayer> top = new ArrayList<>();
-		if(type.equals(TopType.COINS)) {
-			try {
-				PreparedStatement q = XelephiaPlugin.getPlayersDB().getConnection()
-						.prepareStatement("SELECT uuid FROM players ORDER BY "+type.getColumnName()+" DESC");
-				ResultSet rs = q.executeQuery();
-				boolean isExist = rs.next();
-				if (!isExist) return top;
-				
-				for(int i = 1; rs.next() && i <= nbPlayer; i++) {
-					String strUUID = rs.getString("uuid");
-					top.add(XelephiaPlugin.getXPlayer(UUID.fromString(strUUID)));
-				}
-				q.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
+		try {
+			PreparedStatement q = XelephiaPlugin.getPlayersDB().getConnection()
+					.prepareStatement("SELECT uuid FROM players ORDER BY "+type.getColumnName()+" DESC");
+			ResultSet rs = q.executeQuery();
+			boolean isExist = rs.next();
+			if (!isExist) return top;
+
+			for(int i = 1; rs.next() && i <= nbPlayer; i++) {
+				String strUUID = rs.getString("uuid");
+				top.add(XelephiaPlugin.getXPlayer(UUID.fromString(strUUID)));
 			}
-			return top;
-		}else {
-			return top;
+			q.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
+		return top;
 	}
 }
