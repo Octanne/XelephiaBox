@@ -307,6 +307,7 @@ public class XelephiaPlugin extends JavaPlugin {
 		if(!mainConfig.get().isSet("holoTop.coins.unit"))mainConfig.set("holoTop.coins.unit", "coin(s)");
 		if(!mainConfig.get().isSet("holoTop.death.title"))mainConfig.set("holoTop.death.title", "§6TOP §7- §8(§5Mort§8)");
 		if(!mainConfig.get().isSet("holoTop.death.unit"))mainConfig.set("holoTop.death.unit", " mort(s)");
+		if(!mainConfig.get().isSet("holoTop.updateTime"))mainConfig.set("holoTop.updateTime", 30);
 		mainConfig.save();
 	}
 	public void loadMessage() {

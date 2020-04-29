@@ -36,8 +36,6 @@ public class Top {
 	}
 	
 	public void loadTop() {
-		List<XPlayer> xPlayers = getTopPlayer(type, nbPlayer);
-		
 		// Top Title
 		ArmorStand standTitle = (ArmorStand) topLocation.getWorld().spawnEntity(topLocation, EntityType.ARMOR_STAND);
 		standTitle.setGravity(false);
@@ -46,21 +44,17 @@ public class Top {
 		standTitle.setCustomName(type.getTitle());
 		armorStandList.add(standTitle);
 		
-		for(XPlayer xP : xPlayers) {
-			String data = "";
-			try {
-				data = ""+xP.getClass().getMethod(type.getMethod()).invoke(xP);
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
-					| NoSuchMethodException | SecurityException e) {
-				e.printStackTrace();
-			}
+		for(int i = 1; armorStandList.size() >= nbPlayer; i++) {
+			Location standLoc = topLocation.clone();
+			standLoc.setY(i*0.25+topLocation.getY());
 			ArmorStand stand = (ArmorStand) topLocation.getWorld().spawnEntity(topLocation, EntityType.ARMOR_STAND);
 			stand.setGravity(false);
 			stand.setVisible(false);
 			stand.setCustomNameVisible(true);
-			stand.setCustomName(xP.getGrade().getDisplayName()+" "+xP.getName()+" : "+data+" "+type.getUnit());
+			stand.setCustomName("-------");
 			armorStandList.add(stand);
 		}
+		updateTop();
 	}
 	
 	public void updateTop() {

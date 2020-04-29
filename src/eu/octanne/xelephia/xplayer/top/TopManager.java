@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import eu.octanne.xelephia.XelephiaPlugin;
 import eu.octanne.xelephia.util.ConfigYaml;
@@ -12,13 +14,16 @@ public class TopManager {
 	
 	ConfigYaml config = new ConfigYaml("top.yml");
 	
-	public List<Top> topList = new ArrayList<>();
+	private List<Top> topList = new ArrayList<>();
+	
+	private BukkitTask task;
 	
 	public TopManager() {
 		enable();	
 	}
 	
 	public void disable() {
+		task.cancel();
 		for(Top top : topList) {
 			top.unloadTop();
 		}
@@ -26,8 +31,23 @@ public class TopManager {
 	
 	public void enable() {
 		loadTops();
+		launchUpdateTask();
 	}
 	
+	private void launchUpdateTask() {
+		new BukkitRunnable() {
+
+			@Override
+			public void run() {
+				for(Top top : topList) {
+					top.updateTop();
+				}
+			}
+			
+		}.runTaskTimer(XelephiaPlugin.getInstance(), XelephiaPlugin.getMainConfig().get().getInt("holoTop.updateTime"), 
+				XelephiaPlugin.getMainConfig().get().getInt("holoTop.updateTime"));
+	}
+
 	public void createTop(TopType type, Location loc, int nbEntry, String name) {
 		
 		Top top = new Top(type, loc, nbEntry, name);
