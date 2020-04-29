@@ -291,6 +291,14 @@ public class XelephiaPlugin extends JavaPlugin {
 		if(!mainConfig.get().isSet("chatFormat"))mainConfig.set("chatFormat", "{PREFIX} {PLAYERNAME} §7≫§r {MESSAGE}");
 		if(!mainConfig.get().isSet("tabList.header"))mainConfig.set("tabList.header", "      §9▶ §6§lXelephia §bv§30.8 §a- §3PvP§8/§cBox §aRéinventé §9◀");
 		if(!mainConfig.get().isSet("tabList.footer"))mainConfig.set("tabList.footer", "§bJoueurs : §7{ONLINE}§8/§7{MAX}\\n§3Bon jeu §b{PLAYERNAME} §3! §9| §3IP : §bplay.xelephia.fr");
+		if(!mainConfig.get().isSet("holoTop.kill.title"))mainConfig.set("holoTop.kill.title", "§6TOP §7- §8(§cKill§8)");
+		if(!mainConfig.get().isSet("holoTop.kill.unit"))mainConfig.set("holoTop.kill.unit", "kill(s)");
+		if(!mainConfig.get().isSet("holoTop.killstreak.title"))mainConfig.set("holoTop.killstreak.title", "§6TOP §7- §8(§cKill Streak§8)");
+		if(!mainConfig.get().isSet("holoTop.killstreak.unit"))mainConfig.set("holoTop.killstreak.unit", "kill(s)");
+		if(!mainConfig.get().isSet("holoTop.coins.title"))mainConfig.set("holoTop.coins.title", "§6TOP §7- §8(§eCoins§8)");
+		if(!mainConfig.get().isSet("holoTop.coins.unit"))mainConfig.set("holoTop.coins.unit", "coin(s)");
+		if(!mainConfig.get().isSet("holoTop.death.title"))mainConfig.set("holoTop.death.title", "§6TOP §7- §8(§5Mort§8)");
+		if(!mainConfig.get().isSet("holoTop.death.unit"))mainConfig.set("holoTop.death.unit", " mort(s)");
 		mainConfig.save();
 	}
 	public void loadMessage() {
