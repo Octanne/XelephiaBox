@@ -17,7 +17,7 @@ public class TopCommand implements CommandExecutor {
 		if(sender instanceof Player) {
 			if(sender.hasPermission("xelephia.commands.createtop")) {
 				if(args.length >= 3) {
-					if(args[1].equals("DEATH") || args[1].equals("KILL") || args[1].equals("KILLSTREAK") ||
+					if(args[1].equals("DEATH") || args[1].equals("KILL") || args[1].equals("HIGHSTREAK") ||
 							args[1].equals("COINS") ) {
 						int nbEntry;
 						try{

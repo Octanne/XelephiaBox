@@ -46,12 +46,12 @@ public class Top {
 		
 		for(int i = 1; armorStandList.size()-1 < nbPlayer; i++) {
 			Location standLoc = topLocation.clone();
-			standLoc.setY(i*0.25-topLocation.getY());
+			standLoc.setY(topLocation.getY()-i*0.30-0.20);
 			ArmorStand stand = (ArmorStand) standLoc.getWorld().spawnEntity(standLoc, EntityType.ARMOR_STAND);
 			stand.setGravity(false);
 			stand.setVisible(false);
 			stand.setCustomNameVisible(true);
-			stand.setCustomName("---------");
+			stand.setCustomName("§7-----");
 			armorStandList.add(stand);
 		}
 		updateTop();
@@ -70,7 +70,7 @@ public class Top {
 				e.printStackTrace();
 			}
 			ArmorStand stand = armorStandList.get(i);
-			stand.setCustomName(xP.getGrade().getDisplayName()+" "+xP.getName()+" : "+data+" "+type.getUnit());
+			stand.setCustomName(xP.getGrade().getDisplayName()+" "+xP.getName()+" §7: "+data+" "+type.getUnit());
 			i++;
 		}
 	}
@@ -91,12 +91,12 @@ public class Top {
 		if(type.equals(TopType.COINS)) {
 			try {
 				PreparedStatement q = XelephiaPlugin.getPlayersDB().getConnection()
-						.prepareStatement("SELECT uuid FROM players ORDER BY "+ type.getColumnName());
+						.prepareStatement("SELECT uuid FROM players ORDER BY "+type.getColumnName()+" DESC");
 				ResultSet rs = q.executeQuery();
 				boolean isExist = rs.next();
 				if (!isExist) return top;
 				
-				for(int  i = 1; rs.next() || i <= nbPlayer; i++) {
+				for(int i = 1; rs.next() && i <= nbPlayer; i++) {
 					String strUUID = rs.getString("uuid");
 					top.add(XelephiaPlugin.getXPlayer(UUID.fromString(strUUID)));
 				}

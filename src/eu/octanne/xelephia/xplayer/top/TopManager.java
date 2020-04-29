@@ -9,6 +9,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import eu.octanne.xelephia.XelephiaPlugin;
 import eu.octanne.xelephia.util.ConfigYaml;
+import eu.octanne.xelephia.xplayer.XPlayer;
 
 public class TopManager {
 	
@@ -35,17 +36,20 @@ public class TopManager {
 	}
 	
 	private void launchUpdateTask() {
-		new BukkitRunnable() {
+		task = new BukkitRunnable() {
 
 			@Override
 			public void run() {
 				for(Top top : topList) {
+					for(XPlayer xp : XelephiaPlugin.getXPlayersOnline()) {
+						xp.saveIntoDB();
+					}
 					top.updateTop();
 				}
 			}
 			
-		}.runTaskTimer(XelephiaPlugin.getInstance(), XelephiaPlugin.getMainConfig().get().getInt("holoTop.updateTime"), 
-				XelephiaPlugin.getMainConfig().get().getInt("holoTop.updateTime"));
+		}.runTaskTimer(XelephiaPlugin.getInstance(), 20*XelephiaPlugin.getMainConfig().get().getInt("holoTop.updateTime"), 
+				XelephiaPlugin.getMainConfig().get().getInt("holoTop.updateTime")*20);
 	}
 
 	public void createTop(TopType type, Location loc, int nbEntry, String name) {

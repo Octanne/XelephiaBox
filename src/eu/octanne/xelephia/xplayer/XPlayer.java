@@ -96,8 +96,8 @@ public class XPlayer {
 	protected XPlayer lastMessenger;
 
 	public void finalize() throws Throwable {
-		saveIntoDB();
-		Bukkit.getLogger().info("Libération mémoire XPlayer : "+lastPlayerName);
+		//saveIntoDB();
+		//Bukkit.getLogger().info("Libération mémoire XPlayer : "+lastPlayerName);
 		untilAppleDate = null;
 		damageTaken = null;
 		menuStats = null;
@@ -145,7 +145,7 @@ public class XPlayer {
 				else this.kitEquiped = false;
 				this.grade = XelephiaPlugin.getGradeManager().getGrade(rs.getString("grade"));
 
-				Bukkit.getLogger().log(Level.INFO, "[Xelephia] Chargement du joueur : " + this.lastPlayerName + " !");
+				//Bukkit.getLogger().log(Level.INFO, "[Xelephia] Chargement du joueur : " + this.lastPlayerName + " !");
 			} else {
 				this.coins = 0;
 				this.killCount = 0;
@@ -216,7 +216,7 @@ public class XPlayer {
 			// ADD Capture Zone Date
 			qCreate.execute();
 			qCreate.close();
-			Bukkit.getLogger().log(Level.INFO, "[Xelephia] Sauvegarde du joueur : " + this.lastPlayerName + " !");
+			//Bukkit.getLogger().log(Level.INFO, "[Xelephia] Sauvegarde du joueur : " + this.lastPlayerName + " !");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;

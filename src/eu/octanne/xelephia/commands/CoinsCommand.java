@@ -27,18 +27,21 @@ public class CoinsCommand implements CommandExecutor {
 						xP.takeCoins(amount);
 						sender.sendMessage("§6Coins §8| §9(§c-" + amount + " §9coins) §e" + xP.getName()
 								+ " §9possède désormais §e" + xP.getCoins() + "§9 coins.");
+						xP.saveIntoDB();
 						return true;
 					}
 					if (args[0].equalsIgnoreCase("give")) {
 						xP.giveCoins(amount);
 						sender.sendMessage("§6Coins §8| §9(§a+" + amount + " §9coins) §e" + xP.getName()
 								+ " §9possède désormais §e" + xP.getCoins() + "§9 coins.");
+						xP.saveIntoDB();
 						return true;
 					}
 					if (args[0].equalsIgnoreCase("set")) {
 						xP.setCoins(amount);
 						sender.sendMessage("§6Coins §8| §e" + xP.getName() + " §9possède désormais §e" + xP.getCoins()
 								+ "§9 coins.");
+						xP.saveIntoDB();
 						return true;
 					} else {
 						sender.sendMessage("§6Coins §8| §c/coins <take|give|set> <pseudo> <amount>");
