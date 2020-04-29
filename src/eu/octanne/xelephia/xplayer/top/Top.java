@@ -44,14 +44,14 @@ public class Top {
 		standTitle.setCustomName(type.getTitle());
 		armorStandList.add(standTitle);
 		
-		for(int i = 1; armorStandList.size() >= nbPlayer; i++) {
+		for(int i = 1; armorStandList.size()-1 < nbPlayer; i++) {
 			Location standLoc = topLocation.clone();
 			standLoc.setY(i*0.25+topLocation.getY());
-			ArmorStand stand = (ArmorStand) topLocation.getWorld().spawnEntity(topLocation, EntityType.ARMOR_STAND);
+			ArmorStand stand = (ArmorStand) standLoc.getWorld().spawnEntity(standLoc, EntityType.ARMOR_STAND);
 			stand.setGravity(false);
 			stand.setVisible(false);
 			stand.setCustomNameVisible(true);
-			stand.setCustomName("-------");
+			stand.setCustomName("---------");
 			armorStandList.add(stand);
 		}
 		updateTop();

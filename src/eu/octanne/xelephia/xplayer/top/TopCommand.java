@@ -27,7 +27,7 @@ public class TopCommand implements CommandExecutor {
 							return false;
 						}
 						XelephiaPlugin.getTopManager().createTop(TopType.valueOf(args[1]), ((Player) sender).getLocation(), nbEntry, args[0]);
-						sender.sendMessage(COMMAND_TAG+"§aCréation d'un top §9"+args[2]+" §aavec succès.");
+						sender.sendMessage(COMMAND_TAG+"§aCréation d'un top §9"+args[1]+" §aavec succès.");
 						return true;
 					}else {
 						sender.sendMessage(COMMAND_TAG+"§cErreur : §9"+args[1]+" §cn'est pas un type correct (DEATH, KILL, KILLSTREAK, COINS)");

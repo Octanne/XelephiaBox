@@ -133,7 +133,8 @@ public class XelephiaPlugin extends JavaPlugin {
 		for (XPlayer xp : xplayersOnline) {
 			xp.saveIntoDB();
 		}
-		
+		// Top
+		topManager.disable();
 		// Players DB
 		dbPlayers.disconnect();
 		
