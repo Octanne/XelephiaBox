@@ -71,3 +71,5 @@ commands:
     description: reset a player
   setgrade:
     description: set a grade
+  createtop:
+    description: create or modify a top
