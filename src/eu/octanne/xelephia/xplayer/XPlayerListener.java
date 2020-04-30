@@ -250,7 +250,7 @@ public class XPlayerListener implements Listener {
 					e.setCancelled(true);
 				}else if(e.getClick().equals(ClickType.NUMBER_KEY)) {
 					ItemStack item = e.getView().getBottomInventory().getItem(e.getHotbarButton());
-					if(item.hasItemMeta() && item.getItemMeta().getLore().contains("§cItem de kit")) {
+					if(item != null && item.hasItemMeta() && item.getItemMeta().getLore().contains("§cItem de kit")) {
 						e.setCancelled(true);
 					}
 				}
@@ -418,6 +418,10 @@ public class XPlayerListener implements Listener {
 			if(xPKiller.getBPlayer().getInventory().firstEmpty() == -1) xPKiller.getBPlayer().getWorld()
 			.dropItem(e.getEntity().getKiller().getLocation(), new ItemStack(Material.EXP_BOTTLE, 1));
 			else xPKiller.getBPlayer().getInventory().addItem(new ItemStack(Material.EXP_BOTTLE, 1));
+			// Give Apple
+			if(xPKiller.getBPlayer().getInventory().firstEmpty() == -1) xPKiller.getBPlayer().getWorld()
+			.dropItem(e.getEntity().getKiller().getLocation(), new ItemStack(Material.GOLDEN_APPLE, 1));
+			else xPKiller.getBPlayer().getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE, 1));
 			// Update KillStreak
 			if (xPKiller.highKillStreak < xPKiller.actualKillStreak)
 				xPKiller.highKillStreak = xPKiller.actualKillStreak;

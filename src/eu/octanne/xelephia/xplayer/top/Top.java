@@ -94,11 +94,12 @@ public class Top {
 			ResultSet rs = q.executeQuery();
 			boolean isExist = rs.next();
 			if (!isExist) return top;
-
-			for(int i = 1; rs.next() && i <= nbPlayer; i++) {
+			int i = 1;
+			do{
 				String strUUID = rs.getString("uuid");
 				top.add(XelephiaPlugin.getXPlayer(UUID.fromString(strUUID)));
-			}
+				i++;
+			}while(rs.next() && i <= nbPlayer);
 			q.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
