@@ -20,6 +20,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -244,9 +245,14 @@ public class XPlayerListener implements Listener {
 		if(e.getWhoClicked() instanceof Player) {
 			// Fix Items in stats menu
 			if (e.getClickedInventory() != null && e.getClickedInventory().getName().contains("§8Statistiques de §b")) e.setCancelled(true);
-			if(e.getView().getTopInventory().getType().equals(InventoryType.ENDER_CHEST)) {
-				if(e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().getLore().contains("§cItem de kit")) {
+			if(e.getView().getTopInventory() != null && e.getView().getTopInventory().getType().equals(InventoryType.ENDER_CHEST)) {
+				if(e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().getLore().contains("§cItem de kit") && e.getRawSlot() > 26) {
 					e.setCancelled(true);
+				}else if(e.getClick().equals(ClickType.NUMBER_KEY)) {
+					ItemStack item = e.getView().getBottomInventory().getItem(e.getHotbarButton());
+					if(item.hasItemMeta() && item.getItemMeta().getLore().contains("§cItem de kit")) {
+						e.setCancelled(true);
+					}
 				}
 			}
 		}
