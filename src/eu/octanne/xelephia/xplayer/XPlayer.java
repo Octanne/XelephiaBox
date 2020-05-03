@@ -301,7 +301,6 @@ public class XPlayer {
 		}else {
 			return "§9Chargé";
 		}
-
 	}
 	/*
 	 * getTimeUntilApple
