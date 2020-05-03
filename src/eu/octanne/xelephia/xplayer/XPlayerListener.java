@@ -420,19 +420,16 @@ public class XPlayerListener implements Listener {
 			else xPKiller.getBPlayer().getInventory().addItem(new ItemStack(Material.EXP_BOTTLE, 1));
 			// Give Apple
 			int appleSlot = xPKiller.getBPlayer().getInventory().first(Material.GOLDEN_APPLE);
-			if(appleSlot != -1) {
+			if(appleSlot != -1 && xPKiller.getBPlayer().getInventory().firstEmpty() != -1) {
 				xPKiller.getBPlayer().getInventory().getItem(appleSlot).setAmount(
 						xPKiller.getBPlayer().getInventory().getItem(appleSlot).getAmount()+1);
-			}else {
+			}else if(xPKiller.getBPlayer().getInventory().firstEmpty() != -1){
 				ArrayList<String> lore = new ArrayList<>();
 				lore.add(" ");
 				lore.add("§cItem de kit");
-				ItemStack arrowItem = Utils.createItemStack("", Material.ARROW, 1, lore, 0, false);
-				xPKiller.getBPlayer().getInventory().addItem(arrowItem);
+				ItemStack appleItem = Utils.createItemStack("", Material.ARROW, 1, lore, 0, false);
+				xPKiller.getBPlayer().getInventory().addItem(appleItem);
 			}
-			if(xPKiller.getBPlayer().getInventory().firstEmpty() == -1) xPKiller.getBPlayer().getWorld()
-			.dropItem(e.getEntity().getKiller().getLocation(), new ItemStack(Material.GOLDEN_APPLE, 1));
-			else xPKiller.getBPlayer().getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE, 1));
 			// Update KillStreak
 			if (xPKiller.highKillStreak < xPKiller.actualKillStreak)
 				xPKiller.highKillStreak = xPKiller.actualKillStreak;
