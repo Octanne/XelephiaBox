@@ -419,6 +419,17 @@ public class XPlayerListener implements Listener {
 			.dropItem(e.getEntity().getKiller().getLocation(), new ItemStack(Material.EXP_BOTTLE, 1));
 			else xPKiller.getBPlayer().getInventory().addItem(new ItemStack(Material.EXP_BOTTLE, 1));
 			// Give Apple
+			int appleSlot = xPKiller.getBPlayer().getInventory().first(Material.GOLDEN_APPLE);
+			if(appleSlot != -1) {
+				xPKiller.getBPlayer().getInventory().getItem(appleSlot).setAmount(
+						xPKiller.getBPlayer().getInventory().getItem(appleSlot).getAmount()+1);
+			}else {
+				ArrayList<String> lore = new ArrayList<>();
+				lore.add(" ");
+				lore.add("§cItem de kit");
+				ItemStack arrowItem = Utils.createItemStack("", Material.ARROW, 1, lore, 0, false);
+				xPKiller.getBPlayer().getInventory().addItem(arrowItem);
+			}
 			if(xPKiller.getBPlayer().getInventory().firstEmpty() == -1) xPKiller.getBPlayer().getWorld()
 			.dropItem(e.getEntity().getKiller().getLocation(), new ItemStack(Material.GOLDEN_APPLE, 1));
 			else xPKiller.getBPlayer().getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE, 1));
