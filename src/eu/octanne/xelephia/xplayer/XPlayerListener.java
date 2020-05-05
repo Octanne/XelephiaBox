@@ -246,7 +246,7 @@ public class XPlayerListener implements Listener {
 			// Fix Items in stats menu
 			if (e.getClickedInventory() != null && e.getClickedInventory().getName().contains("§8Statistiques de §b")) e.setCancelled(true);
 			if(e.getView().getTopInventory() != null && e.getView().getTopInventory().getType().equals(InventoryType.ENDER_CHEST)) {
-				if(e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().getLore().contains("§cItem de kit") && e.getRawSlot() > 26) {
+				if(e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasLore() && e.getCurrentItem().getItemMeta().getLore().contains("§cItem de kit") && e.getRawSlot() > 26) {
 					e.setCancelled(true);
 				}else if(e.getClick().equals(ClickType.NUMBER_KEY)) {
 					ItemStack item = e.getView().getBottomInventory().getItem(e.getHotbarButton());
