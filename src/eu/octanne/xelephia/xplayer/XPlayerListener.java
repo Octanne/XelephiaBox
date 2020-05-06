@@ -388,7 +388,7 @@ public class XPlayerListener implements Listener {
 
 		xP.setKitEquiped(false);
 		xP.actualKillStreak = 0;
-		xP.deathCount++;
+		if(!e.getEntity().getLastDamageCause().getCause().equals(DamageCause.SUICIDE))xP.deathCount++;
 
 		// Calculate Coins Reward
 		Random rand = new Random();

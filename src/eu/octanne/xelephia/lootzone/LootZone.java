@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -197,9 +198,17 @@ public class LootZone {
 			}.runTaskTimer(XelephiaPlugin.getInstance(), 0, 30);
 	}
 
+	private int getOnlinePlayer() {
+		int size = 0;
+		for(Player p : Bukkit.getOnlinePlayers()) {
+			if(p.getGameMode().equals(GameMode.ADVENTURE) || p.getGameMode().equals(GameMode.SURVIVAL))size++;
+		}
+		return size;
+	}
+	
 	private TryCaptureResult canCapture(XPlayer p) {
 		p.updateLoots();
-		if(Bukkit.getOnlinePlayers().size() < minPlayers) {
+		if(getOnlinePlayer() < minPlayers) {
 			return TryCaptureResult.NEED_MORE_PLAYERS;
 		}else if(p.getHourLoot() >= LootZoneManager.maxLootPerHour) {
 			return TryCaptureResult.NO_MORE_CAPTURE;
