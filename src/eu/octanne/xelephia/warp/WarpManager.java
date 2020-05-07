@@ -52,7 +52,7 @@ public class WarpManager implements Listener {
 
 	public Warp getWarp(String name) {
 		for(Warp warp : warpList) {
-			if(warp.getName().equals(""))return warp;
+			if(warp.getName().equals(name))return warp;
 		}
 		return null;
 	}
