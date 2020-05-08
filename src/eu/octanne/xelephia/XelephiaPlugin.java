@@ -24,6 +24,7 @@ import eu.octanne.xelephia.commands.GameModeCommand;
 import eu.octanne.xelephia.commands.HealCommand;
 import eu.octanne.xelephia.commands.MessageCommand;
 import eu.octanne.xelephia.commands.NightCommand;
+import eu.octanne.xelephia.commands.PoubelleCommand;
 import eu.octanne.xelephia.commands.RenameCommand;
 import eu.octanne.xelephia.commands.ResetPlayerCommand;
 import eu.octanne.xelephia.commands.SetSpawnCommand;
@@ -284,6 +285,7 @@ public class XelephiaPlugin extends JavaPlugin {
 		getCommand("resetplayer").setExecutor(new ResetPlayerCommand());
 		getCommand("setgrade").setExecutor(new GradeCommand());
 		getCommand("createtop").setExecutor(new TopCommand());
+		getCommand("poubelle").setExecutor(new PoubelleCommand());
 	}
 
 	/*

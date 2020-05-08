@@ -73,3 +73,5 @@ commands:
     description: set a grade
   createtop:
     description: create or modify a top
+  poubelle:
+    description: poubelle command.
